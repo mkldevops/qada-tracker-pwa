@@ -28,15 +28,21 @@ export function Settings() {
 
   const [years, setYears] = useState('');
   const [excludedDays, setExcludedDays] = useState('0');
+  const [isFemme, setIsFemme] = useState(false);
+  const [avgHaydDays, setAvgHaydDays] = useState('6');
   const [manualAmounts, setManualAmounts] = useState<Partial<Record<PrayerName, string>>>({});
   const [objPeriod, setObjPeriod] = useState<Period>('daily');
   const [objTarget, setObjTarget] = useState('');
 
+  const haydExclusion = isFemme
+    ? Math.round((parseFloat(years) || 0) * (parseFloat(avgHaydDays) || 6) * 12)
+    : 0;
+  const totalExcluded = (parseInt(excludedDays, 10) || 0) + haydExclusion;
+
   const handleSetDebtFromYears = async () => {
     const y = parseFloat(years);
-    const exc = parseInt(excludedDays, 10) || 0;
     if (!isNaN(y) && y > 0) {
-      await setDebtFromYears(y, exc);
+      await setDebtFromYears(y, totalExcluded);
       setYears('');
     }
   };
@@ -97,7 +103,7 @@ export function Settings() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium" style={{ color: '#6E6E70' }}>Jours exclus</label>
+              <label className="text-xs font-medium" style={{ color: '#6E6E70' }}>Autres jours exclus</label>
               <input
                 type="number"
                 value={excludedDays}
@@ -108,6 +114,51 @@ export function Settings() {
               />
             </div>
           </div>
+
+          {/* Option femme */}
+          <div style={{ height: 1, background: '#2A2A2C' }} />
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-0.5">
+              <span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>Femme</span>
+              <span className="text-[11px]" style={{ color: '#6E6E70' }}>Déduire les jours de menstrues (hayd)</span>
+            </div>
+            <button
+              onClick={() => setIsFemme((v) => !v)}
+              className="relative h-7 w-12 rounded-full transition-colors"
+              style={{ background: isFemme ? '#C9A962' : '#3A3A3C' }}
+            >
+              <span
+                className="absolute top-1 h-5 w-5 rounded-full transition-all"
+                style={{
+                  background: '#F5F5F0',
+                  left: isFemme ? '50%' : '4px',
+                }}
+              />
+            </button>
+          </div>
+
+          {isFemme && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium" style={{ color: '#6E6E70' }}>
+                Moy. jours de hayd / mois
+              </label>
+              <input
+                type="number"
+                value={avgHaydDays}
+                onChange={(e) => setAvgHaydDays(e.target.value)}
+                placeholder="6"
+                min="1"
+                max="15"
+                style={inputStyle}
+              />
+              {parseFloat(years) > 0 && (
+                <p className="text-[11px]" style={{ color: '#6E9E6E' }}>
+                  ≈ {haydExclusion} jours déduits ({totalExcluded} au total)
+                </p>
+              )}
+            </div>
+          )}
+
           <button
             onClick={handleSetDebtFromYears}
             disabled={!years || parseFloat(years) <= 0}
