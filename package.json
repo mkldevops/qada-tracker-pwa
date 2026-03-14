@@ -1,0 +1,36 @@
+{
+  "name": "qada-tracker-pwa",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-progress": "^1.1.8",
+    "@radix-ui/react-separator": "^1.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "dexie": "4.3.0",
+    "lucide-react": "0.577.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.2.0",
+    "zustand": "5.0.11"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.2.1",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "5.2.0",
+    "tailwindcss": "4.2.1",
+    "typescript": "^5.7.3",
+    "vite": "7.3.1",
+    "vite-plugin-pwa": "1.2.0"
+  }
+}
