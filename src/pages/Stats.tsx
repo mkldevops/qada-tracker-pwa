@@ -1,9 +1,20 @@
 import { useStats, useDebts, useTotalRemaining } from '@/stores/prayerStore';
-import { StatsCard } from '@/components/StatsCard';
-import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { PRAYER_NAMES } from '@/types';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+
+function StatTile({ label, value, color }: { label: string; value: string | number; color?: string }) {
+  return (
+    <div
+      className="flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-5"
+      style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+    >
+      <span className="font-display text-3xl font-medium" style={{ color: color ?? '#F5F5F0' }}>
+        {value}
+      </span>
+      <span className="text-[10px] font-medium" style={{ color: '#6E6E70' }}>{label}</span>
+    </div>
+  );
+}
 
 export function Stats() {
   const stats = useStats();
@@ -11,71 +22,94 @@ export function Stats() {
   const totalRemaining = useTotalRemaining();
 
   return (
-    <div className="space-y-4 p-4">
-      <h1 className="text-xl font-bold">Statistiques</h1>
+    <div className="space-y-5 px-7 pb-4 pt-1">
+      <h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>Statistiques</h1>
+
+      <div
+        className="flex w-full flex-col justify-center gap-2 rounded-[20px] px-6 py-7"
+        style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
+      >
+        <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#1A1A1C88' }}>
+          TOTAL LOGUÉ
+        </p>
+        <p className="font-display text-[52px] font-light leading-[0.85]" style={{ color: '#1A1A1C' }}>
+          {stats.allTime.toLocaleString()}
+        </p>
+      </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <StatsCard label="Aujourd'hui" value={stats.today} highlight />
-        <StatsCard label="Cette semaine" value={stats.thisWeek} />
-        <StatsCard label="Ce mois" value={stats.thisMonth} />
-        <StatsCard label="Total logué" value={stats.allTime} />
-        <StatsCard label="Streak" value={`${stats.streak}j`} sub="jours consécutifs" />
-        <StatsCard
-          label="Moy. / jour"
+        <StatTile label="aujourd'hui" value={stats.today} />
+        <StatTile label="série" value={`${stats.streak}j`} color="#C9A962" />
+        <StatTile label="cette semaine" value={stats.thisWeek} />
+        <StatTile
+          label="moy/jour"
           value={stats.avgPerDay > 0 ? stats.avgPerDay.toFixed(1) : '—'}
-          sub="sur 30 jours"
+          color="#6E9E6E"
         />
       </div>
 
       {stats.estimatedDays && (
-        <Card className="border-primary/30 bg-card">
-          <CardContent className="p-4 text-center">
-            <p className="text-sm text-muted-foreground">Estimation pour finir</p>
-            <p className="mt-1 text-3xl font-bold text-primary">{stats.estimatedDays}</p>
-            <p className="text-sm text-muted-foreground">jours au rythme actuel</p>
-          </CardContent>
-        </Card>
+        <div
+          className="flex items-center justify-between rounded-[20px] px-6"
+          style={{ background: '#242426', border: '1px solid #3A3A3C80', height: 72 }}
+        >
+          <span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
+            Estimation pour finir
+          </span>
+          <span className="font-display text-3xl font-medium" style={{ color: '#C9A962' }}>
+            {stats.estimatedDays}j
+          </span>
+        </div>
       )}
 
-      <div className="space-y-2">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          Dette par prière
-        </h2>
-        <Card className="border-border bg-card">
-          <CardContent className="divide-y divide-border p-0">
-            {PRAYER_NAMES.map((prayer) => {
-              const debt = debts[prayer];
-              const progress =
-                debt.total_owed > 0
-                  ? Math.min(100, (debt.total_completed / debt.total_owed) * 100)
-                  : 0;
-              const config = PRAYER_CONFIG[prayer];
-              return (
-                <div key={prayer} className="px-4 py-3">
+      <div className="flex flex-col gap-2.5">
+        <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+          DETTE PAR PRIÈRE
+        </p>
+        <div
+          className="overflow-hidden rounded-[20px]"
+          style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+        >
+          {PRAYER_NAMES.map((prayer, i) => {
+            const debt = debts[prayer];
+            const cfg = PRAYER_CONFIG[prayer];
+            const progress = debt?.total_owed > 0
+              ? Math.min(100, (debt.total_completed / debt.total_owed) * 100)
+              : 0;
+            return (
+              <div key={prayer}>
+                {i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+                <div className="flex flex-col gap-1.5 px-5 py-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium" style={{ color: config.color }}>
-                      {config.labelFr}
+                    <span className="font-display text-[15px] font-medium" style={{ color: cfg.hex }}>
+                      {cfg.labelFr}
                     </span>
-                    <span className="text-sm text-muted-foreground">
-                      {debt.remaining.toLocaleString()} / {debt.total_owed.toLocaleString()}
+                    <span className="text-[11px]" style={{ color: '#6E6E70' }}>
+                      {(debt?.remaining ?? 0).toLocaleString()} / {(debt?.total_owed ?? 0).toLocaleString()}
                     </span>
                   </div>
-                  <Progress value={progress} className="mt-1.5 h-1.5" />
+                  <div className="h-[3px] w-full overflow-hidden rounded-full" style={{ background: '#3A3A3C' }}>
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${progress}%`, background: cfg.hex }}
+                    />
+                  </div>
                 </div>
-              );
-            })}
-          </CardContent>
-        </Card>
-      </div>
+              </div>
+            );
+          })}
+        </div>
 
-      <Card className="border-border bg-card">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Total restant</span>
-            <span className="text-lg font-bold">{totalRemaining.toLocaleString()}</span>
-          </div>
-        </CardContent>
-      </Card>
+        <div
+          className="flex items-center justify-between rounded-[20px] px-6"
+          style={{ background: '#242426', border: '1px solid #3A3A3C', height: 60 }}
+        >
+          <span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>Total restant</span>
+          <span className="font-display text-2xl font-medium" style={{ color: '#F5F5F0' }}>
+            {totalRemaining.toLocaleString()}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

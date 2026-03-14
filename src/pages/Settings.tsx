@@ -1,8 +1,6 @@
 import { useState } from 'react';
+import { Trash2 } from 'lucide-react';
 import { usePrayerStore, useDebts } from '@/stores/prayerStore';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,20 +12,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Separator } from '@/components/ui/separator';
 import type { PrayerName, Period } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 
 const PERIODS: { value: Period; label: string }[] = [
-  { value: 'daily', label: 'Par jour' },
-  { value: 'weekly', label: 'Par semaine' },
-  { value: 'monthly', label: 'Par mois' },
+  { value: 'daily', label: 'Jour' },
+  { value: 'weekly', label: 'Semaine' },
+  { value: 'monthly', label: 'Mois' },
 ];
 
 export function Settings() {
-  const { setDebtManual, setDebtFromYears, setObjective, resetAll, activeObjective } =
-    usePrayerStore();
+  const { setDebtManual, setDebtFromYears, setObjective, resetAll, activeObjective } = usePrayerStore();
   const debts = useDebts();
 
   const [years, setYears] = useState('');
@@ -42,7 +38,6 @@ export function Settings() {
     if (!isNaN(y) && y > 0) {
       await setDebtFromYears(y, exc);
       setYears('');
-      setExcludedDays('0');
     }
   };
 
@@ -62,153 +57,194 @@ export function Settings() {
     }
   };
 
-  return (
-    <div className="space-y-6 p-4">
-      <h1 className="text-xl font-bold">Réglages</h1>
+  const inputStyle = {
+    background: '#1A1A1C',
+    border: '1px solid #3A3A3C',
+    borderRadius: 12,
+    color: '#F5F5F0',
+    padding: '0 14px',
+    height: 44,
+    fontSize: 15,
+    fontWeight: 500,
+    width: '100%',
+    outline: 'none',
+  } as const;
 
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          Calculer la dette depuis les années
-        </h2>
-        <Card className="border-border bg-card">
-          <CardContent className="space-y-3 p-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Années manquées</label>
-                <Input
-                  type="number"
-                  value={years}
-                  onChange={(e) => setYears(e.target.value)}
-                  placeholder="ex: 5.5"
-                  min="0"
-                  step="0.5"
-                />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs text-muted-foreground">Jours exclus</label>
-                <Input
-                  type="number"
-                  value={excludedDays}
-                  onChange={(e) => setExcludedDays(e.target.value)}
-                  placeholder="0"
-                  min="0"
-                />
-              </div>
+  return (
+    <div className="space-y-6 px-7 pb-4 pt-1">
+      <h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>Réglages</h1>
+
+      {/* Section 1: Debt from years */}
+      <section className="flex flex-col gap-2.5">
+        <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+          CALCULER LA DETTE
+        </p>
+        <div
+          className="flex flex-col gap-4 rounded-[20px] p-5"
+          style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+        >
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium" style={{ color: '#6E6E70' }}>Années manquées</label>
+              <input
+                type="number"
+                value={years}
+                onChange={(e) => setYears(e.target.value)}
+                placeholder="ex : 5.5"
+                min="0"
+                step="0.5"
+                style={inputStyle}
+              />
             </div>
-            <Button
-              className="w-full"
-              onClick={handleSetDebtFromYears}
-              disabled={!years || parseFloat(years) <= 0}
-            >
-              Appliquer
-            </Button>
-          </CardContent>
-        </Card>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium" style={{ color: '#6E6E70' }}>Jours exclus</label>
+              <input
+                type="number"
+                value={excludedDays}
+                onChange={(e) => setExcludedDays(e.target.value)}
+                placeholder="0"
+                min="0"
+                style={inputStyle}
+              />
+            </div>
+          </div>
+          <button
+            onClick={handleSetDebtFromYears}
+            disabled={!years || parseFloat(years) <= 0}
+            className="flex w-full items-center justify-center rounded-3xl py-3 text-[13px] font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30"
+            style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
+          >
+            APPLIQUER
+          </button>
+        </div>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          Ajuster manuellement
-        </h2>
-        <Card className="border-border bg-card">
-          <CardContent className="divide-y divide-border p-0">
-            {PRAYER_NAMES.map((prayer) => {
-              const config = PRAYER_CONFIG[prayer];
-              return (
-                <div key={prayer} className="flex items-center gap-3 px-4 py-3">
-                  <span className="w-20 text-sm font-medium" style={{ color: config.color }}>
-                    {config.labelFr}
+      {/* Section 2: Manual adjustment */}
+      <section className="flex flex-col gap-2.5">
+        <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+          AJUSTEMENT MANUEL
+        </p>
+        <div
+          className="overflow-hidden rounded-[20px]"
+          style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+        >
+          {PRAYER_NAMES.map((prayer, i) => {
+            const cfg = PRAYER_CONFIG[prayer];
+            return (
+              <div key={prayer}>
+                {i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+                <div className="flex items-center gap-3 px-5 py-3">
+                  <span className="w-20 font-display text-base font-medium" style={{ color: cfg.hex }}>
+                    {cfg.labelFr}
                   </span>
-                  <span className="w-12 text-right text-sm text-muted-foreground">
+                  <span className="w-12 text-right text-sm" style={{ color: '#6E6E70' }}>
                     {debts[prayer]?.remaining ?? 0}
                   </span>
-                  <Input
+                  <input
                     type="number"
                     className="flex-1"
                     value={manualAmounts[prayer] ?? ''}
-                    onChange={(e) =>
-                      setManualAmounts((prev) => ({ ...prev, [prayer]: e.target.value }))
-                    }
+                    onChange={(e) => setManualAmounts((prev) => ({ ...prev, [prayer]: e.target.value }))}
                     placeholder="Nouveau total"
                     min="0"
+                    style={{ ...inputStyle, height: 36, fontSize: 13 }}
                   />
-                  <Button
-                    size="sm"
-                    variant="outline"
+                  <button
                     onClick={() => handleManualDebt(prayer)}
                     disabled={!manualAmounts[prayer]}
+                    className="rounded-xl px-3 py-1.5 text-xs font-semibold transition-opacity disabled:opacity-30"
+                    style={{ background: '#3A3A3C', color: '#C9A962' }}
                   >
                     OK
-                  </Button>
+                  </button>
                 </div>
-              );
-            })}
-          </CardContent>
-        </Card>
+              </div>
+            );
+          })}
+        </div>
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          Objectif
-        </h2>
-        <Card className="border-border bg-card">
-          <CardContent className="space-y-3 p-4">
-            {activeObjective && (
-              <p className="text-xs text-muted-foreground">
-                Actuel : {activeObjective.target} prières {activeObjective.period === 'daily' ? 'par jour' : activeObjective.period === 'weekly' ? 'par semaine' : 'par mois'}
-              </p>
-            )}
-            <div className="grid grid-cols-3 gap-2">
-              {PERIODS.map(({ value, label }) => (
-                <Button
-                  key={value}
-                  variant={objPeriod === value ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setObjPeriod(value)}
-                >
-                  {label}
-                </Button>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <Input
-                type="number"
-                value={objTarget}
-                onChange={(e) => setObjTarget(e.target.value)}
-                placeholder="Nombre cible"
-                min="1"
-              />
-              <Button onClick={handleSetObjective} disabled={!objTarget}>
-                Définir
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Section 3: Objective */}
+      <section className="flex flex-col gap-2.5">
+        <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+          OBJECTIF
+        </p>
+        <div
+          className="flex flex-col gap-4 rounded-[20px] p-5"
+          style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+        >
+          {activeObjective && (
+            <p className="text-xs" style={{ color: '#6E6E70' }}>
+              Actuel : {activeObjective.target} /
+              {activeObjective.period === 'daily' ? ' jour' : activeObjective.period === 'weekly' ? ' semaine' : ' mois'}
+            </p>
+          )}
+          <div className="flex gap-2">
+            {PERIODS.map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => setObjPeriod(value)}
+                className="flex-1 rounded-[20px] py-2.5 text-[13px] font-medium transition-colors"
+                style={
+                  objPeriod === value
+                    ? { background: '#C9A962', color: '#1A1A1C', fontWeight: 600 }
+                    : { background: '#1A1A1C', border: '1px solid #3A3A3C', color: '#4A4A4C' }
+                }
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="number"
+              value={objTarget}
+              onChange={(e) => setObjTarget(e.target.value)}
+              placeholder="Nombre cible"
+              min="1"
+              style={{ ...inputStyle, flex: 1 }}
+            />
+            <button
+              onClick={handleSetObjective}
+              disabled={!objTarget}
+              className="rounded-[22px] px-6 text-[13px] font-bold transition-opacity disabled:opacity-30"
+              style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       </section>
 
-      <Separator />
-
-      <section>
+      {/* Danger zone */}
+      <section className="flex flex-col gap-2.5">
+        <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+          ZONE DANGER
+        </p>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="w-full">
-              Réinitialiser toutes les données
-            </Button>
+            <button
+              className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
+              style={{ background: '#2A1515', border: '1px solid #D45F5F33' }}
+            >
+              <Trash2 size={18} style={{ color: '#D45F5F' }} />
+              <span className="text-xs font-semibold tracking-[1px]" style={{ color: '#D45F5F' }}>
+                RÉINITIALISER TOUTES LES DONNÉES
+              </span>
+            </button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
             <AlertDialogHeader>
-              <AlertDialogTitle>Tout réinitialiser ?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Cette action effacera tous les logs et remettra les compteurs à zéro. Cette action
-                est irréversible.
+              <AlertDialogTitle style={{ color: '#F5F5F0' }}>Tout réinitialiser ?</AlertDialogTitle>
+              <AlertDialogDescription style={{ color: '#6E6E70' }}>
+                Efface tous les logs et remet les compteurs à zéro. Irréversible.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={resetAll}
-                className="bg-destructive hover:bg-destructive/90"
-              >
+              <AlertDialogCancel style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}>
+                Annuler
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={resetAll} style={{ background: '#D45F5F', color: '#F5F5F0' }}>
                 Réinitialiser
               </AlertDialogAction>
             </AlertDialogFooter>

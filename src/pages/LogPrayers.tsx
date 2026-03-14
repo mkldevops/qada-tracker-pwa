@@ -1,8 +1,6 @@
 import { useState } from 'react';
+import { Minus, Plus, Check } from 'lucide-react';
 import { usePrayerStore } from '@/stores/prayerStore';
-import { PrayerRow } from '@/components/PrayerCounter';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,6 +14,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import type { PrayerName, BatchEntry } from '@/types';
 import { PRAYER_NAMES } from '@/types';
+import { PRAYER_CONFIG } from '@/constants/prayers';
 
 const EMPTY = (): Record<PrayerName, number> =>
   PRAYER_NAMES.reduce((acc, p) => ({ ...acc, [p]: 0 }), {} as Record<PrayerName, number>);
@@ -26,84 +25,146 @@ export function LogPrayers() {
 
   const total = PRAYER_NAMES.reduce((sum, p) => sum + quantities[p], 0);
 
-  const handleChange = (prayer: PrayerName, quantity: number) => {
-    setQuantities((prev) => ({ ...prev, [prayer]: quantity }));
+  const handleChange = (prayer: PrayerName, qty: number) => {
+    setQuantities((prev) => ({ ...prev, [prayer]: Math.max(0, qty) }));
   };
 
   const handleLog = async () => {
-    const entries: BatchEntry[] = PRAYER_NAMES.map((prayer) => ({
-      prayer,
-      quantity: quantities[prayer],
-    }));
-    const sessionId = `batch-${Date.now()}`;
-    await logBatch(entries, sessionId);
+    const entries: BatchEntry[] = PRAYER_NAMES.map((prayer) => ({ prayer, quantity: quantities[prayer] }));
+    await logBatch(entries, `batch-${Date.now()}`);
     setQuantities(EMPTY());
   };
 
-  const recent = recentLogs.slice(0, 10);
-
   return (
-    <div className="space-y-4 p-4">
-      <h1 className="text-xl font-bold">Logger en lot</h1>
+    <div className="space-y-5 px-7 pb-4 pt-1">
+      <div className="flex flex-col gap-0.5">
+        <h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>Logger</h1>
+        <p className="text-[13px]" style={{ color: '#6E6E70' }}>
+          Sélectionne les prières à compter
+        </p>
+      </div>
 
-      <Card className="border-border bg-card">
-        <CardContent className="p-4">
-          <div className="divide-y divide-border">
-            {PRAYER_NAMES.map((prayer) => (
-              <PrayerRow
-                key={prayer}
-                prayer={prayer}
-                quantity={quantities[prayer]}
-                onChange={handleChange}
-              />
-            ))}
-          </div>
-          <Button
-            className="mt-4 w-full"
-            disabled={total === 0}
-            onClick={handleLog}
-          >
-            Logger {total > 0 ? `${total} prière${total > 1 ? 's' : ''}` : ''}
-          </Button>
-        </CardContent>
-      </Card>
+      <div
+        className="w-full overflow-hidden rounded-[20px]"
+        style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+      >
+        {PRAYER_NAMES.map((prayer, i) => {
+          const cfg = PRAYER_CONFIG[prayer];
+          const qty = quantities[prayer];
+          const active = qty > 0;
+          return (
+            <div key={prayer}>
+              {i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+              <div className="flex items-center gap-3 px-5" style={{ height: 70 }}>
+                <div className="flex flex-1 flex-col gap-0.5">
+                  <span className="font-display text-lg font-medium" style={{ color: cfg.hex }}>
+                    {cfg.labelFr}
+                  </span>
+                  <span className="text-[11px]" style={{ color: '#4A4A4C' }}>
+                    {cfg.labelAr} · {cfg.rakat} rak'at
+                  </span>
+                </div>
+                <div className="flex items-center gap-0">
+                  <button
+                    onClick={() => handleChange(prayer, qty - 1)}
+                    className="flex h-9 w-9 items-center justify-center rounded-full"
+                    style={{ background: '#2A2A2C' }}
+                  >
+                    <Minus size={14} style={{ color: '#6E6E70' }} />
+                  </button>
+                  <span
+                    className="w-10 text-center font-display text-xl font-medium tabular-nums"
+                    style={{ color: active ? cfg.hex : '#4A4A4C' }}
+                  >
+                    {qty}
+                  </span>
+                  <button
+                    onClick={() => handleChange(prayer, qty + 1)}
+                    className="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+                    style={active ? { background: cfg.hex } : { background: '#2A2A2C' }}
+                  >
+                    <Plus size={14} style={{ color: active ? '#1A1A1C' : '#6E6E70' }} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div
+        className="flex items-center justify-between rounded-[20px] px-6"
+        style={{ background: '#242426', border: '1px solid #3A3A3C', height: 72 }}
+      >
+        <span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
+          Total à logger
+        </span>
+        <span className="font-display text-2xl font-medium" style={{ color: '#C9A962' }}>
+          {total > 0 ? `${total} prière${total > 1 ? 's' : ''}` : '—'}
+        </span>
+      </div>
+
+      <button
+        onClick={handleLog}
+        disabled={total === 0}
+        className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 transition-opacity disabled:opacity-30"
+        style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
+      >
+        <Check size={18} style={{ color: '#1A1A1C' }} strokeWidth={2.5} />
+        <span className="text-[13px] font-semibold tracking-[1.5px]" style={{ color: '#1A1A1C' }}>
+          CONFIRMER LE LOG
+        </span>
+      </button>
 
       {recentLogs.length > 0 && (
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2.5">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Historique récent
-            </h2>
+            <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+              HISTORIQUE
+            </p>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                  Annuler la dernière
-                </Button>
+                <button className="text-[12px] font-medium" style={{ color: '#D45F5F' }}>
+                  Annuler le dernier
+                </button>
               </AlertDialogTrigger>
-              <AlertDialogContent>
+              <AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Annuler la dernière entrée ?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Cette action supprimera la dernière session de log et remettra les compteurs à jour.
+                  <AlertDialogTitle style={{ color: '#F5F5F0' }}>Annuler la dernière entrée ?</AlertDialogTitle>
+                  <AlertDialogDescription style={{ color: '#6E6E70' }}>
+                    Supprime la dernière session et remet les compteurs à jour.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Annuler</AlertDialogCancel>
-                  <AlertDialogAction onClick={undoLastLog} className="bg-destructive hover:bg-destructive/90">
+                  <AlertDialogCancel style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}>
+                    Annuler
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={undoLastLog}
+                    style={{ background: '#D45F5F', color: '#F5F5F0' }}
+                  >
                     Confirmer
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
           </div>
-
-          <Card className="border-border bg-card">
-            <CardContent className="divide-y divide-border p-0">
-              {recent.map((log) => (
-                <div key={log.id} className="flex items-center justify-between px-4 py-3">
+          <div
+            className="overflow-hidden rounded-[20px]"
+            style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+          >
+            {recentLogs.slice(0, 8).map((log, i) => (
+              <div key={log.id}>
+                {i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+                <div className="flex items-center justify-between px-5 py-3">
                   <div>
-                    <span className="text-sm font-medium capitalize">{log.prayer}</span>
-                    <span className="ml-2 text-xs text-muted-foreground">
+                    <span
+                      className="font-display text-[15px] font-medium capitalize"
+                      style={{ color: PRAYER_CONFIG[log.prayer].hex }}
+                    >
+                      {log.prayer}
+                    </span>
+                    <span className="ml-2 text-xs" style={{ color: '#4A4A4C' }}>
                       {new Date(log.logged_at).toLocaleString('fr-FR', {
                         day: '2-digit',
                         month: '2-digit',
@@ -112,11 +173,13 @@ export function LogPrayers() {
                       })}
                     </span>
                   </div>
-                  <span className="text-sm font-bold text-primary">+{log.quantity}</span>
+                  <span className="font-display text-lg font-medium" style={{ color: '#C9A962' }}>
+                    +{log.quantity}
+                  </span>
                 </div>
-              ))}
-            </CardContent>
-          </Card>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
