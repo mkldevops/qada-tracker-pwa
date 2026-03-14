@@ -11,7 +11,7 @@ function StatPill({ label, value, color }: { label: string; value: string | numb
       style={{ background: '#242426', border: '1px solid #3A3A3C' }}
     >
       <span
-        className="font-display text-3xl font-medium leading-none"
+        className="text-3xl font-semibold leading-none tabular-nums"
         style={{ color: color ?? '#F5F5F0' }}
       >
         {value}
@@ -92,7 +92,7 @@ export function Dashboard() {
         <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#1A1A1C99' }}>
           TOTAL RESTANT
         </p>
-        <p className="font-display text-[64px] font-light leading-[0.85]" style={{ color: '#1A1A1C' }}>
+        <p className="text-[64px] font-light leading-[0.85] tabular-nums" style={{ color: '#1A1A1C' }}>
           {totalRemaining.toLocaleString()}
         </p>
         <p className="text-sm" style={{ color: '#1A1A1C88' }}>prières manquées</p>

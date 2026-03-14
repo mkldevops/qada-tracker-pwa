@@ -8,7 +8,7 @@ function StatTile({ label, value, color }: { label: string; value: string | numb
       className="flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-5"
       style={{ background: '#242426', border: '1px solid #3A3A3C' }}
     >
-      <span className="font-display text-3xl font-medium" style={{ color: color ?? '#F5F5F0' }}>
+      <span className="text-3xl font-semibold tabular-nums" style={{ color: color ?? '#F5F5F0' }}>
         {value}
       </span>
       <span className="text-[10px] font-medium" style={{ color: '#6E6E70' }}>{label}</span>
@@ -32,7 +32,7 @@ export function Stats() {
         <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#1A1A1C88' }}>
           TOTAL LOGUÉ
         </p>
-        <p className="font-display text-[52px] font-light leading-[0.85]" style={{ color: '#1A1A1C' }}>
+        <p className="text-[52px] font-light leading-[0.85] tabular-nums" style={{ color: '#1A1A1C' }}>
           {stats.allTime.toLocaleString()}
         </p>
       </div>
@@ -56,7 +56,7 @@ export function Stats() {
           <span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
             Estimation pour finir
           </span>
-          <span className="font-display text-3xl font-medium" style={{ color: '#C9A962' }}>
+          <span className="text-3xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
             {stats.estimatedDays}j
           </span>
         </div>
@@ -105,7 +105,7 @@ export function Stats() {
           style={{ background: '#242426', border: '1px solid #3A3A3C', height: 60 }}
         >
           <span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>Total restant</span>
-          <span className="font-display text-2xl font-medium" style={{ color: '#F5F5F0' }}>
+          <span className="text-2xl font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
             {totalRemaining.toLocaleString()}
           </span>
         </div>
