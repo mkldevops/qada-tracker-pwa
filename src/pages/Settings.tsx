@@ -1,5 +1,5 @@
 import { Download, RotateCcw, Trash2, Upload } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -58,6 +58,12 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
+	useEffect(() => {
+		if (!dataFeedback) return;
+		const timeout = setTimeout(() => setDataFeedback(null), 5000);
+		return () => clearTimeout(timeout);
+	}, [dataFeedback]);
+
 	const haydExclusion = isFemme
 		? Math.round((parseFloat(years) || 0) * (parseFloat(avgHaydDays) || 6) * 12)
 		: 0;
@@ -88,7 +94,12 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	};
 
 	const handleExport = async () => {
-		await exportBackup(db);
+		try {
+			await exportBackup(db);
+			setDataFeedback({ type: 'success', message: 'Sauvegarde téléchargée.' });
+		} catch {
+			setDataFeedback({ type: 'error', message: "Impossible d'exporter la sauvegarde." });
+		}
 	};
 
 	const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {

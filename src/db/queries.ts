@@ -2,6 +2,20 @@ import type { Objective, Period, PrayerDebt, PrayerLog, PrayerName, StatsState }
 import { PRAYER_NAMES } from '../types';
 import type { QadaDB } from './database';
 
+function isValidPrayerName(value: unknown): value is PrayerName {
+	return typeof value === 'string' && PRAYER_NAMES.includes(value as PrayerName);
+}
+
+function isValidPeriod(value: unknown): value is Period {
+	return value === 'daily' || value === 'weekly' || value === 'monthly';
+}
+
+function isValidIsoDate(value: unknown): boolean {
+	if (typeof value !== 'string') return false;
+	const date = new Date(value);
+	return !Number.isNaN(date.getTime()) && date.toISOString() === value;
+}
+
 export async function getAllDebts(db: QadaDB): Promise<Record<PrayerName, PrayerDebt>> {
 	const rows = await db.prayer_debts.toArray();
 	const result = {} as Record<PrayerName, PrayerDebt>;
@@ -236,25 +250,29 @@ export async function resetAll(db: QadaDB): Promise<void> {
 }
 
 export async function exportBackup(db: QadaDB): Promise<void> {
-	const [prayer_logs, prayer_debts, objectives] = await Promise.all([
-		db.prayer_logs.toArray(),
-		db.prayer_debts.toArray(),
-		db.objectives.toArray(),
-	]);
-	const data = {
-		version: 1,
-		exported_at: new Date().toISOString(),
-		prayer_logs,
-		prayer_debts,
-		objectives,
-	};
-	const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-	const url = URL.createObjectURL(blob);
-	const a = document.createElement('a');
-	a.href = url;
-	a.download = `qada-backup-${new Date().toISOString().slice(0, 10)}.json`;
-	a.click();
-	URL.revokeObjectURL(url);
+	try {
+		const [prayer_logs, prayer_debts, objectives] = await Promise.all([
+			db.prayer_logs.toArray(),
+			db.prayer_debts.toArray(),
+			db.objectives.toArray(),
+		]);
+		const data = {
+			version: 1,
+			exported_at: new Date().toISOString(),
+			prayer_logs,
+			prayer_debts,
+			objectives,
+		};
+		const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `qada-backup-${new Date().toISOString().slice(0, 10)}.json`;
+		a.click();
+		setTimeout(() => URL.revokeObjectURL(url), 100);
+	} catch {
+		throw new Error("Impossible d'exporter la sauvegarde");
+	}
 }
 
 export async function importBackup(
@@ -272,19 +290,89 @@ export async function importBackup(
 	) {
 		throw new Error('Fichier de backup invalide');
 	}
+
+	// Validate prayer_logs
+	for (const log of data.prayer_logs) {
+		if (
+			!isValidPrayerName(log.prayer) ||
+			typeof log.quantity !== 'number' ||
+			log.quantity < 0 ||
+			!isValidIsoDate(log.logged_at) ||
+			(log.session_id !== null && typeof log.session_id !== 'string')
+		) {
+			throw new Error('Format de log invalide');
+		}
+	}
+
+	// Validate prayer_debts
+	for (const debt of data.prayer_debts) {
+		if (
+			!isValidPrayerName(debt.prayer) ||
+			typeof debt.total_owed !== 'number' ||
+			debt.total_owed < 0 ||
+			typeof debt.total_completed !== 'number' ||
+			debt.total_completed < 0 ||
+			!isValidIsoDate(debt.created_at) ||
+			!isValidIsoDate(debt.updated_at)
+		) {
+			throw new Error('Format de dette invalide');
+		}
+	}
+
+	// Validate objectives
+	for (const obj of data.objectives) {
+		if (
+			!isValidPeriod(obj.period) ||
+			typeof obj.target !== 'number' ||
+			obj.target <= 0 ||
+			(obj.is_active !== 0 && obj.is_active !== 1) ||
+			!isValidIsoDate(obj.created_at)
+		) {
+			throw new Error("Format d'objectif invalide");
+		}
+	}
+
 	await db.transaction('rw', db.prayer_logs, db.prayer_debts, db.objectives, async () => {
 		await db.prayer_logs.clear();
 		await db.prayer_debts.clear();
 		await db.objectives.clear();
+
+		// Import logs
 		if (data.prayer_logs.length > 0) {
-			await db.prayer_logs.bulkAdd(data.prayer_logs.map(({ id: _, ...r }: any) => r));
+			const logsToAdd = data.prayer_logs.map(({ id: _, ...r }: any) => r);
+			await db.prayer_logs.bulkAdd(logsToAdd);
 		}
+
+		// Import debts
+		const importedPrayers = new Set<PrayerName>();
 		if (data.prayer_debts.length > 0) {
-			await db.prayer_debts.bulkAdd(data.prayer_debts.map(({ id: _, ...r }: any) => r));
+			const debtsToAdd = data.prayer_debts.map(({ id: _, ...r }: any) => {
+				importedPrayers.add(r.prayer);
+				return r;
+			});
+			await db.prayer_debts.bulkAdd(debtsToAdd);
 		}
+
+		// Ensure all 5 prayers exist
+		const missingPrayers = PRAYER_NAMES.filter((p) => !importedPrayers.has(p));
+		if (missingPrayers.length > 0) {
+			const now = new Date().toISOString();
+			const defaultDebts = missingPrayers.map((prayer) => ({
+				prayer,
+				total_owed: 0,
+				total_completed: 0,
+				created_at: now,
+				updated_at: now,
+			}));
+			await db.prayer_debts.bulkAdd(defaultDebts);
+		}
+
+		// Import objectives
 		if (data.objectives.length > 0) {
-			await db.objectives.bulkAdd(data.objectives.map(({ id: _, ...r }: any) => r));
+			const objToAdd = data.objectives.map(({ id: _, ...r }: any) => r);
+			await db.objectives.bulkAdd(objToAdd);
 		}
 	});
+
 	await loadAll();
 }
