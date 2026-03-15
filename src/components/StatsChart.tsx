@@ -21,11 +21,12 @@ type Bar = { label: string; count: number; isToday: boolean };
 function aggregateWeekly(data: { date: string; count: number }[]): Bar[] {
 	const today = new Date().toISOString().slice(0, 10);
 	const bars: Bar[] = [];
-	for (let i = 0; i < data.length; i += 7) {
-		const chunk = data.slice(i, i + 7);
+	// Aggregate from end so the partial chunk is oldest (leftmost), recent weeks are full
+	for (let i = data.length; i > 0; i -= 7) {
+		const chunk = data.slice(Math.max(0, i - 7), i);
 		const count = chunk.reduce((sum, d) => sum + d.count, 0);
 		const isToday = chunk.some((d) => d.date === today);
-		bars.push({ label: chunk[0].date, count, isToday });
+		bars.unshift({ label: chunk[0].date, count, isToday });
 	}
 	return bars;
 }
@@ -53,13 +54,19 @@ export function StatsChart() {
 	const chartRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
+		let ignore = false;
 		localStorage.setItem(CHART_PERIOD_KEY, String(days));
 		setSelectedIndex(null);
-		getLogsByPeriod(db, days).then(setData);
+		getLogsByPeriod(db, days).then((result) => {
+			if (!ignore) setData(result);
+		});
+		return () => {
+			ignore = true;
+		};
 	}, [days]);
 
 	useEffect(() => {
-		function handleClick(e: MouseEvent) {
+		function handleClick(e: PointerEvent) {
 			if (chartRef.current && !chartRef.current.contains(e.target as Node)) {
 				setSelectedIndex(null);
 			}
@@ -141,9 +148,11 @@ export function StatsChart() {
 								const isSelected = selectedIndex === i;
 								const isHighlighted = bar.isToday || isSelected;
 								return (
-									<motion.div
+									<motion.button
 										key={`${days}-${bar.label}`}
-										className="flex-1 cursor-pointer rounded-t-[2px]"
+										type="button"
+										aria-label={`${bar.count} prière${bar.count !== 1 ? 's' : ''}, ${formatTooltipDate(bar.label, weekly)}`}
+										className="flex-1 cursor-pointer rounded-t-[2px] border-0 p-0"
 										style={{
 											background: isHighlighted ? '#C9A962' : '#3A3A3C',
 											minHeight: 2,
