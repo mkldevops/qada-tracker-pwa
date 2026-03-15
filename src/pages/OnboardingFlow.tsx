@@ -69,7 +69,7 @@ function ErrorBanner({ message }: { message: string }) {
 	);
 }
 
-function WelcomeStep({ onNext }: { onNext: () => void }) {
+function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
 	return (
 		<motion.div
 			key="welcome"
@@ -169,6 +169,15 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
 				>
 					COMMENCER
 				</motion.button>
+				<motion.button
+					type="button"
+					onClick={onSkip}
+					className="text-sm py-2"
+					style={{ color: '#4A4A4C' }}
+					whileTap={{ scale: 0.95 }}
+				>
+					Passer la configuration
+				</motion.button>
 			</motion.div>
 		</motion.div>
 	);
@@ -176,10 +185,12 @@ function WelcomeStep({ onNext }: { onNext: () => void }) {
 
 function DebtStep({
 	onNext,
+	onSkip,
 	saving,
 	saveError,
 }: {
 	onNext: (data: DebtData) => void;
+	onSkip: () => void;
 	saving: boolean;
 	saveError: string | null;
 }) {
@@ -514,7 +525,7 @@ function DebtStep({
 
 			<AnimatePresence>{saveError && <ErrorBanner message={saveError} />}</AnimatePresence>
 
-			<div className="mt-auto">
+			<div className="mt-auto flex flex-col gap-3">
 				<motion.button
 					type="button"
 					onClick={handleSubmit}
@@ -539,6 +550,15 @@ function DebtStep({
 					) : (
 						'SUIVANT'
 					)}
+				</motion.button>
+				<motion.button
+					type="button"
+					onClick={onSkip}
+					className="text-sm py-2"
+					style={{ color: '#4A4A4C' }}
+					whileTap={{ scale: 0.95 }}
+				>
+					Passer cette étape
 				</motion.button>
 			</div>
 		</motion.div>
@@ -884,9 +904,14 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 		>
 			<div className="mx-auto flex w-full max-w-lg flex-1 flex-col pt-14">
 				<AnimatePresence mode="wait">
-					{step === 'welcome' && <WelcomeStep onNext={() => setStep('debt')} />}
+					{step === 'welcome' && <WelcomeStep onNext={() => setStep('debt')} onSkip={onComplete} />}
 					{step === 'debt' && (
-						<DebtStep onNext={handleDebtNext} saving={saving} saveError={saveError} />
+						<DebtStep
+							onNext={handleDebtNext}
+							onSkip={() => setStep('objective')}
+							saving={saving}
+							saveError={saveError}
+						/>
 					)}
 					{step === 'objective' && (
 						<ObjectiveStep onNext={handleObjectiveNext} saving={saving} saveError={saveError} />
