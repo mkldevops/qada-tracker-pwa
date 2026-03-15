@@ -3,6 +3,7 @@ import { AnimatePresence } from 'motion/react';
 import { useState } from 'react';
 import { Session } from '@/components/Session';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { formatDays } from '@/lib/formatDays';
 import { useDebts, usePrayerStore, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import type { PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -150,7 +151,7 @@ export function Dashboard() {
 					<StatPill label="série" value={`${stats.streak}j`} color="#6E9E6E" />
 					<StatPill
 						label="estimation"
-						value={stats.estimatedDays ? `${stats.estimatedDays}j` : '—'}
+						value={stats.estimatedDays ? formatDays(stats.estimatedDays) : '—'}
 					/>
 				</div>
 
