@@ -299,7 +299,7 @@ function DebtStep({
 								<label
 									htmlFor="ob-excluded"
 									className="text-[11px] font-medium"
-									style={{ color: '#6E6E70' }}
+									style={{ color: '#9A9A9C' }}
 								>
 									Jours exclus (optionnel)
 								</label>
@@ -356,7 +356,7 @@ function DebtStep({
 									<label
 										htmlFor="ob-hayd"
 										className="text-xs font-medium"
-										style={{ color: '#6E6E70' }}
+										style={{ color: '#9A9A9C' }}
 									>
 										Moy. jours de hayd / mois
 									</label>
