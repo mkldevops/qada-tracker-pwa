@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { BottomNav } from '@/components/BottomNav';
+import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
 import { Dashboard } from '@/pages/Dashboard';
 import { LogPrayers } from '@/pages/LogPrayers';
+import { OnboardingFlow } from '@/pages/OnboardingFlow';
 import { Settings } from '@/pages/Settings';
 import { Stats } from '@/pages/Stats';
 import { usePrayerStore } from '@/stores/prayerStore';
@@ -10,6 +12,7 @@ type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 
 export function App() {
 	const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
 	const { loadAll, isLoading } = usePrayerStore();
 
 	useEffect(() => {
@@ -26,11 +29,27 @@ export function App() {
 		);
 	}
 
+	if (showOnboarding) {
+		return (
+			<OnboardingFlow
+				onComplete={() => {
+					markOnboardingDone();
+					setShowOnboarding(false);
+				}}
+			/>
+		);
+	}
+
+	function handleRestartOnboarding() {
+		markOnboardingUndone();
+		setShowOnboarding(true);
+	}
+
 	const pages = {
 		dashboard: <Dashboard />,
 		log: <LogPrayers />,
 		stats: <Stats />,
-		settings: <Settings />,
+		settings: <Settings onRestartOnboarding={handleRestartOnboarding} />,
 	};
 
 	return (
