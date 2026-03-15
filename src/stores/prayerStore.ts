@@ -70,7 +70,10 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 	recentLogs: [],
 	activeObjective: null,
 	isLoading: true,
-	sessionOrder: (localStorage.getItem(SESSION_ORDER_KEY) as SessionOrder) ?? 'chronological',
+	sessionOrder: (() => {
+		const raw = localStorage.getItem(SESSION_ORDER_KEY);
+		return raw === 'chronological' || raw === 'highest-debt' ? raw : 'chronological';
+	})(),
 
 	loadAll: async () => {
 		set({ isLoading: true });

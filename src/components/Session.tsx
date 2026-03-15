@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
-import { useDebts, usePrayerStore } from '@/stores/prayerStore';
+import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Objective, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
@@ -92,7 +92,7 @@ function NumberPicker({
 
 function getSortedPrayerOrder(
 	debts: ReturnType<typeof useDebts>,
-	mode: 'chronological' | 'highest-debt',
+	mode: SessionOrder,
 ): PrayerName[] {
 	if (mode === 'chronological') return [...PRAYER_NAMES];
 	return [...PRAYER_NAMES].sort((a, b) => (debts[b]?.remaining ?? 0) - (debts[a]?.remaining ?? 0));
