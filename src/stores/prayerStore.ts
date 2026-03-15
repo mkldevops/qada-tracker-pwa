@@ -40,12 +40,17 @@ const initialDebts = (): Record<PrayerName, PrayerDebt> => {
 	return result;
 };
 
+export type SessionOrder = 'chronological' | 'highest-debt';
+
+const SESSION_ORDER_KEY = 'session-order';
+
 interface PrayerStore {
 	debts: Record<PrayerName, PrayerDebt>;
 	stats: StatsState;
 	recentLogs: PrayerLog[];
 	activeObjective: Objective | null;
 	isLoading: boolean;
+	sessionOrder: SessionOrder;
 
 	loadAll: () => Promise<void>;
 	refresh: () => Promise<void>;
@@ -55,6 +60,7 @@ interface PrayerStore {
 	setDebtManual: (prayer: PrayerName, amount: number) => Promise<void>;
 	setDebtFromYears: (years: number, excludedDays: number) => Promise<void>;
 	setObjective: (period: Period, target: number) => Promise<void>;
+	setSessionOrder: (order: SessionOrder) => void;
 	resetAll: () => Promise<void>;
 }
 
@@ -64,6 +70,7 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 	recentLogs: [],
 	activeObjective: null,
 	isLoading: true,
+	sessionOrder: (localStorage.getItem(SESSION_ORDER_KEY) as SessionOrder) ?? 'chronological',
 
 	loadAll: async () => {
 		set({ isLoading: true });
@@ -133,6 +140,11 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 		await queries.createObjective(db, period, target);
 		const activeObjective = await queries.getActiveObjective(db);
 		set({ activeObjective });
+	},
+
+	setSessionOrder: (order) => {
+		localStorage.setItem(SESSION_ORDER_KEY, order);
+		set({ sessionOrder: order });
 	},
 
 	resetAll: async () => {
