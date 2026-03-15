@@ -174,9 +174,6 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 					onClick={onSkip}
 					className="text-sm py-2"
 					style={{ color: '#4A4A4C' }}
-					initial={{ opacity: 0, y: 12 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.44, ...spring }}
 					whileTap={{ scale: 0.95 }}
 				>
 					Passer la configuration
@@ -528,7 +525,7 @@ function DebtStep({
 
 			<AnimatePresence>{saveError && <ErrorBanner message={saveError} />}</AnimatePresence>
 
-			<div className="mt-auto">
+			<div className="mt-auto flex flex-col gap-3">
 				<motion.button
 					type="button"
 					onClick={handleSubmit}
