@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react';
+import { RotateCcw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import {
 	AlertDialog,
@@ -12,6 +12,7 @@ import {
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { markOnboardingUndone } from '@/lib/onboarding';
 import { useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -22,7 +23,7 @@ const PERIODS: { value: Period; label: string }[] = [
 	{ value: 'monthly', label: 'Mois' },
 ];
 
-export function Settings() {
+export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
 	const { setDebtManual, setDebtFromYears, setObjective, resetAll, activeObjective } =
 		usePrayerStore();
 	const debts = useDebts();
@@ -307,6 +308,25 @@ export function Settings() {
 				</div>
 			</section>
 
+			{onRestartOnboarding && (
+				<section className="flex flex-col gap-2.5">
+					<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+						CONFIGURATION
+					</p>
+					<button
+						type="button"
+						onClick={onRestartOnboarding}
+						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
+						style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+					>
+						<RotateCcw size={16} style={{ color: '#C9A962' }} />
+						<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
+							RECONFIGURER L'ONBOARDING
+						</span>
+					</button>
+				</section>
+			)}
+
 			{/* Danger zone */}
 			<section className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
@@ -339,7 +359,11 @@ export function Settings() {
 								Annuler
 							</AlertDialogCancel>
 							<AlertDialogAction
-								onClick={resetAll}
+								onClick={async () => {
+									await resetAll();
+									markOnboardingUndone();
+									onRestartOnboarding?.();
+								}}
 								style={{ background: '#D45F5F', color: '#F5F5F0' }}
 							>
 								Réinitialiser

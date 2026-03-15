@@ -29,7 +29,7 @@ export async function setDebt(db: QadaDB, prayer: PrayerName, totalOwed: number)
 export async function setAllDebts(db: QadaDB, amount: number): Promise<void> {
 	await db.prayer_debts
 		.toCollection()
-		.modify({ total_owed: amount, updated_at: new Date().toISOString() });
+		.modify({ total_owed: amount, total_completed: 0, updated_at: new Date().toISOString() });
 }
 
 export async function insertLog(
