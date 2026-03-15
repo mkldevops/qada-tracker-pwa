@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Minus, Plus, Check } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Minus, Plus, Check, RotateCcw } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { usePrayerStore } from '@/stores/prayerStore';
 import {
   AlertDialog,
@@ -12,176 +13,416 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import type { PrayerName, BatchEntry } from '@/types';
+import type { PrayerName, BatchEntry, PrayerLog } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+
+const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
+
+const TABS = ['Logger', 'Historique'] as const;
+type Tab = typeof TABS[number];
 
 const EMPTY = (): Record<PrayerName, number> =>
   PRAYER_NAMES.reduce((acc, p) => ({ ...acc, [p]: 0 }), {} as Record<PrayerName, number>);
 
-export function LogPrayers() {
-  const { logBatch, undoLastLog, recentLogs } = usePrayerStore();
-  const [quantities, setQuantities] = useState<Record<PrayerName, number>>(EMPTY);
+function groupBySession(logs: PrayerLog[]) {
+  const groups: { sessionId: string | null; date: string; entries: PrayerLog[] }[] = [];
+  for (const log of logs) {
+    const last = groups[groups.length - 1];
+    if (last && last.sessionId === log.session_id) {
+      last.entries.push(log);
+    } else {
+      groups.push({ sessionId: log.session_id, date: log.logged_at, entries: [log] });
+    }
+  }
+  return groups;
+}
 
-  const total = PRAYER_NAMES.reduce((sum, p) => sum + quantities[p], 0);
-
-  const handleChange = (prayer: PrayerName, qty: number) => {
-    setQuantities((prev) => ({ ...prev, [prayer]: Math.max(0, qty) }));
-  };
-
-  const handleLog = async () => {
-    const entries: BatchEntry[] = PRAYER_NAMES.map((prayer) => ({ prayer, quantity: quantities[prayer] }));
-    await logBatch(entries, `batch-${Date.now()}`);
-    setQuantities(EMPTY());
-  };
+function PrayerRow({
+  prayer, qty, onChange, index,
+}: {
+  prayer: PrayerName;
+  qty: number;
+  onChange: (p: PrayerName, q: number) => void;
+  index: number;
+}) {
+  const cfg = PRAYER_CONFIG[prayer];
+  const active = qty > 0;
 
   return (
-    <div className="space-y-5 px-7 pb-4 pt-1">
-      <div className="flex flex-col gap-0.5">
-        <h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>Logger</h1>
-        <p className="text-[13px]" style={{ color: '#6E6E70' }}>
-          Sélectionne les prières à compter
-        </p>
-      </div>
+    <motion.div
+      initial={{ opacity: 0, x: -16 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: index * 0.05, ...spring }}
+    >
+      {index > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+      <div className="flex items-center gap-3 px-5" style={{ height: 70 }}>
+        <div className="flex flex-1 flex-col gap-0.5">
+          <span className="font-display text-lg font-medium" style={{ color: cfg.hex }}>
+            {cfg.labelFr}
+          </span>
+          <span className="text-[11px]" style={{ color: '#4A4A4C' }}>
+            {cfg.labelAr} · {cfg.rakat} rak'at
+          </span>
+        </div>
+        <div className="flex items-center gap-0">
+          <motion.button
+            onClick={() => onChange(prayer, qty - 1)}
+            className="flex h-9 w-9 items-center justify-center rounded-full"
+            style={{ background: '#2A2A2C' }}
+            whileTap={{ scale: 0.85 }}
+          >
+            <Minus size={14} style={{ color: '#6E6E70' }} />
+          </motion.button>
 
-      <div
+          <AnimatePresence mode="popLayout">
+            <motion.span
+              key={qty}
+              className="w-10 text-center font-display text-xl font-medium tabular-nums"
+              style={{ color: active ? cfg.hex : '#4A4A4C' }}
+              initial={{ opacity: 0, y: active ? -10 : 10, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: active ? 10 : -10, scale: 0.8 }}
+              transition={{ type: 'spring' as const, stiffness: 600, damping: 22 }}
+            >
+              {qty}
+            </motion.span>
+          </AnimatePresence>
+
+          <motion.button
+            onClick={() => onChange(prayer, qty + 1)}
+            className="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+            style={active ? { background: cfg.hex } : { background: '#2A2A2C' }}
+            whileTap={{ scale: 0.85 }}
+            animate={{ background: active ? cfg.hex : '#2A2A2C' }}
+            transition={{ duration: 0.15 }}
+          >
+            <Plus size={14} style={{ color: active ? '#1A1A1C' : '#6E6E70' }} />
+          </motion.button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function LoggerTab({
+  quantities, onChange, total, onLog,
+}: {
+  quantities: Record<PrayerName, number>;
+  onChange: (p: PrayerName, q: number) => void;
+  total: number;
+  onLog: () => void;
+}) {
+  return (
+    <div className="flex flex-col gap-5 pt-4">
+      <motion.div
         className="w-full overflow-hidden rounded-[20px]"
         style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={spring}
       >
-        {PRAYER_NAMES.map((prayer, i) => {
-          const cfg = PRAYER_CONFIG[prayer];
-          const qty = quantities[prayer];
-          const active = qty > 0;
-          return (
-            <div key={prayer}>
-              {i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
-              <div className="flex items-center gap-3 px-5" style={{ height: 70 }}>
-                <div className="flex flex-1 flex-col gap-0.5">
-                  <span className="font-display text-lg font-medium" style={{ color: cfg.hex }}>
-                    {cfg.labelFr}
-                  </span>
-                  <span className="text-[11px]" style={{ color: '#4A4A4C' }}>
-                    {cfg.labelAr} · {cfg.rakat} rak'at
-                  </span>
-                </div>
-                <div className="flex items-center gap-0">
-                  <button
-                    onClick={() => handleChange(prayer, qty - 1)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full"
-                    style={{ background: '#2A2A2C' }}
-                  >
-                    <Minus size={14} style={{ color: '#6E6E70' }} />
-                  </button>
-                  <span
-                    className="w-10 text-center font-display text-xl font-medium tabular-nums"
-                    style={{ color: active ? cfg.hex : '#4A4A4C' }}
-                  >
-                    {qty}
-                  </span>
-                  <button
-                    onClick={() => handleChange(prayer, qty + 1)}
-                    className="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
-                    style={active ? { background: cfg.hex } : { background: '#2A2A2C' }}
-                  >
-                    <Plus size={14} style={{ color: active ? '#1A1A1C' : '#6E6E70' }} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+        {PRAYER_NAMES.map((prayer, i) => (
+          <PrayerRow key={prayer} prayer={prayer} qty={quantities[prayer]} onChange={onChange} index={i} />
+        ))}
+      </motion.div>
 
-      <div
+      <motion.div
         className="flex items-center justify-between rounded-[20px] px-6"
         style={{ background: '#242426', border: '1px solid #3A3A3C', height: 72 }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08, ...spring }}
       >
         <span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
           Total à logger
         </span>
-        <span className="font-display text-2xl font-medium" style={{ color: '#C9A962' }}>
-          {total > 0 ? `${total} prière${total > 1 ? 's' : ''}` : '—'}
-        </span>
-      </div>
+        <AnimatePresence mode="popLayout">
+          <motion.span
+            key={total}
+            className="font-display text-2xl font-medium tabular-nums"
+            style={{ color: '#C9A962' }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ type: 'spring' as const, stiffness: 500, damping: 25 }}
+          >
+            {total > 0 ? `${total} prière${total > 1 ? 's' : ''}` : '—'}
+          </motion.span>
+        </AnimatePresence>
+      </motion.div>
 
-      <button
-        onClick={handleLog}
+      <motion.button
+        onClick={onLog}
         disabled={total === 0}
-        className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 transition-opacity disabled:opacity-30"
+        className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 disabled:opacity-30"
         style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.12, ...spring }}
+        whileTap={{ scale: 0.96 }}
+        whileHover={{ scale: 1.02 }}
       >
         <Check size={18} style={{ color: '#1A1A1C' }} strokeWidth={2.5} />
         <span className="text-[13px] font-semibold tracking-[1.5px]" style={{ color: '#1A1A1C' }}>
           CONFIRMER LE LOG
         </span>
-      </button>
+      </motion.button>
+    </div>
+  );
+}
 
-      {recentLogs.length > 0 && (
-        <div className="flex flex-col gap-2.5">
-          <div className="flex items-center justify-between">
-            <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-              HISTORIQUE
-            </p>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="text-[12px] font-medium" style={{ color: '#D45F5F' }}>
-                  Annuler le dernier
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
-                <AlertDialogHeader>
-                  <AlertDialogTitle style={{ color: '#F5F5F0' }}>Annuler la dernière entrée ?</AlertDialogTitle>
-                  <AlertDialogDescription style={{ color: '#6E6E70' }}>
-                    Supprime la dernière session et remet les compteurs à jour.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}>
-                    Annuler
-                  </AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={undoLastLog}
-                    style={{ background: '#D45F5F', color: '#F5F5F0' }}
-                  >
-                    Confirmer
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-          <div
-            className="overflow-hidden rounded-[20px]"
-            style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void }) {
+  const groups = groupBySession(logs);
+
+  if (groups.length === 0) {
+    return (
+      <motion.div
+        className="flex flex-1 flex-col items-center justify-center pt-20 gap-3"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+      >
+        <p className="text-3xl" style={{ color: '#3A3A3C' }}>—</p>
+        <p className="text-sm" style={{ color: '#4A4A4C' }}>Aucun log enregistré</p>
+      </motion.div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-4 pt-4">
+      <motion.div
+        className="flex justify-end"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.05 }}
+      >
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <motion.button
+              className="flex items-center gap-1.5 rounded-2xl px-4 py-2 text-[12px] font-medium"
+              style={{ background: '#2A1A1A', border: '1px solid #D45F5F40', color: '#D45F5F' }}
+              whileTap={{ scale: 0.93 }}
+            >
+              <RotateCcw size={12} />
+              Annuler le dernier
+            </motion.button>
+          </AlertDialogTrigger>
+          <AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
+            <AlertDialogHeader>
+              <AlertDialogTitle style={{ color: '#F5F5F0' }}>Annuler la dernière entrée ?</AlertDialogTitle>
+              <AlertDialogDescription style={{ color: '#6E6E70' }}>
+                Supprime la dernière session et remet les compteurs à jour.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}>
+                Annuler
+              </AlertDialogCancel>
+              <AlertDialogAction onClick={onUndo} style={{ background: '#D45F5F', color: '#F5F5F0' }}>
+                Confirmer
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </motion.div>
+
+      <div className="flex flex-col gap-3">
+        {groups.map((group, gi) => (
+          <motion.div
+            key={group.sessionId ?? `solo-${gi}`}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: gi * 0.04, ...spring }}
           >
-            {recentLogs.slice(0, 8).map((log, i) => (
-              <div key={log.id}>
-                {i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
-                <div className="flex items-center justify-between px-5 py-3">
-                  <div>
-                    <span
-                      className="font-display text-[15px] font-medium capitalize"
-                      style={{ color: PRAYER_CONFIG[log.prayer].hex }}
+            <div className="mb-1.5 flex items-center gap-2 px-1">
+              <span className="text-[10px] font-medium tracking-[2px]" style={{ color: '#3A3A3C' }}>
+                {new Date(group.date).toLocaleString('fr-FR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
+              {group.sessionId?.startsWith('session-') && (
+                <span
+                  className="rounded-full px-2 py-0.5 text-[9px] font-medium tracking-wider"
+                  style={{ background: '#C9A96215', color: '#C9A96280' }}
+                >
+                  SESSION
+                </span>
+              )}
+            </div>
+
+            <div
+              className="overflow-hidden rounded-[18px]"
+              style={{ background: '#242426', border: '1px solid #2A2A2C' }}
+            >
+              {group.entries.map((log, li) => {
+                const cfg = PRAYER_CONFIG[log.prayer];
+                return (
+                  <div key={log.id}>
+                    {li > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+                    <motion.div
+                      className="flex items-center justify-between px-5 py-3"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: gi * 0.04 + li * 0.03 }}
                     >
-                      {log.prayer}
-                    </span>
-                    <span className="ml-2 text-xs" style={{ color: '#4A4A4C' }}>
-                      {new Date(log.logged_at).toLocaleString('fr-FR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </span>
+                      <div className="flex items-center gap-2.5">
+                        <div
+                          className="h-2 w-2 rounded-full flex-shrink-0"
+                          style={{ background: cfg.hex }}
+                        />
+                        <span
+                          className="font-display text-[15px] font-medium"
+                          style={{ color: cfg.hex }}
+                        >
+                          {cfg.labelFr}
+                        </span>
+                        <span className="text-xs" style={{ color: '#3A3A3C' }}>
+                          {cfg.labelAr}
+                        </span>
+                      </div>
+                      <motion.span
+                        className="font-display text-lg font-medium tabular-nums"
+                        style={{ color: '#C9A962' }}
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: gi * 0.04 + li * 0.03 + 0.05, type: 'spring' as const, stiffness: 500, damping: 22 }}
+                      >
+                        +{log.quantity}
+                      </motion.span>
+                    </motion.div>
                   </div>
-                  <span className="font-display text-lg font-medium" style={{ color: '#C9A962' }}>
-                    +{log.quantity}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+                );
+              })}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function LogPrayers() {
+  const { logBatch, undoLastLog, recentLogs } = usePrayerStore();
+  const [quantities, setQuantities] = useState<Record<PrayerName, number>>(EMPTY);
+  const [activeTab, setActiveTab] = useState<Tab>('Logger');
+  const [tabDir, setTabDir] = useState<1 | -1>(1);
+  const prevTabRef = useRef<Tab>('Logger');
+
+  const total = PRAYER_NAMES.reduce((sum, p) => sum + quantities[p], 0);
+
+  function switchTab(tab: Tab) {
+    if (tab === activeTab) return;
+    const dir = TABS.indexOf(tab) > TABS.indexOf(prevTabRef.current) ? 1 : -1;
+    setTabDir(dir);
+    prevTabRef.current = tab;
+    setActiveTab(tab);
+  }
+
+  function handleChange(prayer: PrayerName, qty: number) {
+    setQuantities((prev) => ({ ...prev, [prayer]: Math.max(0, qty) }));
+  }
+
+  async function handleLog() {
+    const entries: BatchEntry[] = PRAYER_NAMES.map((prayer) => ({ prayer, quantity: quantities[prayer] }));
+    await logBatch(entries, `batch-${Date.now()}`);
+    setQuantities(EMPTY());
+    switchTab('Historique');
+  }
+
+  return (
+    <div className="flex flex-col px-7 pb-4 pt-1" style={{ minHeight: '100%' }}>
+      {/* Header */}
+      <div className="mb-5 flex flex-col gap-0.5">
+        <h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>Logger</h1>
+        <p className="text-[13px]" style={{ color: '#6E6E70' }}>Sélectionne les prières à compter</p>
+      </div>
+
+      {/* Tab bar */}
+      <div
+        className="relative mb-1 flex rounded-2xl p-1"
+        style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+      >
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => switchTab(tab)}
+            className="relative z-10 flex-1 rounded-xl py-2.5 text-[13px] font-medium transition-colors"
+            style={{ color: activeTab === tab ? '#1A1A1C' : '#6E6E70' }}
+          >
+            {activeTab === tab && (
+              <motion.div
+                layoutId="tab-pill"
+                className="absolute inset-0 rounded-xl"
+                style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
+                transition={{ type: 'spring' as const, stiffness: 500, damping: 35 }}
+              />
+            )}
+            <span className="relative z-10">{tab}</span>
+            {tab === 'Historique' && recentLogs.length > 0 && (
+              <motion.span
+                className="relative z-10 ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums"
+                style={{
+                  background: activeTab === tab ? '#1A1A1C30' : '#C9A96220',
+                  color: activeTab === tab ? '#1A1A1C' : '#C9A962',
+                }}
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 0.3 }}
+                key={recentLogs.length}
+              >
+                {recentLogs.length}
+              </motion.span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      <div className="relative overflow-hidden flex-1">
+        <AnimatePresence mode="wait" custom={tabDir}>
+          {activeTab === 'Logger' ? (
+            <motion.div
+              key="logger"
+              custom={tabDir}
+              variants={{
+                enter: (d: number) => ({ x: d * 40, opacity: 0 }),
+                center: { x: 0, opacity: 1 },
+                exit: (d: number) => ({ x: d * -40, opacity: 0 }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={spring}
+            >
+              <LoggerTab
+                quantities={quantities}
+                onChange={handleChange}
+                total={total}
+                onLog={handleLog}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="historique"
+              custom={tabDir}
+              variants={{
+                enter: (d: number) => ({ x: d * 40, opacity: 0 }),
+                center: { x: 0, opacity: 1 },
+                exit: (d: number) => ({ x: d * -40, opacity: 0 }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={spring}
+            >
+              <HistoriqueTab logs={recentLogs} onUndo={undoLastLog} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
