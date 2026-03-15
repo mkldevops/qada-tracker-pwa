@@ -311,29 +311,30 @@ export function Session({ onClose }: { onClose: () => void }) {
 		setPhase('active');
 	}
 
-	async function handleDone() {
+	async function handleIncrement(showPressing: boolean = false) {
 		if (busyRef.current) return;
 		busyRef.current = true;
 		try {
-			const current = getNextPrayer(debts, currentPrayerIndex);
+			const freshDebts = usePrayerStore.getState().debts;
+			const current = getNextPrayer(freshDebts, currentPrayerIndex);
 			if (!current) {
 				setPhase('complete');
 				return;
 			}
 
-			setPressing(true);
+			if (showPressing) setPressing(true);
 			await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
 
-			const newCompleted = completed + 1;
-			setCompleted(newCompleted);
+			setCompleted((prev) => {
+				const newCompleted = prev + 1;
+				if (newCompleted >= target) {
+					setPhase('complete');
+				}
+				return newCompleted;
+			});
 
-			if (newCompleted >= target) {
-				setPhase('complete');
-				return;
-			}
-
-			const freshDebts = usePrayerStore.getState().debts;
-			const next = getNextPrayer(freshDebts, (current.index + 1) % PRAYER_NAMES.length);
+			const freshDebts2 = usePrayerStore.getState().debts;
+			const next = getNextPrayer(freshDebts2, (current.index + 1) % PRAYER_NAMES.length);
 			if (!next) {
 				setPhase('complete');
 				return;
@@ -341,41 +342,12 @@ export function Session({ onClose }: { onClose: () => void }) {
 			setCurrentPrayerIndex(next.index);
 		} finally {
 			busyRef.current = false;
-			setPressing(false);
+			if (showPressing) setPressing(false);
 		}
 	}
 
-	async function handleAutoIncrement() {
-		if (busyRef.current) return;
-		busyRef.current = true;
-		try {
-			const current = getNextPrayer(debts, currentPrayerIndex);
-			if (!current) {
-				setPhase('complete');
-				return;
-			}
-
-			await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
-
-			const newCompleted = completed + 1;
-			setCompleted(newCompleted);
-
-			if (newCompleted >= target) {
-				setPhase('complete');
-				return;
-			}
-
-			const freshDebts = usePrayerStore.getState().debts;
-			const next = getNextPrayer(freshDebts, (current.index + 1) % PRAYER_NAMES.length);
-			if (!next) {
-				setPhase('complete');
-				return;
-			}
-			setCurrentPrayerIndex(next.index);
-		} finally {
-			busyRef.current = false;
-		}
-	}
+	const handleDone = () => handleIncrement(true);
+	const handleAutoIncrement = () => handleIncrement(false);
 
 	const currentEntry = phase === 'active' ? getNextPrayer(debts, currentPrayerIndex) : null;
 	const cfg = currentEntry ? PRAYER_CONFIG[currentEntry.prayer] : null;

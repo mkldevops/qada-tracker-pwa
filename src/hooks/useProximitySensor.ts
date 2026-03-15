@@ -18,6 +18,11 @@ export function useProximitySensor(
 	const sensorRef = useRef<any>(null);
 	const lastDetectionRef = useRef<number>(0);
 	const sujoodCountRef = useRef<0 | 1>(0);
+	const callbacksRef = useRef({ onFirstSujood, onSecondSujood });
+
+	useEffect(() => {
+		callbacksRef.current = { onFirstSujood, onSecondSujood };
+	}, [onFirstSujood, onSecondSujood]);
 
 	useEffect(() => {
 		// Check for sensor support
@@ -39,8 +44,7 @@ export function useProximitySensor(
 		}
 
 		setCurrentState('waiting_first');
-		const now = Date.now();
-		lastDetectionRef.current = now;
+		lastDetectionRef.current = 0;
 		sujoodCountRef.current = 0;
 
 		function handleProximityDetection(isNear: boolean) {
@@ -56,11 +60,11 @@ export function useProximitySensor(
 			if (sujoodCountRef.current === 0) {
 				sujoodCountRef.current = 1;
 				setCurrentState('waiting_second');
-				onFirstSujood();
+				callbacksRef.current.onFirstSujood();
 			} else if (sujoodCountRef.current === 1) {
 				sujoodCountRef.current = 0;
 				setCurrentState('waiting_first');
-				onSecondSujood();
+				callbacksRef.current.onSecondSujood();
 			}
 		}
 
@@ -74,7 +78,9 @@ export function useProximitySensor(
 					handleProximityDetection(sensor.near);
 				});
 				sensor.addEventListener('error', () => {
-					// Fallback to deviceproximity
+					try {
+						sensor.stop();
+					} catch {}
 					setupDeviceProximityFallback();
 				});
 				sensor.start();
@@ -96,10 +102,6 @@ export function useProximitySensor(
 
 			window.addEventListener('deviceproximity', handleDeviceProximity);
 			sensorRef.current = handleDeviceProximity;
-
-			return () => {
-				window.removeEventListener('deviceproximity', handleDeviceProximity);
-			};
 		}
 
 		return () => {
@@ -115,7 +117,7 @@ export function useProximitySensor(
 			}
 			setCurrentState('idle');
 		};
-	}, [active, onFirstSujood, onSecondSujood]);
+	}, [active]);
 
 	return {
 		isSupported,
