@@ -68,14 +68,19 @@ function PrayerRow({
 						{remaining.toLocaleString()} restantes
 					</span>
 				</div>
-				<div
-					className="h-[3px] w-full overflow-hidden rounded-full"
-					style={{ background: '#3A3A3C' }}
-				>
+				<div className="flex items-center gap-2">
 					<div
-						className="h-full rounded-full transition-all"
-						style={{ width: `${progress}%`, background: cfg.hex }}
-					/>
+						className="h-[3px] flex-1 overflow-hidden rounded-full"
+						style={{ background: '#3A3A3C' }}
+					>
+						<div
+							className="h-full rounded-full transition-all"
+							style={{ width: `${progress}%`, background: cfg.hex }}
+						/>
+					</div>
+					<span className="w-8 text-right text-[10px] tabular-nums" style={{ color: '#6E6E70' }}>
+						{totalOwed === 0 ? '—' : `${Math.round(progress)}%`}
+					</span>
 				</div>
 			</div>
 			<button
@@ -120,7 +125,7 @@ export function Dashboard() {
 						TOTAL RESTANT
 					</p>
 					<p
-						className="text-[64px] font-light leading-[0.85] tabular-nums"
+						className="text-[80px] font-semibold leading-[0.85] tabular-nums"
 						style={{ color: '#1A1A1C' }}
 					>
 						{totalRemaining.toLocaleString()}
