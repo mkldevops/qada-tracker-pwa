@@ -202,6 +202,7 @@ export async function resetAll(db: QadaDB): Promise<void> {
 		await db.prayer_logs.clear();
 		await db.objectives.clear();
 		await db.prayer_debts.toCollection().modify({
+			total_owed: 0,
 			total_completed: 0,
 			updated_at: new Date().toISOString(),
 		});

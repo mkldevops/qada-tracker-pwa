@@ -17,22 +17,25 @@ describe('computeTarget', () => {
 		expect(computeTarget(null)).toBe(10);
 	});
 
-	it('daily: returns target as-is', () => {
+	it('daily: returns target, minimum 1', () => {
 		expect(computeTarget(makeObj('daily', 15))).toBe(15);
 		expect(computeTarget(makeObj('daily', 1))).toBe(1);
+		expect(computeTarget(makeObj('daily', 0))).toBe(1); // Math.max(1, 0)
 	});
 
-	it('weekly: returns Math.round(target / 7)', () => {
+	it('weekly: returns Math.max(1, round(target / 7))', () => {
 		expect(computeTarget(makeObj('weekly', 7))).toBe(1);
 		expect(computeTarget(makeObj('weekly', 70))).toBe(10);
 		expect(computeTarget(makeObj('weekly', 49))).toBe(7);
 		expect(computeTarget(makeObj('weekly', 10))).toBe(1); // round(10/7) = 1
+		expect(computeTarget(makeObj('weekly', 3))).toBe(1); // round(3/7)=0 → clamped to 1
 	});
 
-	it('monthly: returns Math.round(target / 30)', () => {
+	it('monthly: returns Math.max(1, round(target / 30))', () => {
 		expect(computeTarget(makeObj('monthly', 30))).toBe(1);
 		expect(computeTarget(makeObj('monthly', 300))).toBe(10);
 		expect(computeTarget(makeObj('monthly', 450))).toBe(15);
+		expect(computeTarget(makeObj('monthly', 14))).toBe(1); // round(14/30)=0 → clamped to 1
 	});
 });
 

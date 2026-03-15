@@ -13,6 +13,7 @@ import {
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { groupBySession } from '@/lib/groupBySession';
 import { usePrayerStore } from '@/stores/prayerStore';
 import type { BatchEntry, PrayerLog, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -24,19 +25,6 @@ type Tab = (typeof TABS)[number];
 
 const EMPTY = (): Record<PrayerName, number> =>
 	Object.fromEntries(PRAYER_NAMES.map((p) => [p, 0])) as Record<PrayerName, number>;
-
-function groupBySession(logs: PrayerLog[]) {
-	const groups: { sessionId: string | null; date: string; entries: PrayerLog[] }[] = [];
-	for (const log of logs) {
-		const last = groups[groups.length - 1];
-		if (last && last.sessionId === log.session_id) {
-			last.entries.push(log);
-		} else {
-			groups.push({ sessionId: log.session_id, date: log.logged_at, entries: [log] });
-		}
-	}
-	return groups;
-}
 
 function PrayerRow({
 	prayer,

@@ -1,12 +1,18 @@
 import type { Objective, PrayerDebt, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
+const DEFAULT_TARGET = 10;
+
 export function computeTarget(obj: Objective | null): number {
-	if (!obj) return 10;
-	if (obj.period === 'daily') return obj.target;
-	if (obj.period === 'weekly') return Math.round(obj.target / 7);
-	if (obj.period === 'monthly') return Math.round(obj.target / 30);
-	return 10;
+	if (!obj) return DEFAULT_TARGET;
+	switch (obj.period) {
+		case 'daily':
+			return Math.max(1, obj.target);
+		case 'weekly':
+			return Math.max(1, Math.round(obj.target / 7));
+		case 'monthly':
+			return Math.max(1, Math.round(obj.target / 30));
+	}
 }
 
 export function getNextPrayer(
