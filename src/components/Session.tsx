@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { usePrayerStore, useDebts } from '@/stores/prayerStore';
+import type { Objective } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import type { PrayerName } from '@/types';
@@ -9,6 +10,14 @@ import type { PrayerName } from '@/types';
 type Phase = 'setup' | 'active' | 'complete';
 
 const PRESETS = [5, 10, 15, 20];
+
+function computeTarget(obj: Objective | null): number {
+  if (!obj) return 10;
+  if (obj.period === 'daily') return obj.target;
+  if (obj.period === 'weekly') return Math.round(obj.target / 7);
+  if (obj.period === 'monthly') return Math.round(obj.target / 30);
+  return 10;
+}
 
 const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 const springBouncy = { type: 'spring' as const, stiffness: 600, damping: 20 };
@@ -96,14 +105,16 @@ function AnimatedCounter({ value, target }: { value: number; target: number }) {
     const duration = 400;
     const from = prev;
     const to = value;
+    let rafId: number;
 
     function tick(now: number) {
       const t = Math.min((now - start) / duration, 1);
       const ease = 1 - Math.pow(1 - t, 3);
       setDisplay(Math.round(from + (to - from) * ease));
-      if (t < 1) requestAnimationFrame(tick);
+      if (t < 1) rafId = requestAnimationFrame(tick);
     }
-    requestAnimationFrame(tick);
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
   }, [value]);
 
   const progress = target > 0 ? value / target : 0;
@@ -187,13 +198,7 @@ export function Session({ onClose }: { onClose: () => void }) {
   const debts = useDebts();
   const activeObjective = usePrayerStore((s) => s.activeObjective);
 
-  const defaultTarget = (() => {
-    if (!activeObjective) return 10;
-    if (activeObjective.period === 'daily') return activeObjective.target;
-    if (activeObjective.period === 'weekly') return Math.round(activeObjective.target / 7);
-    if (activeObjective.period === 'monthly') return Math.round(activeObjective.target / 30);
-    return 10;
-  })();
+  const defaultTarget = computeTarget(activeObjective);
 
   const [phase, setPhase] = useState<Phase>('setup');
   const [target, setTarget] = useState(defaultTarget);
@@ -208,21 +213,17 @@ export function Session({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     if (userEdited || phase !== 'setup') return;
-    const t = (() => {
-      if (!activeObjective) return 10;
-      if (activeObjective.period === 'daily') return activeObjective.target;
-      if (activeObjective.period === 'weekly') return Math.round(activeObjective.target / 7);
-      if (activeObjective.period === 'monthly') return Math.round(activeObjective.target / 30);
-      return 10;
-    })();
+    const t = computeTarget(activeObjective);
+    if (t === target) return;
     setTargetDir(t >= target ? 1 : -1);
     setTarget(t);
-  }, [activeObjective, userEdited, phase]);
+  }, [activeObjective, userEdited, phase, target]);
   const [completed, setCompleted] = useState(0);
   const [currentPrayerIndex, setCurrentPrayerIndex] = useState(0);
   const [sessionId] = useState(`session-${Date.now()}`);
   const [confirmQuit, setConfirmQuit] = useState(false);
   const [pressing, setPressing] = useState(false);
+  const busyRef = useRef(false);
 
   function handleStart() {
     const next = getNextPrayer(debts, 0);
@@ -235,30 +236,37 @@ export function Session({ onClose }: { onClose: () => void }) {
   }
 
   async function handleDone() {
-    const current = getNextPrayer(debts, currentPrayerIndex);
-    if (!current) {
-      setPhase('complete');
-      return;
+    if (busyRef.current) return;
+    busyRef.current = true;
+    try {
+      const current = getNextPrayer(debts, currentPrayerIndex);
+      if (!current) {
+        setPhase('complete');
+        return;
+      }
+
+      setPressing(true);
+      await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
+      setPressing(false);
+
+      const newCompleted = completed + 1;
+      setCompleted(newCompleted);
+
+      if (newCompleted >= target) {
+        setPhase('complete');
+        return;
+      }
+
+      const freshDebts = usePrayerStore.getState().debts;
+      const next = getNextPrayer(freshDebts, (current.index + 1) % PRAYER_NAMES.length);
+      if (!next) {
+        setPhase('complete');
+        return;
+      }
+      setCurrentPrayerIndex(next.index);
+    } finally {
+      busyRef.current = false;
     }
-
-    setPressing(true);
-    await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
-    setPressing(false);
-
-    const newCompleted = completed + 1;
-    setCompleted(newCompleted);
-
-    if (newCompleted >= target) {
-      setPhase('complete');
-      return;
-    }
-
-    const next = getNextPrayer(debts, (current.index + 1) % PRAYER_NAMES.length);
-    if (!next) {
-      setPhase('complete');
-      return;
-    }
-    setCurrentPrayerIndex(next.index);
   }
 
   const currentEntry = phase === 'active' ? getNextPrayer(debts, currentPrayerIndex) : null;

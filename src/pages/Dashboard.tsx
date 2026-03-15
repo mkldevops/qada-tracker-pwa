@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { AnimatePresence } from 'motion/react';
 import { Plus } from 'lucide-react';
 import { usePrayerStore, useDebts, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import { PRAYER_NAMES } from '@/types';
@@ -137,7 +138,9 @@ export function Dashboard() {
       </div>
     </div>
 
-    {showSession && <Session onClose={() => setShowSession(false)} />}
+    <AnimatePresence>
+      {showSession && <Session onClose={() => setShowSession(false)} />}
+    </AnimatePresence>
     </>
   );
 }
