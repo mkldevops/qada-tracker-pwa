@@ -1,115 +1,140 @@
-import { useStats, useDebts, useTotalRemaining } from '@/stores/prayerStore';
-import { PRAYER_NAMES } from '@/types';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { useDebts, useStats, useTotalRemaining } from '@/stores/prayerStore';
+import { PRAYER_NAMES } from '@/types';
 
-function StatTile({ label, value, color }: { label: string; value: string | number; color?: string }) {
-  return (
-    <div
-      className="flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-5"
-      style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-    >
-      <span className="text-3xl font-semibold tabular-nums" style={{ color: color ?? '#F5F5F0' }}>
-        {value}
-      </span>
-      <span className="text-[10px] font-medium" style={{ color: '#6E6E70' }}>{label}</span>
-    </div>
-  );
+function StatTile({
+	label,
+	value,
+	color,
+}: {
+	label: string;
+	value: string | number;
+	color?: string;
+}) {
+	return (
+		<div
+			className="flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-5"
+			style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+		>
+			<span className="text-3xl font-semibold tabular-nums" style={{ color: color ?? '#F5F5F0' }}>
+				{value}
+			</span>
+			<span className="text-[10px] font-medium" style={{ color: '#6E6E70' }}>
+				{label}
+			</span>
+		</div>
+	);
 }
 
 export function Stats() {
-  const stats = useStats();
-  const debts = useDebts();
-  const totalRemaining = useTotalRemaining();
+	const stats = useStats();
+	const debts = useDebts();
+	const totalRemaining = useTotalRemaining();
 
-  return (
-    <div className="space-y-5 px-7 pb-4 pt-1">
-      <h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>Statistiques</h1>
+	return (
+		<div className="space-y-5 px-7 pb-4 pt-1">
+			<h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
+				Statistiques
+			</h1>
 
-      <div
-        className="flex w-full flex-col justify-center gap-2 rounded-[20px] px-6 py-7"
-        style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
-      >
-        <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#1A1A1C88' }}>
-          TOTAL LOGUÉ
-        </p>
-        <p className="text-[52px] font-light leading-[0.85] tabular-nums" style={{ color: '#1A1A1C' }}>
-          {stats.allTime.toLocaleString()}
-        </p>
-      </div>
+			<div
+				className="flex w-full flex-col justify-center gap-2 rounded-[20px] px-6 py-7"
+				style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
+			>
+				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#1A1A1C88' }}>
+					TOTAL LOGUÉ
+				</p>
+				<p
+					className="text-[52px] font-light leading-[0.85] tabular-nums"
+					style={{ color: '#1A1A1C' }}
+				>
+					{stats.allTime.toLocaleString()}
+				</p>
+			</div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <StatTile label="aujourd'hui" value={stats.today} />
-        <StatTile label="série" value={`${stats.streak}j`} color="#C9A962" />
-        <StatTile label="cette semaine" value={stats.thisWeek} />
-        <StatTile
-          label="moy/jour"
-          value={stats.avgPerDay > 0 ? stats.avgPerDay.toFixed(1) : '—'}
-          color="#6E9E6E"
-        />
-      </div>
+			<div className="grid grid-cols-2 gap-3">
+				<StatTile label="aujourd'hui" value={stats.today} />
+				<StatTile label="série" value={`${stats.streak}j`} color="#C9A962" />
+				<StatTile label="cette semaine" value={stats.thisWeek} />
+				<StatTile
+					label="moy/jour"
+					value={stats.avgPerDay > 0 ? stats.avgPerDay.toFixed(1) : '—'}
+					color="#6E9E6E"
+				/>
+			</div>
 
-      {stats.estimatedDays && (
-        <div
-          className="flex items-center justify-between rounded-[20px] px-6"
-          style={{ background: '#242426', border: '1px solid #3A3A3C80', height: 72 }}
-        >
-          <span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
-            Estimation pour finir
-          </span>
-          <span className="text-3xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
-            {stats.estimatedDays}j
-          </span>
-        </div>
-      )}
+			{stats.estimatedDays && (
+				<div
+					className="flex items-center justify-between rounded-[20px] px-6"
+					style={{ background: '#242426', border: '1px solid #3A3A3C80', height: 72 }}
+				>
+					<span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
+						Estimation pour finir
+					</span>
+					<span className="text-3xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
+						{stats.estimatedDays}j
+					</span>
+				</div>
+			)}
 
-      <div className="flex flex-col gap-2.5">
-        <p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-          DETTE PAR PRIÈRE
-        </p>
-        <div
-          className="overflow-hidden rounded-[20px]"
-          style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-        >
-          {PRAYER_NAMES.map((prayer, i) => {
-            const debt = debts[prayer];
-            const cfg = PRAYER_CONFIG[prayer];
-            const progress = debt?.total_owed > 0
-              ? Math.min(100, (debt.total_completed / debt.total_owed) * 100)
-              : 0;
-            return (
-              <div key={prayer}>
-                {i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
-                <div className="flex flex-col gap-1.5 px-5 py-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-display text-[15px] font-medium" style={{ color: cfg.hex }}>
-                      {cfg.labelFr}
-                    </span>
-                    <span className="text-[11px]" style={{ color: '#6E6E70' }}>
-                      {(debt?.remaining ?? 0).toLocaleString()} / {(debt?.total_owed ?? 0).toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="h-[3px] w-full overflow-hidden rounded-full" style={{ background: '#3A3A3C' }}>
-                    <div
-                      className="h-full rounded-full"
-                      style={{ width: `${progress}%`, background: cfg.hex }}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+			<div className="flex flex-col gap-2.5">
+				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+					DETTE PAR PRIÈRE
+				</p>
+				<div
+					className="overflow-hidden rounded-[20px]"
+					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				>
+					{PRAYER_NAMES.map((prayer, i) => {
+						const debt = debts[prayer];
+						const cfg = PRAYER_CONFIG[prayer];
+						const progress =
+							debt?.total_owed > 0
+								? Math.min(100, (debt.total_completed / debt.total_owed) * 100)
+								: 0;
+						return (
+							<div key={prayer}>
+								{i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+								<div className="flex flex-col gap-1.5 px-5 py-3">
+									<div className="flex items-center justify-between">
+										<span
+											className="font-display text-[15px] font-medium"
+											style={{ color: cfg.hex }}
+										>
+											{cfg.labelFr}
+										</span>
+										<span className="text-[11px]" style={{ color: '#6E6E70' }}>
+											{(debt?.remaining ?? 0).toLocaleString()} /{' '}
+											{(debt?.total_owed ?? 0).toLocaleString()}
+										</span>
+									</div>
+									<div
+										className="h-[3px] w-full overflow-hidden rounded-full"
+										style={{ background: '#3A3A3C' }}
+									>
+										<div
+											className="h-full rounded-full"
+											style={{ width: `${progress}%`, background: cfg.hex }}
+										/>
+									</div>
+								</div>
+							</div>
+						);
+					})}
+				</div>
 
-        <div
-          className="flex items-center justify-between rounded-[20px] px-6"
-          style={{ background: '#242426', border: '1px solid #3A3A3C', height: 60 }}
-        >
-          <span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>Total restant</span>
-          <span className="text-2xl font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
-            {totalRemaining.toLocaleString()}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
+				<div
+					className="flex items-center justify-between rounded-[20px] px-6"
+					style={{ background: '#242426', border: '1px solid #3A3A3C', height: 60 }}
+				>
+					<span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
+						Total restant
+					</span>
+					<span className="text-2xl font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
+						{totalRemaining.toLocaleString()}
+					</span>
+				</div>
+			</div>
+		</div>
+	);
 }

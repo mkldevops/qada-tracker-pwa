@@ -1,23 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @layer base {
-  :root {
-    --background: #1A1A1C;
-    --surface: #242426;
-    --surface-raised: #2A2A2C;
-    --border: #3A3A3C;
-    --border-divider: #2A2A2C;
-    --text-primary: #F5F5F0;
-    --text-secondary: #6E6E70;
-    --text-tertiary: #4A4A4C;
-    --gold: #C9A962;
-    --gold-deep: #8B7845;
-    --sage: #6E9E6E;
-    --danger: #D45F5F;
-    --radius-card: 20px;
-    --radius-pill: 34px;
-  }
+	:root {
+		--background: #1a1a1c;
+		--surface: #242426;
+		--surface-raised: #2a2a2c;
+		--border: #3a3a3c;
+		--border-divider: #2a2a2c;
+		--text-primary: #f5f5f0;
+		--text-secondary: #6e6e70;
+		--text-tertiary: #4a4a4c;
+		--gold: #c9a962;
+		--gold-deep: #8b7845;
+		--sage: #6e9e6e;
+		--danger: #d45f5f;
+		--radius-card: 20px;
+		--radius-pill: 34px;
+	}
 }
 
 @theme inline {
@@ -49,32 +49,32 @@
 }
 
 @layer base {
-  * {
-    -webkit-tap-highlight-color: transparent;
-    box-sizing: border-box;
-  }
+	* {
+		-webkit-tap-highlight-color: transparent;
+		box-sizing: border-box;
+	}
 
-  body {
-    min-height: 100dvh;
-    background-color: var(--background);
-    color: var(--text-primary);
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    -webkit-font-smoothing: antialiased;
-  }
+	body {
+		min-height: 100dvh;
+		background-color: var(--background);
+		color: var(--text-primary);
+		font-family: "Inter", system-ui, -apple-system, sans-serif;
+		-webkit-font-smoothing: antialiased;
+	}
 
-  #root {
-    min-height: 100dvh;
-  }
+	#root {
+		min-height: 100dvh;
+	}
 }
 
 @layer utilities {
-  .pb-safe {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  .font-display {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-  }
-  .gradient-gold {
-    background: linear-gradient(135deg, #C9A962, #8B7845);
-  }
+	.pb-safe {
+		padding-bottom: env(safe-area-inset-bottom, 0px);
+	}
+	.font-display {
+		font-family: "Cormorant Garamond", Georgia, serif;
+	}
+	.gradient-gold {
+		background: linear-gradient(135deg, #c9a962, #8b7845);
+	}
 }
