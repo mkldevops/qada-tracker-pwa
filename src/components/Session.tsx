@@ -2,6 +2,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { useProximitySensor } from '@/hooks/useProximitySensor';
 import { useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Objective, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -242,8 +243,22 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const [sessionId] = useState(`session-${Date.now()}`);
 	const [confirmQuit, setConfirmQuit] = useState(false);
 	const [pressing, setPressing] = useState(false);
+	const [sujoodCount, setSujoodCount] = useState<0 | 1>(0);
 	const busyRef = useRef(false);
 	const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+	const sensorState = useProximitySensor(
+		phase === 'active',
+		() => {
+			navigator.vibrate?.(100);
+			setSujoodCount(1);
+		},
+		() => {
+			navigator.vibrate?.([50, 50, 150]);
+			setSujoodCount(0);
+			handleAutoIncrement();
+		},
+	);
 
 	useEffect(() => {
 		const active = { current: true };
@@ -296,29 +311,30 @@ export function Session({ onClose }: { onClose: () => void }) {
 		setPhase('active');
 	}
 
-	async function handleDone() {
+	async function handleIncrement(showPressing: boolean = false) {
 		if (busyRef.current) return;
 		busyRef.current = true;
 		try {
-			const current = getNextPrayer(debts, currentPrayerIndex);
+			const freshDebts = usePrayerStore.getState().debts;
+			const current = getNextPrayer(freshDebts, currentPrayerIndex);
 			if (!current) {
 				setPhase('complete');
 				return;
 			}
 
-			setPressing(true);
+			if (showPressing) setPressing(true);
 			await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
 
-			const newCompleted = completed + 1;
-			setCompleted(newCompleted);
+			setCompleted((prev) => {
+				const newCompleted = prev + 1;
+				if (newCompleted >= target) {
+					setPhase('complete');
+				}
+				return newCompleted;
+			});
 
-			if (newCompleted >= target) {
-				setPhase('complete');
-				return;
-			}
-
-			const freshDebts = usePrayerStore.getState().debts;
-			const next = getNextPrayer(freshDebts, (current.index + 1) % PRAYER_NAMES.length);
+			const freshDebts2 = usePrayerStore.getState().debts;
+			const next = getNextPrayer(freshDebts2, (current.index + 1) % PRAYER_NAMES.length);
 			if (!next) {
 				setPhase('complete');
 				return;
@@ -326,9 +342,12 @@ export function Session({ onClose }: { onClose: () => void }) {
 			setCurrentPrayerIndex(next.index);
 		} finally {
 			busyRef.current = false;
-			setPressing(false);
+			if (showPressing) setPressing(false);
 		}
 	}
+
+	const handleDone = () => handleIncrement(true);
+	const handleAutoIncrement = () => handleIncrement(false);
 
 	const currentEntry = phase === 'active' ? getNextPrayer(debts, currentPrayerIndex) : null;
 	const cfg = currentEntry ? PRAYER_CONFIG[currentEntry.prayer] : null;
@@ -459,6 +478,30 @@ export function Session({ onClose }: { onClose: () => void }) {
 						>
 							<AnimatedCounter value={completed} target={target} />
 						</motion.div>
+
+						{sensorState.isSupported && sensorState.isActive && (
+							<motion.div
+								className="w-full mb-6 px-4 py-3 rounded-2xl text-center text-sm font-medium"
+								style={{ background: '#242426', color: '#C9A962' }}
+								initial={{ opacity: 0, y: -8 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 0.1, ...spring }}
+							>
+								{sujoodCount === 0 ? '✋ Attente du 1er sujood' : '✋ Attente du 2ème sujood'}
+							</motion.div>
+						)}
+
+						{!sensorState.isSupported && phase === 'active' && (
+							<motion.div
+								className="w-full mb-6 px-4 py-3 rounded-2xl text-center text-xs"
+								style={{ background: '#242426', color: '#6E6E70' }}
+								initial={{ opacity: 0, y: -8 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 0.1, ...spring }}
+							>
+								Mode capteur non supporté — utilisez le bouton "Terminé"
+							</motion.div>
+						)}
 
 						<AnimatePresence mode="wait">
 							<PrayerCard key={currentEntry.prayer} prayer={currentEntry.prayer} cfg={cfg} />
