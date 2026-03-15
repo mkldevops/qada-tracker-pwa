@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BottomNav } from '@/components/BottomNav';
+import { type BeforeInstallPromptEvent, InstallBanner } from '@/components/InstallBanner';
 import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
 import { Dashboard } from '@/pages/Dashboard';
 import { LogPrayers } from '@/pages/LogPrayers';
@@ -13,11 +14,25 @@ type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 export function App() {
 	const [activeTab, setActiveTab] = useState<Tab>('dashboard');
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
+	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 	const { loadAll, isLoading } = usePrayerStore();
 
 	useEffect(() => {
 		loadAll();
 	}, [loadAll]);
+
+	useEffect(() => {
+		const handleBeforeInstallPrompt = (e: Event) => {
+			e.preventDefault();
+			setInstallPrompt(e as BeforeInstallPromptEvent);
+		};
+
+		window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+		return () => {
+			window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+		};
+	}, []);
 
 	if (isLoading) {
 		return (
@@ -55,6 +70,9 @@ export function App() {
 	return (
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
 			<main className="mx-auto max-w-lg pt-4 pb-28">{pages[activeTab]}</main>
+			{!showOnboarding && installPrompt && (
+				<InstallBanner prompt={installPrompt} onDismiss={() => setInstallPrompt(null)} />
+			)}
 			<BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 		</div>
 	);
