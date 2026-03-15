@@ -197,6 +197,57 @@ describe('resetAll', () => {
 	});
 });
 
+// ─── getLogsByPeriod ──────────────────────────────────────────────────────────
+
+describe('getLogsByPeriod', () => {
+	beforeEach(() => vi.useFakeTimers({ toFake: ['Date'], now: PINNED_NOW }));
+
+	it('returns exactly N entries for N days', async () => {
+		const result = await queries.getLogsByPeriod(db, 7);
+		expect(result).toHaveLength(7);
+	});
+
+	it('all entries have count 0 when no logs exist', async () => {
+		const result = await queries.getLogsByPeriod(db, 7);
+		expect(result.every((r) => r.count === 0)).toBe(true);
+	});
+
+	it('counts logs on today correctly', async () => {
+		await queries.insertLog(db, 'fajr', 3);
+		await queries.insertLog(db, 'dhuhr', 2);
+		const result = await queries.getLogsByPeriod(db, 7);
+		const today = PINNED_NOW.toISOString().slice(0, 10);
+		const todayEntry = result.find((r) => r.date === today);
+		expect(todayEntry?.count).toBe(5);
+	});
+
+	it('excludes logs before the period', async () => {
+		// Insert a log 10 days ago (outside a 7-day window)
+		await db.prayer_logs.add({
+			prayer: 'fajr',
+			quantity: 99,
+			logged_at: new Date(PINNED_NOW.getTime() - 10 * 86_400_000).toISOString(),
+			session_id: null,
+		});
+		const result = await queries.getLogsByPeriod(db, 7);
+		expect(result.every((r) => r.count < 99)).toBe(true);
+	});
+
+	it('aggregates multiple logs on the same day', async () => {
+		await queries.insertLog(db, 'fajr', 4);
+		await queries.insertLog(db, 'asr', 6);
+		const result = await queries.getLogsByPeriod(db, 1);
+		expect(result[0].count).toBe(10);
+	});
+
+	it('dates are consecutive and in ascending order', async () => {
+		const result = await queries.getLogsByPeriod(db, 7);
+		for (let i = 1; i < result.length; i++) {
+			expect(result[i].date > result[i - 1].date).toBe(true);
+		}
+	});
+});
+
 // ─── getStats ────────────────────────────────────────────────────────────────
 
 describe('getStats', () => {
