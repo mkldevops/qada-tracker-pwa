@@ -273,12 +273,12 @@ function DebtStep({
 						exit={{ opacity: 0, x: -20 }}
 						transition={spring}
 					>
-						<div className="grid grid-cols-2 gap-3">
+						<div className="flex flex-col gap-4">
 							<div className="flex flex-col gap-1.5">
 								<label
 									htmlFor="ob-years"
-									className="text-xs font-medium"
-									style={{ color: '#6E6E70' }}
+									className="text-sm font-medium"
+									style={{ color: '#F5F5F0' }}
 								>
 									Années manquées
 								</label>
@@ -294,13 +294,14 @@ function DebtStep({
 									style={inputStyle}
 								/>
 							</div>
+							<div style={{ height: 1, background: '#2A2A2C' }} />
 							<div className="flex flex-col gap-1.5">
 								<label
 									htmlFor="ob-excluded"
-									className="text-xs font-medium"
-									style={{ color: '#6E6E70' }}
+									className="text-[11px] font-medium"
+									style={{ color: '#9A9A9C' }}
 								>
-									Jours exclus
+									Jours exclus (optionnel)
 								</label>
 								<input
 									id="ob-excluded"
@@ -355,7 +356,7 @@ function DebtStep({
 									<label
 										htmlFor="ob-hayd"
 										className="text-xs font-medium"
-										style={{ color: '#6E6E70' }}
+										style={{ color: '#9A9A9C' }}
 									>
 										Moy. jours de hayd / mois
 									</label>
