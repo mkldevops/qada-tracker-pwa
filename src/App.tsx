@@ -1,7 +1,9 @@
+import { AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { BottomNav } from '@/components/BottomNav';
-import { type BeforeInstallPromptEvent, InstallBanner } from '@/components/InstallBanner';
+import { InstallBanner } from '@/components/InstallBanner';
 import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
+import { type BeforeInstallPromptEvent, shouldShowInstallBanner } from '@/lib/pwa';
 import { Dashboard } from '@/pages/Dashboard';
 import { LogPrayers } from '@/pages/LogPrayers';
 import { OnboardingFlow } from '@/pages/OnboardingFlow';
@@ -70,9 +72,11 @@ export function App() {
 	return (
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
 			<main className="mx-auto max-w-lg pt-4 pb-28">{pages[activeTab]}</main>
-			{!showOnboarding && installPrompt && (
-				<InstallBanner prompt={installPrompt} onDismiss={() => setInstallPrompt(null)} />
-			)}
+			<AnimatePresence>
+				{!showOnboarding && installPrompt && shouldShowInstallBanner() && (
+					<InstallBanner prompt={installPrompt} onDismiss={() => setInstallPrompt(null)} />
+				)}
+			</AnimatePresence>
 			<BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 		</div>
 	);

@@ -1,10 +1,6 @@
 import { motion } from 'motion/react';
-import { useEffect, useState } from 'react';
-
-export interface BeforeInstallPromptEvent extends Event {
-	prompt: () => Promise<void>;
-	userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
+import { useState } from 'react';
+import { type BeforeInstallPromptEvent, dismissInstallBanner } from '@/lib/pwa';
 
 interface InstallBannerProps {
 	prompt: BeforeInstallPromptEvent;
@@ -12,54 +8,28 @@ interface InstallBannerProps {
 }
 
 export function InstallBanner({ prompt, onDismiss }: InstallBannerProps) {
-	const [visible, setVisible] = useState(false);
 	const [isPrompting, setIsPrompting] = useState(false);
-
-	useEffect(() => {
-		// Don't show if already dismissed
-		if (localStorage.getItem('pwa-install-dismissed') === 'true') {
-			return;
-		}
-
-		// Don't show if already installed (standalone mode)
-		if (window.matchMedia('(display-mode: standalone)').matches) {
-			return;
-		}
-
-		// Show banner
-		setVisible(true);
-	}, []);
 
 	const handleInstall = async () => {
 		setIsPrompting(true);
 		try {
 			await prompt.prompt();
-			const { outcome } = await prompt.userChoice;
-			if (outcome === 'accepted') {
-				// User accepted install
-				localStorage.setItem('pwa-install-dismissed', 'true');
-				setVisible(false);
-				onDismiss();
-			} else {
-				// User dismissed
-				localStorage.setItem('pwa-install-dismissed', 'true');
-				setVisible(false);
-				onDismiss();
-			}
+			await prompt.userChoice;
+			dismissInstallBanner();
+			onDismiss();
 		} catch (error) {
 			console.error('Install prompt failed:', error);
+			dismissInstallBanner();
+			onDismiss();
 		} finally {
 			setIsPrompting(false);
 		}
 	};
 
 	const handleDismiss = () => {
-		localStorage.setItem('pwa-install-dismissed', 'true');
-		setVisible(false);
+		dismissInstallBanner();
 		onDismiss();
 	};
-
-	if (!visible) return null;
 
 	return (
 		<motion.div
