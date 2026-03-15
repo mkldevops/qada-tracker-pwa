@@ -266,7 +266,6 @@ export function Session({ onClose }: { onClose: () => void }) {
 
 			setPressing(true);
 			await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
-			setPressing(false);
 
 			const newCompleted = completed + 1;
 			setCompleted(newCompleted);
@@ -285,6 +284,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 			setCurrentPrayerIndex(next.index);
 		} finally {
 			busyRef.current = false;
+			setPressing(false);
 		}
 	}
 
