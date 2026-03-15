@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
-import { useDebts, usePrayerStore } from '@/stores/prayerStore';
+import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Objective, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
@@ -90,13 +90,22 @@ function NumberPicker({
 	);
 }
 
+function getSortedPrayerOrder(
+	debts: ReturnType<typeof useDebts>,
+	mode: SessionOrder,
+): PrayerName[] {
+	if (mode === 'chronological') return [...PRAYER_NAMES];
+	return [...PRAYER_NAMES].sort((a, b) => (debts[b]?.remaining ?? 0) - (debts[a]?.remaining ?? 0));
+}
+
 function getNextPrayer(
 	debts: ReturnType<typeof useDebts>,
+	prayerOrder: PrayerName[],
 	fromIndex: number,
 ): { prayer: PrayerName; index: number } | null {
-	for (let i = 0; i < PRAYER_NAMES.length; i++) {
-		const idx = (fromIndex + i) % PRAYER_NAMES.length;
-		const prayer = PRAYER_NAMES[idx];
+	for (let i = 0; i < prayerOrder.length; i++) {
+		const idx = (fromIndex + i) % prayerOrder.length;
+		const prayer = prayerOrder[idx];
 		if ((debts[prayer]?.remaining ?? 0) > 0) {
 			return { prayer, index: idx };
 		}
@@ -217,6 +226,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const { logBatch } = usePrayerStore();
 	const debts = useDebts();
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
+	const sessionOrder = usePrayerStore((s) => s.sessionOrder);
 
 	const defaultTarget = computeTarget(activeObjective);
 
@@ -238,6 +248,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 		setTargetDir(t >= target ? 1 : -1);
 		setTarget(t);
 	}, [activeObjective, userEdited, phase, target]);
+	const [prayerOrder, setPrayerOrder] = useState<PrayerName[]>([...PRAYER_NAMES]);
 	const [completed, setCompleted] = useState(0);
 	const [currentPrayerIndex, setCurrentPrayerIndex] = useState(0);
 	const [sessionId] = useState(`session-${Date.now()}`);
@@ -302,7 +313,9 @@ export function Session({ onClose }: { onClose: () => void }) {
 	}, [phase]);
 
 	function handleStart() {
-		const next = getNextPrayer(debts, 0);
+		const order = getSortedPrayerOrder(debts, sessionOrder);
+		setPrayerOrder(order);
+		const next = getNextPrayer(debts, order, 0);
 		if (!next) {
 			setPhase('complete');
 			return;
@@ -316,7 +329,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 		busyRef.current = true;
 		try {
 			const freshDebts = usePrayerStore.getState().debts;
-			const current = getNextPrayer(freshDebts, currentPrayerIndex);
+			const current = getNextPrayer(freshDebts, prayerOrder, currentPrayerIndex);
 			if (!current) {
 				setPhase('complete');
 				return;
@@ -334,7 +347,11 @@ export function Session({ onClose }: { onClose: () => void }) {
 			});
 
 			const freshDebts2 = usePrayerStore.getState().debts;
-			const next = getNextPrayer(freshDebts2, (current.index + 1) % PRAYER_NAMES.length);
+			const next = getNextPrayer(
+				freshDebts2,
+				prayerOrder,
+				(current.index + 1) % prayerOrder.length,
+			);
 			if (!next) {
 				setPhase('complete');
 				return;
@@ -349,7 +366,8 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const handleDone = () => handleIncrement(true);
 	const handleAutoIncrement = () => handleIncrement(false);
 
-	const currentEntry = phase === 'active' ? getNextPrayer(debts, currentPrayerIndex) : null;
+	const currentEntry =
+		phase === 'active' ? getNextPrayer(debts, prayerOrder, currentPrayerIndex) : null;
 	const cfg = currentEntry ? PRAYER_CONFIG[currentEntry.prayer] : null;
 
 	return (

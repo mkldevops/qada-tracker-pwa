@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { markOnboardingUndone } from '@/lib/onboarding';
-import { useDebts, usePrayerStore } from '@/stores/prayerStore';
+import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
@@ -23,9 +23,21 @@ const PERIODS: { value: Period; label: string }[] = [
 	{ value: 'monthly', label: 'Mois' },
 ];
 
+const SESSION_ORDERS: { value: SessionOrder; label: string }[] = [
+	{ value: 'chronological', label: 'Chronologique' },
+	{ value: 'highest-debt', label: 'Priorité dette' },
+];
+
 export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
-	const { setDebtManual, setDebtFromYears, setObjective, resetAll, activeObjective } =
-		usePrayerStore();
+	const {
+		setDebtManual,
+		setDebtFromYears,
+		setObjective,
+		setSessionOrder,
+		resetAll,
+		activeObjective,
+		sessionOrder,
+	} = usePrayerStore();
 	const debts = useDebts();
 
 	const [years, setYears] = useState('');
@@ -304,6 +316,43 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 						>
 							OK
 						</button>
+					</div>
+				</div>
+			</section>
+
+			{/* Section 4: Session order */}
+			<section className="flex flex-col gap-2.5">
+				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+					SESSION
+				</p>
+				<div
+					className="flex flex-col gap-4 rounded-[20px] p-5"
+					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				>
+					<div className="flex flex-col gap-1">
+						<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
+							Ordre des prières
+						</span>
+						<span className="text-[11px]" style={{ color: '#6E6E70' }}>
+							Ordre dans lequel les prières sont proposées en session
+						</span>
+					</div>
+					<div className="flex gap-2">
+						{SESSION_ORDERS.map(({ value, label }) => (
+							<button
+								type="button"
+								key={value}
+								onClick={() => setSessionOrder(value)}
+								className="flex-1 rounded-[20px] py-2.5 text-[13px] font-medium transition-colors"
+								style={
+									sessionOrder === value
+										? { background: '#C9A962', color: '#1A1A1C', fontWeight: 600 }
+										: { background: '#1A1A1C', border: '1px solid #3A3A3C', color: '#4A4A4C' }
+								}
+							>
+								{label}
+							</button>
+						))}
 					</div>
 				</div>
 			</section>
