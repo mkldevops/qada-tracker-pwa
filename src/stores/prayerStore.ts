@@ -63,7 +63,7 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 	stats: EMPTY_STATS,
 	recentLogs: [],
 	activeObjective: null,
-	isLoading: false,
+	isLoading: true,
 
 	loadAll: async () => {
 		set({ isLoading: true });

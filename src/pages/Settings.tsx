@@ -12,6 +12,7 @@ import {
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { markOnboardingUndone } from '@/lib/onboarding';
 import { useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -358,7 +359,11 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 								Annuler
 							</AlertDialogCancel>
 							<AlertDialogAction
-								onClick={resetAll}
+								onClick={async () => {
+									await resetAll();
+									markOnboardingUndone();
+									onRestartOnboarding?.();
+								}}
 								style={{ background: '#D45F5F', color: '#F5F5F0' }}
 							>
 								Réinitialiser
