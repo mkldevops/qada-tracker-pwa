@@ -74,7 +74,7 @@ export function Stats() {
 						Estimation pour finir
 					</span>
 					<span className="text-3xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
-						{formatDays(stats.estimatedDays ?? 0)}
+						{formatDays(stats.estimatedDays!)}
 					</span>
 				</div>
 			)}
