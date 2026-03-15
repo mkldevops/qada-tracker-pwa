@@ -10,13 +10,13 @@ export default defineConfig({
 		tailwindcss(),
 		VitePWA({
 			registerType: 'autoUpdate',
-			includeAssets: ['icon-180.png', 'icon-192.png', 'icon-512.png'],
+			includeAssets: ['icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png'],
 			manifest: {
 				name: 'Qada Tracker',
 				short_name: 'Qada',
 				description: 'Tracker de prières à rattraper — 100% offline',
-				theme_color: '#0F1419',
-				background_color: '#0F1419',
+				theme_color: '#1A1A1C',
+				background_color: '#1A1A1C',
 				display: 'standalone',
 				orientation: 'portrait',
 				scope: '/',
@@ -25,6 +25,12 @@ export default defineConfig({
 					{ src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
 					{ src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
 					{ src: 'icon-180.png', sizes: '180x180', type: 'image/png', purpose: 'any' },
+					{
+						src: 'icon-512-maskable.png',
+						sizes: '512x512',
+						type: 'image/png',
+						purpose: 'maskable',
+					},
 				],
 			},
 			workbox: {
