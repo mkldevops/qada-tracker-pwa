@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { usePrayerStore, useDebts, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import { PRAYER_NAMES } from '@/types';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import type { PrayerName } from '@/types';
+import { Session } from '@/components/Session';
 
 function StatPill({ label, value, color }: { label: string; value: string | number; color?: string }) {
   return (
@@ -73,8 +75,10 @@ export function Dashboard() {
   const debts = useDebts();
   const stats = useStats();
   const totalRemaining = useTotalRemaining();
+  const [showSession, setShowSession] = useState(false);
 
   return (
+    <>
     <div className="space-y-5 px-7 pb-4 pt-1">
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-0.5">
@@ -97,6 +101,15 @@ export function Dashboard() {
         </p>
         <p className="text-sm" style={{ color: '#1A1A1C88' }}>prières manquées</p>
       </div>
+
+      <button
+        onClick={() => setShowSession(true)}
+        disabled={totalRemaining === 0}
+        className="w-full rounded-[28px] py-4 font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30"
+        style={{ background: '#242426', border: '1px solid #C9A962', color: '#C9A962' }}
+      >
+        Lancer une session
+      </button>
 
       <div className="flex gap-3">
         <StatPill label="aujourd'hui" value={stats.today} color="#C9A962" />
@@ -123,5 +136,8 @@ export function Dashboard() {
         ))}
       </div>
     </div>
+
+    {showSession && <Session onClose={() => setShowSession(false)} />}
+    </>
   );
 }
