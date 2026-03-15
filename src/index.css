@@ -78,3 +78,22 @@
 		background: linear-gradient(135deg, #c9a962, #8b7845);
 	}
 }
+
+@media (orientation: landscape) and (max-width: 1024px) {
+	#root {
+		display: none;
+	}
+	body::before {
+		content: 'Pivotez votre appareil en mode portrait';
+		position: fixed;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: #1a1a1c;
+		color: #c9a962;
+		font-size: 1rem;
+		text-align: center;
+		padding: 2rem;
+	}
+}
