@@ -234,3 +234,57 @@ export async function resetAll(db: QadaDB): Promise<void> {
 		});
 	});
 }
+
+export async function exportBackup(db: QadaDB): Promise<void> {
+	const [prayer_logs, prayer_debts, objectives] = await Promise.all([
+		db.prayer_logs.toArray(),
+		db.prayer_debts.toArray(),
+		db.objectives.toArray(),
+	]);
+	const data = {
+		version: 1,
+		exported_at: new Date().toISOString(),
+		prayer_logs,
+		prayer_debts,
+		objectives,
+	};
+	const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+	const url = URL.createObjectURL(blob);
+	const a = document.createElement('a');
+	a.href = url;
+	a.download = `qada-backup-${new Date().toISOString().slice(0, 10)}.json`;
+	a.click();
+	URL.revokeObjectURL(url);
+}
+
+export async function importBackup(
+	db: QadaDB,
+	file: File,
+	loadAll: () => Promise<void>,
+): Promise<void> {
+	const text = await file.text();
+	const data = JSON.parse(text);
+	if (
+		!data.version ||
+		!Array.isArray(data.prayer_logs) ||
+		!Array.isArray(data.prayer_debts) ||
+		!Array.isArray(data.objectives)
+	) {
+		throw new Error('Fichier de backup invalide');
+	}
+	await db.transaction('rw', db.prayer_logs, db.prayer_debts, db.objectives, async () => {
+		await db.prayer_logs.clear();
+		await db.prayer_debts.clear();
+		await db.objectives.clear();
+		if (data.prayer_logs.length > 0) {
+			await db.prayer_logs.bulkAdd(data.prayer_logs.map(({ id: _, ...r }: any) => r));
+		}
+		if (data.prayer_debts.length > 0) {
+			await db.prayer_debts.bulkAdd(data.prayer_debts.map(({ id: _, ...r }: any) => r));
+		}
+		if (data.objectives.length > 0) {
+			await db.objectives.bulkAdd(data.objectives.map(({ id: _, ...r }: any) => r));
+		}
+	});
+	await loadAll();
+}

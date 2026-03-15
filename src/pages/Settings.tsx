@@ -1,5 +1,5 @@
-import { RotateCcw, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { Download, RotateCcw, Trash2, Upload } from 'lucide-react';
+import { useRef, useState } from 'react';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -12,6 +12,8 @@ import {
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { db } from '@/db/database';
+import { exportBackup, importBackup } from '@/db/queries';
 import { markOnboardingUndone } from '@/lib/onboarding';
 import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
@@ -35,6 +37,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 		setObjective,
 		setSessionOrder,
 		resetAll,
+		loadAll,
 		activeObjective,
 		sessionOrder,
 	} = usePrayerStore();
@@ -47,6 +50,13 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	const [manualAmounts, setManualAmounts] = useState<Partial<Record<PrayerName, string>>>({});
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
 	const [objTarget, setObjTarget] = useState('');
+	const [pendingFile, setPendingFile] = useState<File | null>(null);
+	const [dataFeedback, setDataFeedback] = useState<{
+		type: 'success' | 'error';
+		message: string;
+	} | null>(null);
+
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const haydExclusion = isFemme
 		? Math.round((parseFloat(years) || 0) * (parseFloat(avgHaydDays) || 6) * 12)
@@ -74,6 +84,30 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 		if (!Number.isNaN(target) && target > 0) {
 			await setObjective(objPeriod, target);
 			setObjTarget('');
+		}
+	};
+
+	const handleExport = async () => {
+		await exportBackup(db);
+	};
+
+	const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (file) {
+			setPendingFile(file);
+		}
+		e.target.value = '';
+	};
+
+	const handleImportConfirm = async () => {
+		if (!pendingFile) return;
+		try {
+			await importBackup(db, pendingFile, loadAll);
+			setDataFeedback({ type: 'success', message: 'Données restaurées avec succès.' });
+		} catch {
+			setDataFeedback({ type: 'error', message: 'Fichier invalide ou corrompu.' });
+		} finally {
+			setPendingFile(null);
 		}
 	};
 
@@ -375,6 +409,89 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 					</button>
 				</section>
 			)}
+
+			{/* Section 5: Data backup */}
+			<section className="flex flex-col gap-2.5">
+				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+					DONNÉES
+				</p>
+				<div
+					className="flex flex-col gap-3 rounded-[20px] p-5"
+					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				>
+					{dataFeedback && (
+						<p
+							className="text-[11px] font-medium"
+							style={{ color: dataFeedback.type === 'success' ? '#6E9E6E' : '#D45F5F' }}
+						>
+							{dataFeedback.message}
+						</p>
+					)}
+					<button
+						type="button"
+						onClick={handleExport}
+						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
+						style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
+					>
+						<Download size={16} style={{ color: '#C9A962' }} />
+						<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
+							EXPORTER LA SAUVEGARDE
+						</span>
+					</button>
+
+					<input
+						ref={fileInputRef}
+						type="file"
+						accept=".json"
+						className="hidden"
+						onChange={handleFileSelect}
+					/>
+
+					<AlertDialog
+						open={pendingFile !== null}
+						onOpenChange={(open) => {
+							if (!open) setPendingFile(null);
+						}}
+					>
+						<AlertDialogTrigger asChild>
+							<button
+								type="button"
+								onClick={() => fileInputRef.current?.click()}
+								className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
+								style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
+							>
+								<Upload size={16} style={{ color: '#C9A962' }} />
+								<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
+									IMPORTER UNE SAUVEGARDE
+								</span>
+							</button>
+						</AlertDialogTrigger>
+						<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
+							<AlertDialogHeader>
+								<AlertDialogTitle style={{ color: '#F5F5F0' }}>
+									Importer la sauvegarde ?
+								</AlertDialogTitle>
+								<AlertDialogDescription style={{ color: '#6E6E70' }}>
+									{pendingFile?.name} — Les données actuelles seront remplacées. Irréversible.
+								</AlertDialogDescription>
+							</AlertDialogHeader>
+							<AlertDialogFooter>
+								<AlertDialogCancel
+									style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
+								>
+									Annuler
+								</AlertDialogCancel>
+								<AlertDialogAction
+									onClick={handleImportConfirm}
+									style={{ background: '#C9A962', color: '#1A1A1C' }}
+								>
+									Importer
+								</AlertDialogAction>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					</AlertDialog>
+				</div>
+			</section>
 
 			{/* Danger zone */}
 			<section className="flex flex-col gap-2.5">
