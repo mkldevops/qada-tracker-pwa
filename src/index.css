@@ -78,3 +78,9 @@
 		background: linear-gradient(135deg, #c9a962, #8b7845);
 	}
 }
+
+@media (orientation: landscape) {
+	body {
+		display: none;
+	}
+}
