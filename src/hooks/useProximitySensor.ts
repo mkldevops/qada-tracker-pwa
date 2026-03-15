@@ -68,6 +68,22 @@ export function useProximitySensor(
 			}
 		}
 
+		function setupCleanup() {
+			return () => {
+				if (sensorRef.current) {
+					try {
+						if (typeof sensorRef.current.stop === 'function') {
+							sensorRef.current.stop();
+						} else if (typeof sensorRef.current === 'function') {
+							window.removeEventListener('deviceproximity', sensorRef.current);
+						}
+					} catch {}
+					sensorRef.current = null;
+				}
+				setCurrentState('idle');
+			};
+		}
+
 		// Try ProximitySensor API first (Chrome, some Android browsers)
 		if (typeof (window as any).ProximitySensor !== 'undefined') {
 			try {
@@ -85,15 +101,13 @@ export function useProximitySensor(
 				});
 				sensor.start();
 				sensorRef.current = sensor;
-				return;
+				return setupCleanup();
 			} catch {
 				// Fall through to deviceproximity fallback
 			}
 		}
 
 		// Fallback to deviceproximity event (Firefox, Android)
-		setupDeviceProximityFallback();
-
 		function setupDeviceProximityFallback() {
 			function handleDeviceProximity(event: any) {
 				const isNear = (event.value as number) < 5;
@@ -104,19 +118,8 @@ export function useProximitySensor(
 			sensorRef.current = handleDeviceProximity;
 		}
 
-		return () => {
-			if (sensorRef.current) {
-				try {
-					if (typeof sensorRef.current.stop === 'function') {
-						sensorRef.current.stop();
-					} else if (typeof sensorRef.current === 'function') {
-						window.removeEventListener('deviceproximity', sensorRef.current);
-					}
-				} catch {}
-				sensorRef.current = null;
-			}
-			setCurrentState('idle');
-		};
+		setupDeviceProximityFallback();
+		return setupCleanup();
 	}, [active]);
 
 	return {
