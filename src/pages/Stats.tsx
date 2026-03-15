@@ -1,5 +1,6 @@
 import { StatsChart } from '@/components/StatsChart';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { formatDays } from '@/lib/formatDays';
 import { useDebts, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import { PRAYER_NAMES } from '@/types';
 
@@ -73,7 +74,7 @@ export function Stats() {
 						Estimation pour finir
 					</span>
 					<span className="text-3xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
-						{stats.estimatedDays}j
+						{formatDays(stats.estimatedDays ?? 0)}
 					</span>
 				</div>
 			)}

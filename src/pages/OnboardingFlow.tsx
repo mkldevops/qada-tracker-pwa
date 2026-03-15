@@ -2,6 +2,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { formatDays } from '@/lib/formatDays';
 import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -574,21 +575,13 @@ function ObjectiveStep({
 	const estimation = (() => {
 		if (!effectiveTarget || totalRemaining === 0) return null;
 		const totalPeriods = Math.ceil(totalRemaining / effectiveTarget);
-		// Convert to total days for human-readable breakdown
 		const totalDays =
 			objPeriod === 'daily'
 				? totalPeriods
 				: objPeriod === 'weekly'
 					? totalPeriods * 7
 					: totalPeriods * 30;
-		const years = Math.floor(totalDays / 365);
-		const months = Math.floor((totalDays % 365) / 30);
-		const days = totalDays % 30;
-		const parts: string[] = [];
-		if (years > 0) parts.push(`${years} an${years > 1 ? 's' : ''}`);
-		if (months > 0) parts.push(`${months} mois`);
-		if (days > 0 && years === 0) parts.push(`${days} j`);
-		return parts.join(' ') || '< 1 jour';
+		return formatDays(totalDays);
 	})();
 
 	return (
