@@ -197,6 +197,32 @@ export async function createObjective(db: QadaDB, period: Period, target: number
 	});
 }
 
+export async function getLogsByPeriod(
+	db: QadaDB,
+	days: number,
+): Promise<{ date: string; count: number }[]> {
+	const since = new Date();
+	since.setDate(since.getDate() - days);
+	since.setHours(0, 0, 0, 0);
+
+	const logs = await db.prayer_logs.where('logged_at').aboveOrEqual(since.toISOString()).toArray();
+
+	const byDate: Record<string, number> = {};
+	for (const log of logs) {
+		const day = log.logged_at.slice(0, 10);
+		byDate[day] = (byDate[day] ?? 0) + log.quantity;
+	}
+
+	const result: { date: string; count: number }[] = [];
+	for (let i = days - 1; i >= 0; i--) {
+		const d = new Date();
+		d.setDate(d.getDate() - i);
+		const key = d.toISOString().slice(0, 10);
+		result.push({ date: key, count: byDate[key] ?? 0 });
+	}
+	return result;
+}
+
 export async function resetAll(db: QadaDB): Promise<void> {
 	await db.transaction('rw', db.prayer_logs, db.objectives, db.prayer_debts, async () => {
 		await db.prayer_logs.clear();

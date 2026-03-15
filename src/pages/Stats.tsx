@@ -1,3 +1,4 @@
+import { StatsChart } from '@/components/StatsChart';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useDebts, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import { PRAYER_NAMES } from '@/types';
@@ -76,6 +77,8 @@ export function Stats() {
 					</span>
 				</div>
 			)}
+
+			<StatsChart />
 
 			<div className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
