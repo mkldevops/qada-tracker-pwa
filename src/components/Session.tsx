@@ -246,36 +246,44 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
 	useEffect(() => {
-		async function acquire() {
+		const active = { current: true };
+
+		async function acquireWakeLock() {
 			if (!('wakeLock' in navigator)) return;
 			try {
-				wakeLockRef.current = await navigator.wakeLock.request('screen');
+				const sentinel = await navigator.wakeLock.request('screen');
+				if (active.current) {
+					wakeLockRef.current = sentinel;
+				} else {
+					sentinel.release().catch(() => {});
+				}
 			} catch {}
 		}
-		function release() {
+
+		function releaseWakeLock() {
 			wakeLockRef.current?.release().catch(() => {});
 			wakeLockRef.current = null;
 		}
-		if (phase === 'active') {
-			acquire();
-		} else {
-			release();
-		}
-		return release;
-	}, [phase]);
 
-	useEffect(() => {
-		if (phase !== 'active') return;
 		async function handleVisibilityChange() {
-			if (document.visibilityState === 'visible') {
-				if (!('wakeLock' in navigator)) return;
-				try {
-					wakeLockRef.current = await navigator.wakeLock.request('screen');
-				} catch {}
+			if (document.visibilityState === 'visible' && active.current) {
+				await acquireWakeLock();
 			}
 		}
-		document.addEventListener('visibilitychange', handleVisibilityChange);
-		return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+
+		if (phase === 'active') {
+			acquireWakeLock();
+			document.addEventListener('visibilitychange', handleVisibilityChange);
+		} else {
+			releaseWakeLock();
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		}
+
+		return () => {
+			active.current = false;
+			releaseWakeLock();
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
 	}, [phase]);
 
 	function handleStart() {
