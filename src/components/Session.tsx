@@ -243,6 +243,48 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const [confirmQuit, setConfirmQuit] = useState(false);
 	const [pressing, setPressing] = useState(false);
 	const busyRef = useRef(false);
+	const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+	useEffect(() => {
+		const active = { current: true };
+
+		async function acquireWakeLock() {
+			if (!('wakeLock' in navigator)) return;
+			try {
+				const sentinel = await navigator.wakeLock.request('screen');
+				if (active.current) {
+					wakeLockRef.current = sentinel;
+				} else {
+					sentinel.release().catch(() => {});
+				}
+			} catch {}
+		}
+
+		function releaseWakeLock() {
+			wakeLockRef.current?.release().catch(() => {});
+			wakeLockRef.current = null;
+		}
+
+		async function handleVisibilityChange() {
+			if (document.visibilityState === 'visible' && active.current) {
+				await acquireWakeLock();
+			}
+		}
+
+		if (phase === 'active') {
+			acquireWakeLock();
+			document.addEventListener('visibilitychange', handleVisibilityChange);
+		} else {
+			releaseWakeLock();
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		}
+
+		return () => {
+			active.current = false;
+			releaseWakeLock();
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+		};
+	}, [phase]);
 
 	function handleStart() {
 		const next = getNextPrayer(debts, 0);
