@@ -1,3 +1,5 @@
+import { writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { fileURLToPath, URL } from 'node:url';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
@@ -12,6 +14,16 @@ export default defineConfig({
 	plugins: [
 		react(),
 		tailwindcss(),
+		{
+			name: 'generate-version-json',
+			apply: 'build',
+			closeBundle() {
+				writeFileSync(
+					resolve(process.cwd(), 'dist/version.json'),
+					JSON.stringify({ version: pkg.version, builtAt: new Date().toISOString() }),
+				);
+			},
+		},
 		VitePWA({
 			registerType: 'prompt',
 			includeAssets: ['icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png'],
@@ -40,6 +52,7 @@ export default defineConfig({
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
 				cleanupOutdatedCaches: true,
+				navigateFallbackDenylist: [/^\/version\.json$/],
 			},
 			devOptions: {
 				enabled: true,
