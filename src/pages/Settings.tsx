@@ -1,4 +1,4 @@
-import { Download, Fingerprint, RotateCcw, Trash2, Upload } from 'lucide-react';
+import { Download, RotateCcw, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,12 +16,6 @@ import { PRAYER_CONFIG } from '@/constants/prayers';
 import { db } from '@/db/database';
 import { exportBackup, importBackup } from '@/db/queries';
 import { markOnboardingUndone } from '@/lib/onboarding';
-import {
-	disablePasskey,
-	isPasskeyEnabled,
-	isPasskeySupported,
-	registerPasskey,
-} from '@/lib/passkey';
 import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -63,12 +57,6 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 		type: 'success' | 'error';
 		message: string;
 	} | null>(null);
-	const [passkeyEnabled, setPasskeyEnabled] = useState(isPasskeyEnabled());
-	const [passkeyLoading, setPasskeyLoading] = useState(false);
-	const [passkeyFeedback, setPasskeyFeedback] = useState<{
-		type: 'success' | 'error';
-		message: string;
-	} | null>(null);
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -77,12 +65,6 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 		const timeout = setTimeout(() => setDataFeedback(null), 5000);
 		return () => clearTimeout(timeout);
 	}, [dataFeedback]);
-
-	useEffect(() => {
-		if (!passkeyFeedback) return;
-		const timeout = setTimeout(() => setPasskeyFeedback(null), 5000);
-		return () => clearTimeout(timeout);
-	}, [passkeyFeedback]);
 
 	const haydExclusion = isFemme
 		? Math.round((parseFloat(years) || 0) * (parseFloat(avgHaydDays) || 6) * 12)
@@ -140,25 +122,6 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 		} finally {
 			setPendingFile(null);
 		}
-	};
-
-	const handleEnablePasskey = async () => {
-		setPasskeyLoading(true);
-		try {
-			await registerPasskey();
-			setPasskeyEnabled(true);
-			setPasskeyFeedback({ type: 'success', message: t('settings.passkeySuccess') });
-		} catch {
-			setPasskeyFeedback({ type: 'error', message: t('settings.passkeyError') });
-		} finally {
-			setPasskeyLoading(false);
-		}
-	};
-
-	const handleDisablePasskey = () => {
-		disablePasskey();
-		setPasskeyEnabled(false);
-		setPasskeyFeedback({ type: 'success', message: t('settings.passkeyDisabled') });
 	};
 
 	const inputStyle = {
@@ -465,74 +428,6 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 							{lang === 'fr' ? 'Français' : 'English'}
 						</button>
 					))}
-				</div>
-			</section>
-
-			{/* Section: Security */}
-			<section className="flex flex-col gap-2.5">
-				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					{t('settings.security')}
-				</p>
-				<div
-					className="flex flex-col gap-4 rounded-[20px] p-5"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-				>
-					<div className="flex items-center gap-3">
-						<Fingerprint size={20} style={{ color: '#C9A962' }} />
-						<div className="flex flex-col gap-0.5">
-							<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
-								{t('settings.passkeyTitle')}
-							</span>
-							<span className="text-[11px]" style={{ color: '#6E6E70' }}>
-								{t('settings.passkeyDesc')}
-							</span>
-						</div>
-					</div>
-
-					{passkeyFeedback && (
-						<p
-							className="text-[11px] font-medium"
-							style={{ color: passkeyFeedback.type === 'success' ? '#6E9E6E' : '#D45F5F' }}
-						>
-							{passkeyFeedback.message}
-						</p>
-					)}
-
-					{!isPasskeySupported() ? (
-						<p className="text-xs" style={{ color: '#6E6E70' }}>
-							{t('settings.passkeyNotSupported')}
-						</p>
-					) : passkeyEnabled ? (
-						<div className="flex items-center justify-between">
-							<span
-								className="rounded-xl px-3 py-1 text-xs font-semibold"
-								style={{ background: '#1C2B1C', color: '#6E9E6E' }}
-							>
-								{t('settings.passkeyActive')}
-							</span>
-							<button
-								type="button"
-								onClick={handleDisablePasskey}
-								className="rounded-[22px] px-5 py-2 text-xs font-semibold"
-								style={{ background: '#3A3A3C', color: '#F5F5F0' }}
-							>
-								{t('settings.passkeyDisable')}
-							</button>
-						</div>
-					) : (
-						<button
-							type="button"
-							onClick={handleEnablePasskey}
-							disabled={passkeyLoading}
-							className="flex w-full items-center justify-center gap-2 rounded-[28px] py-4 transition-opacity disabled:opacity-50"
-							style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
-						>
-							<Fingerprint size={16} style={{ color: '#C9A962' }} />
-							<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
-								{t('settings.passkeyEnable')}
-							</span>
-						</button>
-					)}
 				</div>
 			</section>
 

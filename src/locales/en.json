@@ -116,23 +116,7 @@
 		"resetDialogTitle": "Reset everything?",
 		"resetDialogDesc": "Deletes all logs and resets all counters. Irreversible.",
 		"resetDialogCancel": "Cancel",
-		"resetDialogConfirm": "Reset",
-		"security": "SECURITY",
-		"passkeyTitle": "Passkey",
-		"passkeyDesc": "Protect access with your device biometrics",
-		"passkeyEnable": "SET UP PASSKEY",
-		"passkeyDisable": "Disable",
-		"passkeyActive": "Active",
-		"passkeyNotSupported": "Not supported on this browser",
-		"passkeySuccess": "Passkey configured",
-		"passkeyDisabled": "Passkey disabled",
-		"passkeyError": "Error during setup"
-	},
-	"passkey": {
-		"unlock": "Unlock",
-		"unlocking": "Verifying...",
-		"error": "Authentication cancelled, try again",
-		"subtitle": "Use your device biometrics"
+		"resetDialogConfirm": "Reset"
 	},
 	"onboarding": {
 		"welcome": "Welcome",

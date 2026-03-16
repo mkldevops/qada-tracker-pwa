@@ -116,23 +116,7 @@
 		"resetDialogTitle": "Tout réinitialiser ?",
 		"resetDialogDesc": "Efface tous les logs et remet les compteurs à zéro. Irréversible.",
 		"resetDialogCancel": "Annuler",
-		"resetDialogConfirm": "Réinitialiser",
-		"security": "SÉCURITÉ",
-		"passkeyTitle": "Clé d'accès (Passkey)",
-		"passkeyDesc": "Protège l'accès avec la biométrie de ton appareil",
-		"passkeyEnable": "CONFIGURER LA CLÉ",
-		"passkeyDisable": "Désactiver",
-		"passkeyActive": "Actif",
-		"passkeyNotSupported": "Non supporté sur ce navigateur",
-		"passkeySuccess": "Clé d'accès configurée",
-		"passkeyDisabled": "Clé d'accès désactivée",
-		"passkeyError": "Erreur lors de la configuration"
-	},
-	"passkey": {
-		"unlock": "Déverrouiller",
-		"unlocking": "Vérification...",
-		"error": "Authentification annulée, réessayez",
-		"subtitle": "Utilise la biométrie de ton appareil"
+		"resetDialogConfirm": "Réinitialiser"
 	},
 	"onboarding": {
 		"welcome": "Bienvenue",

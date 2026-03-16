@@ -3,10 +3,8 @@ import { AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { BottomNav } from '@/components/BottomNav';
 import { InstallBanner } from '@/components/InstallBanner';
-import { PasskeyLock } from '@/components/PasskeyLock';
 import { UpdateBanner } from '@/components/UpdateBanner';
 import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
-import { isPasskeyEnabled } from '@/lib/passkey';
 import { type BeforeInstallPromptEvent, shouldShowInstallBanner } from '@/lib/pwa';
 import { Dashboard } from '@/pages/Dashboard';
 import { LogPrayers } from '@/pages/LogPrayers';
@@ -19,7 +17,6 @@ type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 
 export function App() {
 	const [activeTab, setActiveTab] = useState<Tab>('dashboard');
-	const [isLocked, setIsLocked] = useState(() => isPasskeyEnabled());
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 	const [updateError, setUpdateError] = useState<string | null>(null);
@@ -45,10 +42,6 @@ export function App() {
 			window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 		};
 	}, []);
-
-	if (isLocked) {
-		return <PasskeyLock onUnlock={() => setIsLocked(false)} />;
-	}
 
 	if (isLoading) {
 		return (
