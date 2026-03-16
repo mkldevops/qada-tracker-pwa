@@ -86,6 +86,11 @@
 	},
 	"settings": {
 		"title": "Réglages",
+		"tabDebt": "DETTE",
+		"tabSession": "SESSION",
+		"tabApp": "APP",
+		"debtByYears": "Par années",
+		"debtManual": "Manuel",
 		"calculateDebt": "CALCULER LA DETTE",
 		"missedYears": "Années manquées",
 		"yearsPlaceholder": "ex : 5.5",
