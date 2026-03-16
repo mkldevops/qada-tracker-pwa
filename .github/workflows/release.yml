@@ -64,3 +64,8 @@ jobs:
           git commit -m "chore(release): bump to v${{ steps.version.outputs.value }} [skip ci]"
           git tag "v${{ steps.version.outputs.value }}"
           git push origin main --tags
+
+      - name: Deploy to Coolify
+        run: |
+          curl -s -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN_CLF }}" \
+            "https://clf.fahari.pro/api/v1/deploy?uuid=hvq34qzm5g0jqdjcp2hdh1vn&force=false"
