@@ -21,7 +21,7 @@ import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStor
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
-type Tab = 'dette' | 'session' | 'app';
+type Tab = 'debt' | 'session' | 'app';
 type DebtMode = 'years' | 'manual';
 
 function CollapsibleSection({
@@ -94,7 +94,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	} = usePrayerStore();
 	const debts = useDebts();
 
-	const [activeTab, setActiveTab] = useState<Tab>('dette');
+	const [activeTab, setActiveTab] = useState<Tab>('debt');
 	const [debtMode, setDebtMode] = useState<DebtMode>('years');
 
 	const [years, setYears] = useState('');
@@ -128,28 +128,40 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	const totalExcluded = (parseInt(excludedDays, 10) || 0) + haydExclusion;
 
 	const handleSetDebtFromYears = async () => {
-		const y = parseFloat(years);
-		if (!Number.isNaN(y) && y > 0) {
-			await setDebtFromYears(y, totalExcluded);
-			setYears('');
+		try {
+			const y = parseFloat(years);
+			if (!Number.isNaN(y) && y > 0) {
+				await setDebtFromYears(y, totalExcluded);
+				setYears('');
+			}
+		} catch {
+			setDataFeedback({ type: 'error', message: t('settings.importError') });
 		}
 	};
 
 	const handleApplyAllManual = async () => {
-		for (const [prayer, val] of Object.entries(manualAmounts)) {
-			const n = parseInt(val ?? '', 10);
-			if (!Number.isNaN(n) && n >= 0) {
-				await setDebtManual(prayer as PrayerName, n);
+		try {
+			for (const [prayer, val] of Object.entries(manualAmounts)) {
+				const n = parseInt(val ?? '', 10);
+				if (!Number.isNaN(n) && n >= 0 && n <= 999999) {
+					await setDebtManual(prayer as PrayerName, n);
+				}
 			}
+			setManualAmounts({});
+		} catch {
+			setDataFeedback({ type: 'error', message: t('settings.importError') });
 		}
-		setManualAmounts({});
 	};
 
 	const handleSetObjective = async () => {
-		const target = parseInt(objTarget, 10);
-		if (!Number.isNaN(target) && target > 0) {
-			await setObjective(objPeriod, target);
-			setObjTarget('');
+		try {
+			const target = parseInt(objTarget, 10);
+			if (!Number.isNaN(target) && target > 0) {
+				await setObjective(objPeriod, target);
+				setObjTarget('');
+			}
+		} catch {
+			setDataFeedback({ type: 'error', message: t('settings.importError') });
 		}
 	};
 
@@ -196,7 +208,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	} as const;
 
 	const TABS: { value: Tab; label: string }[] = [
-		{ value: 'dette', label: t('settings.tabDebt') },
+		{ value: 'debt', label: t('settings.tabDebt') },
 		{ value: 'session', label: t('settings.tabSession') },
 		{ value: 'app', label: t('settings.tabApp') },
 	];
@@ -240,7 +252,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 					className="flex flex-col gap-5"
 				>
 					{/* ── DETTE tab ── */}
-					{activeTab === 'dette' && (
+					{activeTab === 'debt' && (
 						<>
 							{/* Merged debt section */}
 							<CollapsibleSection label={t('settings.calculateDebt')} defaultOpen={!hasDebt}>
@@ -328,6 +340,9 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 												</div>
 												<button
 													type="button"
+													role="switch"
+													aria-checked={isFemme}
+													aria-label={t('settings.female')}
 													onClick={() => setIsFemme((v) => !v)}
 													className="relative h-7 w-12 rounded-full transition-colors"
 													style={{ background: isFemme ? '#C9A962' : '#3A3A3C' }}
@@ -744,9 +759,13 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 											</AlertDialogCancel>
 											<AlertDialogAction
 												onClick={async () => {
-													await resetAll();
-													markOnboardingUndone();
-													onRestartOnboarding?.();
+													try {
+														await resetAll();
+														markOnboardingUndone();
+														onRestartOnboarding?.();
+													} catch {
+														setDataFeedback({ type: 'error', message: t('settings.importError') });
+													}
 												}}
 												style={{ background: '#D45F5F', color: '#F5F5F0' }}
 											>
