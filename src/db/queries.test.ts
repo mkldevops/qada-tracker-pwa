@@ -276,4 +276,45 @@ describe('getStats', () => {
 		expect(stats.estimatedDays).not.toBeNull();
 		expect(stats.estimatedDays).toBeGreaterThan(0);
 	});
+
+	it('uses actual history duration for new user with 1 day of logs', async () => {
+		// First log is today → effectiveDays = 1
+		await queries.insertLog(db, 'fajr', 5);
+		const stats = await queries.getStats(db);
+		expect(stats.avgPerDay).toBe(5);
+	});
+
+	it('uses actual history duration when user has 5 days of logs', async () => {
+		// Insert logs spread over 5 days (days 4, 3, 2, 1, 0 days ago)
+		const now = PINNED_NOW.getTime();
+		const msDay = 86_400_000;
+		for (let i = 4; i >= 0; i--) {
+			const date = new Date(now - i * msDay).toISOString();
+			await db.prayer_logs.add({ prayer: 'fajr', quantity: 2, logged_at: date, session_id: null });
+		}
+		const stats = await queries.getStats(db);
+		// 10 total logs over 4 days since first → effectiveDays = 4, avgPerDay = 10/4
+		expect(stats.avgPerDay).toBeCloseTo(10 / 4);
+	});
+
+	it('caps effectiveDays at 30 for users with long history', async () => {
+		// Insert 1 log today and 1 log 45 days ago → effectiveDays = 30
+		const now = PINNED_NOW.getTime();
+		const msDay = 86_400_000;
+		await db.prayer_logs.add({
+			prayer: 'fajr',
+			quantity: 3,
+			logged_at: new Date(now).toISOString(),
+			session_id: null,
+		});
+		await db.prayer_logs.add({
+			prayer: 'fajr',
+			quantity: 1,
+			logged_at: new Date(now - 45 * msDay).toISOString(),
+			session_id: null,
+		});
+		const stats = await queries.getStats(db);
+		// logsInWindow = thisMonth (only the log from today, 3), effectiveDays = 30
+		expect(stats.avgPerDay).toBeCloseTo(3 / 30);
+	});
 });
