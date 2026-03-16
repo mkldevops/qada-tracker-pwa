@@ -514,15 +514,38 @@ export function Session({ onClose }: { onClose: () => void }) {
 						)}
 
 						{!sensorState.isSupported && phase === 'active' && (
-							<motion.div
-								className="w-full mb-6 px-4 py-3 rounded-2xl text-center text-xs"
-								style={{ background: '#242426', color: '#6E6E70' }}
+							<motion.button
+								onClick={() => {
+									if (sujoodCount === 0) {
+										navigator.vibrate?.(100);
+										setSujoodCount(1);
+									} else if (!busyRef.current) {
+										navigator.vibrate?.([50, 50, 150]);
+										setSujoodCount(0);
+										handleAutoIncrement();
+									}
+								}}
+								className="w-full mb-6 py-5 rounded-2xl text-center font-semibold tracking-[1px]"
+								style={
+									sujoodCount === 0
+										? { background: '#242426', border: '1px solid #3A3A3C', color: '#C9A962' }
+										: { background: '#C9A962', color: '#1A1A1C' }
+								}
 								initial={{ opacity: 0, y: -8 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: 0.1, ...spring }}
+								animate={
+									sujoodCount === 1
+										? { opacity: 1, y: 0, scale: [1, 1.05, 1] }
+										: { opacity: 1, y: 0, scale: 1 }
+								}
+								transition={
+									sujoodCount === 1
+										? { duration: 0.8, repeat: Infinity, ease: 'easeInOut' }
+										: { delay: 0.1, ...spring }
+								}
+								whileTap={{ scale: 0.93 }}
 							>
-								{t('session.sensorUnsupported')}
-							</motion.div>
+								{sujoodCount === 0 ? t('session.manualSujood1') : t('session.manualSujood2')}
+							</motion.button>
 						)}
 
 						<AnimatePresence mode="wait">
