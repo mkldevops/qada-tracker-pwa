@@ -48,18 +48,14 @@ describe('useVersionCheck', () => {
 
 	it('sets updateAvailable = true when version changes', async () => {
 		const { result } = await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1'));
-		await act(async () => {
-			vi.advanceTimersByTime(POLL_INTERVAL_MS + 100);
-		});
+		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
 		await act(async () => {});
 		expect(result.current.updateAvailable).toBe(true);
 	});
 
 	it('dismiss sets updateAvailable back to false', async () => {
 		const { result } = await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1'));
-		await act(async () => {
-			vi.advanceTimersByTime(POLL_INTERVAL_MS + 100);
-		});
+		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
 		await act(async () => {});
 		expect(result.current.updateAvailable).toBe(true);
 
@@ -70,9 +66,7 @@ describe('useVersionCheck', () => {
 	it('dismiss prevents re-triggering for the same new version (regression guard)', async () => {
 		// Bug fixed in #46: dismiss() must advance currentVersionRef so polling does not re-show the dialog
 		const { result } = await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1', '1.0.1'));
-		await act(async () => {
-			vi.advanceTimersByTime(POLL_INTERVAL_MS + 100);
-		});
+		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
 		await act(async () => {});
 		expect(result.current.updateAvailable).toBe(true);
 
@@ -80,9 +74,7 @@ describe('useVersionCheck', () => {
 		expect(result.current.updateAvailable).toBe(false);
 
 		// Next poll returns same new version — must NOT re-open
-		await act(async () => {
-			vi.advanceTimersByTime(POLL_INTERVAL_MS + 100);
-		});
+		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
 		await act(async () => {});
 		expect(result.current.updateAvailable).toBe(false);
 	});
