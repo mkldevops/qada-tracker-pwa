@@ -519,7 +519,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 									if (sujoodCount === 0) {
 										navigator.vibrate?.(100);
 										setSujoodCount(1);
-									} else {
+									} else if (!busyRef.current) {
 										navigator.vibrate?.([50, 50, 150]);
 										setSujoodCount(0);
 										handleAutoIncrement();
