@@ -86,6 +86,11 @@
 	},
 	"settings": {
 		"title": "Settings",
+		"tabDebt": "DEBT",
+		"tabSession": "SESSION",
+		"tabApp": "APP",
+		"debtByYears": "By years",
+		"debtManual": "Manual",
 		"calculateDebt": "CALCULATE DEBT",
 		"missedYears": "Missed years",
 		"yearsPlaceholder": "e.g. 5.5",
