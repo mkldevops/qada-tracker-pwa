@@ -1,6 +1,7 @@
 import { CheckCircle2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { formatDays } from '@/lib/formatDays';
 import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
@@ -15,12 +16,6 @@ type DebtData =
 
 const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 const springSnappy = { type: 'spring' as const, stiffness: 500, damping: 28 };
-
-const PERIODS: { value: Period; label: string }[] = [
-	{ value: 'daily', label: 'Jour' },
-	{ value: 'weekly', label: 'Semaine' },
-	{ value: 'monthly', label: 'Mois' },
-];
 
 const inputStyle = {
 	background: '#1A1A1C',
@@ -70,6 +65,8 @@ function ErrorBanner({ message }: { message: string }) {
 }
 
 function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => void }) {
+	const { t } = useTranslation();
+
 	return (
 		<motion.div
 			key="welcome"
@@ -106,10 +103,10 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 					transition={{ delay: 0.1, ...spring }}
 				>
 					<h1 className="font-display text-4xl font-normal" style={{ color: '#F5F5F0' }}>
-						Bienvenue
+						{t('onboarding.welcome')}
 					</h1>
 					<p className="text-sm leading-relaxed max-w-[260px]" style={{ color: '#6E6E70' }}>
-						Configurez votre rattrapage de prières en 2 étapes
+						{t('onboarding.welcomeSubtitle')}
 					</p>
 				</motion.div>
 			</motion.div>
@@ -125,8 +122,8 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
 				>
 					{[
-						{ n: '1', label: 'Votre dette', sub: 'Années manquées ou saisie manuelle' },
-						{ n: '2', label: 'Votre objectif', sub: 'Quotidien, hebdo ou mensuel' },
+						{ n: '1', label: t('onboarding.step1Label'), sub: t('onboarding.step1Sub') },
+						{ n: '2', label: t('onboarding.step2Label'), sub: t('onboarding.step2Sub') },
 					].map(({ n, label, sub }, i) => (
 						<motion.div
 							key={n}
@@ -167,7 +164,7 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 					whileTap={{ scale: 0.95 }}
 					whileHover={{ scale: 1.02 }}
 				>
-					COMMENCER
+					{t('onboarding.start')}
 				</motion.button>
 				<motion.button
 					type="button"
@@ -176,7 +173,7 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 					style={{ color: '#4A4A4C' }}
 					whileTap={{ scale: 0.95 }}
 				>
-					Passer la configuration
+					{t('onboarding.skipConfig')}
 				</motion.button>
 			</motion.div>
 		</motion.div>
@@ -194,6 +191,7 @@ function DebtStep({
 	saving: boolean;
 	saveError: string | null;
 }) {
+	const { t } = useTranslation();
 	const [debtMode, setDebtMode] = useState<DebtMode>('years');
 
 	// Years mode
@@ -244,7 +242,7 @@ function DebtStep({
 			<div className="flex flex-col gap-3">
 				<StepIndicator current={1} total={2} />
 				<h2 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
-					Votre dette
+					{t('onboarding.debtTitle')}
 				</h2>
 			</div>
 
@@ -268,7 +266,7 @@ function DebtStep({
 							transition={springSnappy}
 							whileTap={{ scale: 0.96 }}
 						>
-							{m === 'years' ? 'Par années' : 'Manuel'}
+							{m === 'years' ? t('onboarding.byYears') : t('onboarding.manual')}
 						</motion.button>
 					);
 				})}
@@ -292,14 +290,14 @@ function DebtStep({
 									className="text-sm font-medium"
 									style={{ color: '#F5F5F0' }}
 								>
-									Années manquées
+									{t('onboarding.missedYears')}
 								</label>
 								<input
 									id="ob-years"
 									type="number"
 									value={years}
 									onChange={(e) => setYears(e.target.value)}
-									placeholder="ex : 5.5"
+									placeholder={t('onboarding.yearsPlaceholder')}
 									min="0.5"
 									max="100"
 									step="0.5"
@@ -313,7 +311,7 @@ function DebtStep({
 									className="text-[11px] font-medium"
 									style={{ color: '#9A9A9C' }}
 								>
-									Jours exclus (optionnel)
+									{t('onboarding.excludedDays')}
 								</label>
 								<input
 									id="ob-excluded"
@@ -332,17 +330,17 @@ function DebtStep({
 						<div className="flex items-center justify-between">
 							<div className="flex flex-col gap-0.5">
 								<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
-									Femme
+									{t('onboarding.female')}
 								</span>
 								<span className="text-[11px]" style={{ color: '#6E6E70' }}>
-									Déduire les jours de hayd
+									{t('onboarding.femaleDesc')}
 								</span>
 							</div>
 							<button
 								type="button"
 								role="switch"
 								aria-checked={isFemme}
-								aria-label="Déduire les jours de hayd"
+								aria-label={t('onboarding.femaleDesc')}
 								onClick={() => setIsFemme((v) => !v)}
 								className="relative h-7 w-12 rounded-full transition-colors"
 								style={{ background: isFemme ? '#C9A962' : '#3A3A3C' }}
@@ -370,7 +368,7 @@ function DebtStep({
 										className="text-xs font-medium"
 										style={{ color: '#9A9A9C' }}
 									>
-										Moy. jours de hayd / mois
+										{t('onboarding.haydAvg')}
 									</label>
 									<input
 										id="ob-hayd"
@@ -394,7 +392,10 @@ function DebtStep({
 											animate={{ opacity: 1 }}
 											transition={spring}
 										>
-											≈ {haydExclusion} jours déduits ({totalExcluded} au total)
+											{t('onboarding.haydDeducted', {
+												deducted: haydExclusion,
+												total: totalExcluded,
+											})}
 										</motion.p>
 									)}
 								</motion.div>
@@ -442,7 +443,7 @@ function DebtStep({
 											onChange={(e) =>
 												setManualAmounts((prev) => ({ ...prev, [prayer]: e.target.value }))
 											}
-											placeholder="Nombre total"
+											placeholder={t('onboarding.manualPlaceholder')}
 											min="0"
 											style={{ ...inputStyle, height: 36, fontSize: 13 }}
 										/>
@@ -461,7 +462,7 @@ function DebtStep({
 									transition={spring}
 								>
 									<span className="text-xs" style={{ color: '#6E9E6E' }}>
-										Total
+										{t('onboarding.total')}
 									</span>
 									<span
 										className="text-base font-semibold tabular-nums"
@@ -488,11 +489,11 @@ function DebtStep({
 						transition={spring}
 					>
 						<p className="text-[11px] font-medium tracking-[2px]" style={{ color: '#6E9E6E' }}>
-							APERÇU
+							{t('onboarding.preview')}
 						</p>
 						<div className="flex justify-between items-center">
 							<span className="text-sm" style={{ color: '#6E6E70' }}>
-								Total estimé
+								{t('onboarding.estimatedTotal')}
 							</span>
 							<motion.span
 								key={totalPreview}
@@ -548,7 +549,7 @@ function DebtStep({
 							/>
 						</motion.span>
 					) : (
-						'SUIVANT'
+						t('onboarding.next')
 					)}
 				</motion.button>
 				<motion.button
@@ -558,7 +559,7 @@ function DebtStep({
 					style={{ color: '#4A4A4C' }}
 					whileTap={{ scale: 0.95 }}
 				>
-					Passer cette étape
+					{t('onboarding.skipStep')}
 				</motion.button>
 			</div>
 		</motion.div>
@@ -574,6 +575,7 @@ function ObjectiveStep({
 	saving: boolean;
 	saveError: string | null;
 }) {
+	const { t } = useTranslation();
 	const totalRemaining = useTotalRemaining();
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
 	const [objTarget, setObjTarget] = useState('');
@@ -617,10 +619,10 @@ function ObjectiveStep({
 				<StepIndicator current={2} total={2} />
 				<div className="flex flex-col gap-1">
 					<h2 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
-						Votre objectif
+						{t('onboarding.objectiveTitle')}
 					</h2>
 					<p className="text-sm" style={{ color: '#6E6E70' }}>
-						Combien de prières voulez-vous rattraper ?
+						{t('onboarding.objectiveSubtitle')}
 					</p>
 				</div>
 			</div>
@@ -633,7 +635,11 @@ function ObjectiveStep({
 					className="flex gap-1.5 rounded-2xl p-1"
 					style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
 				>
-					{PERIODS.map(({ value, label }) => {
+					{[
+						{ value: 'daily' as Period, label: t('common.day_cap') },
+						{ value: 'weekly' as Period, label: t('common.week_cap') },
+						{ value: 'monthly' as Period, label: t('common.month_cap') },
+					].map(({ value, label }) => {
 						const active = objPeriod === value;
 						return (
 							<motion.button
@@ -657,8 +663,11 @@ function ObjectiveStep({
 				<div className="flex flex-col gap-1.5">
 					<div className="flex items-center justify-between">
 						<label htmlFor="ob-target" className="text-xs font-medium" style={{ color: '#6E6E70' }}>
-							Cible par{' '}
-							{objPeriod === 'daily' ? 'jour' : objPeriod === 'weekly' ? 'semaine' : 'mois'}
+							{t('onboarding.targetPer', {
+								period: t(
+									`common.${objPeriod === 'daily' ? 'day' : objPeriod === 'weekly' ? 'week' : 'month'}`,
+								),
+							})}
 						</label>
 						<AnimatePresence>
 							{suggestion && (
@@ -672,7 +681,7 @@ function ObjectiveStep({
 									exit={{ opacity: 0, x: 8 }}
 									transition={spring}
 								>
-									Suggestion : {suggestion}
+									{t('onboarding.suggestion', { value: suggestion })}
 								</motion.button>
 							)}
 						</AnimatePresence>
@@ -682,7 +691,11 @@ function ObjectiveStep({
 						type="number"
 						value={objTarget}
 						onChange={(e) => setObjTarget(e.target.value)}
-						placeholder={suggestion ? `ex : ${suggestion}` : 'Nombre cible'}
+						placeholder={
+							suggestion
+								? t('onboarding.inputPlaceholder', { value: suggestion })
+								: t('onboarding.targetPlaceholder')
+						}
 						min="1"
 						style={inputStyle}
 					/>
@@ -699,7 +712,7 @@ function ObjectiveStep({
 							transition={spring}
 						>
 							<span className="text-xs" style={{ color: '#6E6E70' }}>
-								Estimation d'achèvement
+								{t('onboarding.estimationLabel')}
 							</span>
 							<motion.span
 								key={estimation}
@@ -709,7 +722,7 @@ function ObjectiveStep({
 								animate={{ opacity: 1, y: 0 }}
 								transition={spring}
 							>
-								≈ {estimation}
+								{t('onboarding.estimationValue', { value: estimation })}
 							</motion.span>
 						</motion.div>
 					)}
@@ -737,7 +750,7 @@ function ObjectiveStep({
 							/>
 						</motion.span>
 					) : (
-						'TERMINER'
+						t('onboarding.finish')
 					)}
 				</motion.button>
 				<motion.button
@@ -747,7 +760,7 @@ function ObjectiveStep({
 					style={{ color: '#4A4A4C' }}
 					whileTap={{ scale: 0.95 }}
 				>
-					Passer cette étape
+					{t('onboarding.skipStep')}
 				</motion.button>
 			</div>
 		</motion.div>
@@ -755,6 +768,7 @@ function ObjectiveStep({
 }
 
 function SummaryStep({ onComplete }: { onComplete: () => void }) {
+	const { t } = useTranslation();
 	const totalRemaining = useTotalRemaining();
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
 
@@ -803,10 +817,10 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 				transition={{ delay: 0.25, ...spring }}
 			>
 				<h2 className="font-display text-4xl font-normal" style={{ color: '#F5F5F0' }}>
-					Tout est prêt !
+					{t('onboarding.summaryTitle')}
 				</h2>
 				<p className="text-sm" style={{ color: '#6E6E70' }}>
-					Voici un récapitulatif de votre configuration
+					{t('onboarding.summarySubtitle')}
 				</p>
 			</motion.div>
 
@@ -819,7 +833,7 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 			>
 				<div className="flex items-center justify-between px-5 py-4">
 					<span className="text-sm" style={{ color: '#6E6E70' }}>
-						Prières à rattraper
+						{t('onboarding.prayersToCatch')}
 					</span>
 					<span className="text-xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
 						{totalRemaining.toLocaleString()}
@@ -828,11 +842,16 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 				<div style={{ height: 1, background: '#2A2A2C' }} />
 				<div className="flex items-center justify-between px-5 py-4">
 					<span className="text-sm" style={{ color: '#6E6E70' }}>
-						Objectif
+						{t('onboarding.summaryObjective')}
 					</span>
 					<span className="text-sm font-semibold" style={{ color: '#F5F5F0' }}>
 						{activeObjective
-							? `${activeObjective.target} / ${activeObjective.period === 'daily' ? 'jour' : activeObjective.period === 'weekly' ? 'semaine' : 'mois'}`
+							? t('onboarding.summaryObjectivePeriod', {
+									target: activeObjective.target,
+									period: t(
+										`common.${activeObjective.period === 'daily' ? 'day' : activeObjective.period === 'weekly' ? 'week' : 'month'}`,
+									),
+								})
 							: '—'}
 					</span>
 				</div>
@@ -849,13 +868,14 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 				whileTap={{ scale: 0.95 }}
 				whileHover={{ scale: 1.02 }}
 			>
-				COMMENCER
+				{t('onboarding.save')}
 			</motion.button>
 		</motion.div>
 	);
 }
 
 export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
+	const { t } = useTranslation();
 	const { setDebtFromYears, setDebtManual, setObjective } = usePrayerStore();
 	const [step, setStep] = useState<Step>('welcome');
 	const [saving, setSaving] = useState(false);
@@ -875,7 +895,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 			}
 			setStep('objective');
 		} catch {
-			setSaveError('Erreur lors de la sauvegarde. Veuillez réessayer.');
+			setSaveError(t('onboarding.saveError'));
 		} finally {
 			setSaving(false);
 		}
@@ -888,7 +908,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 			await setObjective(period, target);
 			setStep('summary');
 		} catch {
-			setSaveError('Erreur lors de la sauvegarde. Veuillez réessayer.');
+			setSaveError(t('onboarding.saveError'));
 		} finally {
 			setSaving(false);
 		}

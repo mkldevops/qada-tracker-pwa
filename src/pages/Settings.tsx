@@ -1,5 +1,6 @@
 import { Download, RotateCcw, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -19,18 +20,19 @@ import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStor
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
-const PERIODS: { value: Period; label: string }[] = [
-	{ value: 'daily', label: 'Jour' },
-	{ value: 'weekly', label: 'Semaine' },
-	{ value: 'monthly', label: 'Mois' },
-];
-
-const SESSION_ORDERS: { value: SessionOrder; label: string }[] = [
-	{ value: 'chronological', label: 'Chronologique' },
-	{ value: 'highest-debt', label: 'Priorité dette' },
-];
-
 export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
+	const { t, i18n } = useTranslation();
+
+	const PERIODS: { value: Period; label: string }[] = [
+		{ value: 'daily', label: t('common.day_cap') },
+		{ value: 'weekly', label: t('common.week_cap') },
+		{ value: 'monthly', label: t('common.month_cap') },
+	];
+
+	const SESSION_ORDERS: { value: SessionOrder; label: string }[] = [
+		{ value: 'chronological', label: t('settings.chronological') },
+		{ value: 'highest-debt', label: t('settings.highestDebt') },
+	];
 	const {
 		setDebtManual,
 		setDebtFromYears,
@@ -96,9 +98,9 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	const handleExport = async () => {
 		try {
 			await exportBackup(db);
-			setDataFeedback({ type: 'success', message: 'Sauvegarde téléchargée.' });
+			setDataFeedback({ type: 'success', message: t('settings.exportSuccess') });
 		} catch {
-			setDataFeedback({ type: 'error', message: "Impossible d'exporter la sauvegarde." });
+			setDataFeedback({ type: 'error', message: t('settings.exportError') });
 		}
 	};
 
@@ -114,9 +116,9 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 		if (!pendingFile) return;
 		try {
 			await importBackup(db, pendingFile, loadAll);
-			setDataFeedback({ type: 'success', message: 'Données restaurées avec succès.' });
+			setDataFeedback({ type: 'success', message: t('settings.importSuccess') });
 		} catch {
-			setDataFeedback({ type: 'error', message: 'Fichier invalide ou corrompu.' });
+			setDataFeedback({ type: 'error', message: t('settings.importError') });
 		} finally {
 			setPendingFile(null);
 		}
@@ -138,13 +140,13 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	return (
 		<div className="space-y-6 px-7 pb-4 pt-1">
 			<h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
-				Réglages
+				{t('settings.title')}
 			</h1>
 
 			{/* Section 1: Debt from years */}
 			<section className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					CALCULER LA DETTE
+					{t('settings.calculateDebt')}
 				</p>
 				<div
 					className="flex flex-col gap-4 rounded-[20px] p-5"
@@ -157,14 +159,14 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 								className="text-xs font-medium"
 								style={{ color: '#6E6E70' }}
 							>
-								Années manquées
+								{t('settings.missedYears')}
 							</label>
 							<input
 								id="input-years"
 								type="number"
 								value={years}
 								onChange={(e) => setYears(e.target.value)}
-								placeholder="ex : 5.5"
+								placeholder={t('settings.yearsPlaceholder')}
 								min="0"
 								step="0.5"
 								style={inputStyle}
@@ -176,7 +178,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 								className="text-xs font-medium"
 								style={{ color: '#6E6E70' }}
 							>
-								Autres jours exclus
+								{t('settings.excludedDays')}
 							</label>
 							<input
 								id="input-excluded"
@@ -195,10 +197,10 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 					<div className="flex items-center justify-between">
 						<div className="flex flex-col gap-0.5">
 							<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
-								Femme
+								{t('settings.female')}
 							</span>
 							<span className="text-[11px]" style={{ color: '#6E6E70' }}>
-								Déduire les jours de menstrues (hayd)
+								{t('settings.femaleDesc')}
 							</span>
 						</div>
 						<button
@@ -224,7 +226,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 								className="text-xs font-medium"
 								style={{ color: '#6E6E70' }}
 							>
-								Moy. jours de hayd / mois
+								{t('settings.haydAvg')}
 							</label>
 							<input
 								id="input-hayd"
@@ -238,7 +240,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 							/>
 							{parseFloat(years) > 0 && (
 								<p className="text-[11px]" style={{ color: '#6E9E6E' }}>
-									≈ {haydExclusion} jours déduits ({totalExcluded} au total)
+									{t('settings.haydDeducted', { deducted: haydExclusion, total: totalExcluded })}
 								</p>
 							)}
 						</div>
@@ -251,7 +253,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 						className="flex w-full items-center justify-center rounded-3xl py-3 text-[13px] font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30"
 						style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
 					>
-						APPLIQUER
+						{t('settings.apply')}
 					</button>
 				</div>
 			</section>
@@ -259,7 +261,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 			{/* Section 2: Manual adjustment */}
 			<section className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					AJUSTEMENT MANUEL
+					{t('settings.manualAdjust')}
 				</p>
 				<div
 					className="overflow-hidden rounded-[20px]"
@@ -287,7 +289,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 										onChange={(e) =>
 											setManualAmounts((prev) => ({ ...prev, [prayer]: e.target.value }))
 										}
-										placeholder="Nouveau total"
+										placeholder={t('settings.newTotal')}
 										min="0"
 										style={{ ...inputStyle, height: 36, fontSize: 13 }}
 									/>
@@ -310,7 +312,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 			{/* Section 3: Objective */}
 			<section className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					OBJECTIF
+					{t('settings.objective')}
 				</p>
 				<div
 					className="flex flex-col gap-4 rounded-[20px] p-5"
@@ -318,12 +320,12 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 				>
 					{activeObjective && (
 						<p className="text-xs" style={{ color: '#6E6E70' }}>
-							Actuel : {activeObjective.target} /
-							{activeObjective.period === 'daily'
-								? ' jour'
-								: activeObjective.period === 'weekly'
-									? ' semaine'
-									: ' mois'}
+							{t('settings.currentObjective', {
+								target: activeObjective.target,
+								period: t(
+									`common.${activeObjective.period === 'daily' ? 'day' : activeObjective.period === 'weekly' ? 'week' : 'month'}`,
+								),
+							})}
 						</p>
 					)}
 					<div className="flex gap-2">
@@ -348,7 +350,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 							type="number"
 							value={objTarget}
 							onChange={(e) => setObjTarget(e.target.value)}
-							placeholder="Nombre cible"
+							placeholder={t('settings.targetPlaceholder')}
 							min="1"
 							style={{ ...inputStyle, flex: 1 }}
 						/>
@@ -368,7 +370,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 			{/* Section 4: Session order */}
 			<section className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					SESSION
+					{t('settings.session')}
 				</p>
 				<div
 					className="flex flex-col gap-4 rounded-[20px] p-5"
@@ -376,10 +378,10 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 				>
 					<div className="flex flex-col gap-1">
 						<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
-							Ordre des prières
+							{t('settings.prayerOrder')}
 						</span>
 						<span className="text-[11px]" style={{ color: '#6E6E70' }}>
-							Ordre dans lequel les prières sont proposées en session
+							{t('settings.prayerOrderDesc')}
 						</span>
 					</div>
 					<div className="flex gap-2">
@@ -402,10 +404,37 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 				</div>
 			</section>
 
+			{/* Section: Language */}
+			<section className="flex flex-col gap-2.5">
+				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+					{t('settings.language')}
+				</p>
+				<div
+					className="flex gap-2 rounded-[20px] p-3"
+					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				>
+					{(['fr', 'en'] as const).map((lang) => (
+						<button
+							key={lang}
+							type="button"
+							onClick={() => i18n.changeLanguage(lang)}
+							className="flex-1 rounded-[16px] py-2.5 text-[13px] font-semibold transition-colors"
+							style={
+								i18n.language === lang
+									? { background: '#C9A962', color: '#1A1A1C' }
+									: { background: '#1A1A1C', border: '1px solid #3A3A3C', color: '#4A4A4C' }
+							}
+						>
+							{lang === 'fr' ? 'Français' : 'English'}
+						</button>
+					))}
+				</div>
+			</section>
+
 			{onRestartOnboarding && (
 				<section className="flex flex-col gap-2.5">
 					<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-						CONFIGURATION
+						{t('settings.configuration')}
 					</p>
 					<button
 						type="button"
@@ -415,7 +444,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 					>
 						<RotateCcw size={16} style={{ color: '#C9A962' }} />
 						<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
-							RECONFIGURER L'ONBOARDING
+							{t('settings.restartOnboarding')}
 						</span>
 					</button>
 				</section>
@@ -424,7 +453,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 			{/* Section 5: Data backup */}
 			<section className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					DONNÉES
+					{t('settings.data')}
 				</p>
 				<div
 					className="flex flex-col gap-3 rounded-[20px] p-5"
@@ -446,7 +475,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 					>
 						<Download size={16} style={{ color: '#C9A962' }} />
 						<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
-							EXPORTER LA SAUVEGARDE
+							{t('settings.exportBackup')}
 						</span>
 					</button>
 
@@ -473,30 +502,30 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 							>
 								<Upload size={16} style={{ color: '#C9A962' }} />
 								<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
-									IMPORTER UNE SAUVEGARDE
+									{t('settings.importBackup')}
 								</span>
 							</button>
 						</AlertDialogTrigger>
 						<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
 							<AlertDialogHeader>
 								<AlertDialogTitle style={{ color: '#F5F5F0' }}>
-									Importer la sauvegarde ?
+									{t('settings.importDialogTitle')}
 								</AlertDialogTitle>
 								<AlertDialogDescription style={{ color: '#6E6E70' }}>
-									{pendingFile?.name} — Les données actuelles seront remplacées. Irréversible.
+									{t('settings.importDialogDesc', { filename: pendingFile?.name ?? '' })}
 								</AlertDialogDescription>
 							</AlertDialogHeader>
 							<AlertDialogFooter>
 								<AlertDialogCancel
 									style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
 								>
-									Annuler
+									{t('settings.importDialogCancel')}
 								</AlertDialogCancel>
 								<AlertDialogAction
 									onClick={handleImportConfirm}
 									style={{ background: '#C9A962', color: '#1A1A1C' }}
 								>
-									Importer
+									{t('settings.importDialogConfirm')}
 								</AlertDialogAction>
 							</AlertDialogFooter>
 						</AlertDialogContent>
@@ -507,14 +536,14 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 			{/* Version */}
 			<section className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					APPLICATION
+					{t('settings.application')}
 				</p>
 				<div
 					className="flex items-center justify-between rounded-[20px] px-5 py-4"
 					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
 				>
 					<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
-						Version
+						{t('settings.version')}
 					</span>
 					<span className="text-sm" style={{ color: '#6E6E70' }}>
 						{__APP_VERSION__}
@@ -525,7 +554,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 			{/* Danger zone */}
 			<section className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					ZONE DANGER
+					{t('settings.dangerZone')}
 				</p>
 				<AlertDialog>
 					<AlertDialogTrigger asChild>
@@ -536,22 +565,24 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 						>
 							<Trash2 size={18} style={{ color: '#D45F5F' }} />
 							<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#D45F5F' }}>
-								RÉINITIALISER TOUTES LES DONNÉES
+								{t('settings.resetAll')}
 							</span>
 						</button>
 					</AlertDialogTrigger>
 					<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
 						<AlertDialogHeader>
-							<AlertDialogTitle style={{ color: '#F5F5F0' }}>Tout réinitialiser ?</AlertDialogTitle>
+							<AlertDialogTitle style={{ color: '#F5F5F0' }}>
+								{t('settings.resetDialogTitle')}
+							</AlertDialogTitle>
 							<AlertDialogDescription style={{ color: '#6E6E70' }}>
-								Efface tous les logs et remet les compteurs à zéro. Irréversible.
+								{t('settings.resetDialogDesc')}
 							</AlertDialogDescription>
 						</AlertDialogHeader>
 						<AlertDialogFooter>
 							<AlertDialogCancel
 								style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
 							>
-								Annuler
+								{t('settings.resetDialogCancel')}
 							</AlertDialogCancel>
 							<AlertDialogAction
 								onClick={async () => {
@@ -561,7 +592,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 								}}
 								style={{ background: '#D45F5F', color: '#F5F5F0' }}
 							>
-								Réinitialiser
+								{t('settings.resetDialogConfirm')}
 							</AlertDialogAction>
 						</AlertDialogFooter>
 					</AlertDialogContent>
