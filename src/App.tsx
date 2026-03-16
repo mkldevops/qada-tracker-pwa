@@ -1,7 +1,9 @@
+import { useRegisterSW } from 'virtual:pwa-register/react';
 import { AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { BottomNav } from '@/components/BottomNav';
 import { InstallBanner } from '@/components/InstallBanner';
+import { UpdateBanner } from '@/components/UpdateBanner';
 import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
 import { type BeforeInstallPromptEvent, shouldShowInstallBanner } from '@/lib/pwa';
 import { Dashboard } from '@/pages/Dashboard';
@@ -18,6 +20,10 @@ export function App() {
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 	const { loadAll, isLoading } = usePrayerStore();
+	const {
+		needRefresh: [needRefresh, setNeedRefresh],
+		updateServiceWorker,
+	} = useRegisterSW();
 
 	useEffect(() => {
 		loadAll();
@@ -72,6 +78,14 @@ export function App() {
 	return (
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
 			<main className="mx-auto max-w-lg pt-4 pb-28">{pages[activeTab]}</main>
+			<AnimatePresence>
+				{!showOnboarding && needRefresh && (
+					<UpdateBanner
+						onUpdate={() => updateServiceWorker(true)}
+						onDismiss={() => setNeedRefresh(false)}
+					/>
+				)}
+			</AnimatePresence>
 			<AnimatePresence>
 				{!showOnboarding && installPrompt && shouldShowInstallBanner() && (
 					<InstallBanner prompt={installPrompt} onDismiss={() => setInstallPrompt(null)} />

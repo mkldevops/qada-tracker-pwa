@@ -3,13 +3,17 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { defineConfig } from 'vitest/config';
+import pkg from './package.json' with { type: 'json' };
 
 export default defineConfig({
+	define: {
+		__APP_VERSION__: JSON.stringify(pkg.version),
+	},
 	plugins: [
 		react(),
 		tailwindcss(),
 		VitePWA({
-			registerType: 'autoUpdate',
+			registerType: 'prompt',
 			includeAssets: ['icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png'],
 			manifest: {
 				name: 'Qada Tracker',
