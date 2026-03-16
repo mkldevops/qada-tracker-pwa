@@ -151,10 +151,14 @@ export function Dashboard() {
 
 				<div className="flex gap-3">
 					<StatPill label={t('dashboard.today')} value={stats.today} color="#C9A962" />
-					<StatPill label={t('dashboard.streak')} value={`${stats.streak}j`} color="#6E9E6E" />
+					<StatPill
+						label={t('dashboard.streak')}
+						value={`${stats.streak}${t('common.dayShort')}`}
+						color="#6E9E6E"
+					/>
 					<StatPill
 						label={t('dashboard.estimation')}
-						value={stats.estimatedDays ? formatDays(stats.estimatedDays) : '—'}
+						value={stats.estimatedDays ? formatDays(stats.estimatedDays, t) : '—'}
 					/>
 				</div>
 

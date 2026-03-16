@@ -603,7 +603,7 @@ function ObjectiveStep({
 				: objPeriod === 'weekly'
 					? totalPeriods * 7
 					: totalPeriods * 30;
-		return formatDays(totalDays);
+		return formatDays(totalDays, t);
 	})();
 
 	return (

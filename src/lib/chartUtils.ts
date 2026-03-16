@@ -24,10 +24,10 @@ export function aggregateDaily(data: { date: string; count: number }[]): Bar[] {
 	return data.map((d) => ({ label: d.date, count: d.count, isToday: d.date === today }));
 }
 
-export function formatTooltipDate(date: string, weekly: boolean): string {
+export function formatTooltipDate(date: string, weekly: boolean, locale = 'fr'): string {
 	const d = new Date(`${date}T00:00:00`);
 	if (weekly) {
-		return `Sem. ${d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`;
+		return d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 	}
-	return d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+	return d.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
 }

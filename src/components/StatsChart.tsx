@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { db } from '@/db/database';
 import { getLogsByPeriod } from '@/db/queries';
 import { aggregateDaily, aggregateWeekly, formatTooltipDate } from '@/lib/chartUtils';
@@ -18,6 +19,7 @@ const CHART_PERIOD_KEY = 'chart_period_days';
 const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
 export function StatsChart() {
+	const { t, i18n } = useTranslation();
 	const [days, setDays] = useState(() => {
 		const stored = Number(localStorage.getItem(CHART_PERIOD_KEY));
 		return PERIODS.some((p) => p.days === stored) ? stored : 30;
@@ -102,10 +104,10 @@ export function StatsChart() {
 						>
 							<div className="rounded-xl px-3 py-1.5 text-center" style={{ background: '#3A3A3C' }}>
 								<p className="text-[10px] font-medium" style={{ color: '#F5F5F0' }}>
-									{bars[selectedIndex].count} prière{bars[selectedIndex].count !== 1 ? 's' : ''}
+									{t('stats.prayerCount', { count: bars[selectedIndex].count })}
 								</p>
 								<p className="text-[9px]" style={{ color: '#6E6E70' }}>
-									{formatTooltipDate(bars[selectedIndex].label, weekly)}
+									{formatTooltipDate(bars[selectedIndex].label, weekly, i18n.language)}
 								</p>
 							</div>
 							<div className="h-1.5 w-[1px]" style={{ background: '#3A3A3C' }} />
@@ -124,7 +126,7 @@ export function StatsChart() {
 									<motion.button
 										key={`${days}-${bar.label}`}
 										type="button"
-										aria-label={`${bar.count} prière${bar.count !== 1 ? 's' : ''}, ${formatTooltipDate(bar.label, weekly)}`}
+										aria-label={`${t('stats.prayerCount', { count: bar.count })}, ${formatTooltipDate(bar.label, weekly, i18n.language)}`}
 										className="flex-1 cursor-pointer rounded-t-[2px] border-0 p-0"
 										style={{
 											background: isHighlighted ? '#C9A962' : '#3A3A3C',
@@ -149,7 +151,7 @@ export function StatsChart() {
 					</div>
 				) : (
 					<div className="flex h-24 items-center justify-center pt-10" style={{ color: '#4A4A4C' }}>
-						<p className="text-xs">Aucune prière sur cette période</p>
+						<p className="text-xs">{t('stats.noPrayersInPeriod')}</p>
 					</div>
 				)}
 			</div>

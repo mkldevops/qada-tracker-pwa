@@ -5,7 +5,14 @@
 		"month": "month",
 		"day_cap": "Day",
 		"week_cap": "Week",
-		"month_cap": "Month"
+		"month_cap": "Month",
+		"year_one": "{{count}} year",
+		"year_other": "{{count}} years",
+		"monthCount_one": "{{count}} month",
+		"monthCount_other": "{{count}} months",
+		"dayCount": "{{count}} d",
+		"dayShort": "d",
+		"lessThanOneDay": "< 1 day"
 	},
 	"nav": {
 		"home": "HOME",
@@ -33,7 +40,10 @@
 		"avgPerDay": "avg/day",
 		"estimation": "Estimated time to finish",
 		"debtByPrayer": "DEBT BY PRAYER",
-		"totalRemaining": "Total remaining"
+		"totalRemaining": "Total remaining",
+		"prayerCount_one": "{{count}} prayer",
+		"prayerCount_other": "{{count}} prayers",
+		"noPrayersInPeriod": "No prayers in this period"
 	},
 	"log": {
 		"title": "Log",

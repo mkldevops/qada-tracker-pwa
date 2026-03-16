@@ -58,7 +58,11 @@ export function Stats() {
 
 			<div className="grid grid-cols-2 gap-3">
 				<StatTile label={t('stats.today')} value={stats.today} />
-				<StatTile label={t('stats.streak')} value={`${stats.streak}j`} color="#C9A962" />
+				<StatTile
+					label={t('stats.streak')}
+					value={`${stats.streak}${t('common.dayShort')}`}
+					color="#C9A962"
+				/>
 				<StatTile label={t('stats.thisWeek')} value={stats.thisWeek} />
 				<StatTile
 					label={t('stats.avgPerDay')}
@@ -76,7 +80,7 @@ export function Stats() {
 						{t('stats.estimation')}
 					</span>
 					<span className="text-3xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
-						{formatDays(stats.estimatedDays!)}
+						{formatDays(stats.estimatedDays!, t)}
 					</span>
 				</div>
 			)}

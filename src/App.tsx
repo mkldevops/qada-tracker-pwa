@@ -1,6 +1,7 @@
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BottomNav } from '@/components/BottomNav';
 import { InstallBanner } from '@/components/InstallBanner';
 import { UpdateBanner } from '@/components/UpdateBanner';
@@ -16,6 +17,7 @@ import { usePrayerStore } from '@/stores/prayerStore';
 type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 
 export function App() {
+	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState<Tab>('dashboard');
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -73,7 +75,7 @@ export function App() {
 		try {
 			await updateServiceWorker(true);
 		} catch (error) {
-			setUpdateError('Mise à jour échouée. Veuillez recharger la page.');
+			setUpdateError(t('updateBanner.error'));
 			console.error('Update failed:', error);
 		}
 	};

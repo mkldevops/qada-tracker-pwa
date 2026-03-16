@@ -5,7 +5,14 @@
 		"month": "mois",
 		"day_cap": "Jour",
 		"week_cap": "Semaine",
-		"month_cap": "Mois"
+		"month_cap": "Mois",
+		"year_one": "{{count}} an",
+		"year_other": "{{count}} ans",
+		"monthCount_one": "{{count}} mois",
+		"monthCount_other": "{{count}} mois",
+		"dayCount": "{{count}} j",
+		"dayShort": "j",
+		"lessThanOneDay": "< 1 jour"
 	},
 	"nav": {
 		"home": "ACCUEIL",
@@ -33,7 +40,10 @@
 		"avgPerDay": "moy/jour",
 		"estimation": "Estimation pour finir",
 		"debtByPrayer": "DETTE PAR PRIÈRE",
-		"totalRemaining": "Total restant"
+		"totalRemaining": "Total restant",
+		"prayerCount_one": "{{count}} prière",
+		"prayerCount_other": "{{count}} prières",
+		"noPrayersInPeriod": "Aucune prière sur cette période"
 	},
 	"log": {
 		"title": "Logger",

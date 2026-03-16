@@ -420,7 +420,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 							onClick={() => i18n.changeLanguage(lang)}
 							className="flex-1 rounded-[16px] py-2.5 text-[13px] font-semibold transition-colors"
 							style={
-								i18n.language === lang
+								i18n.resolvedLanguage === lang
 									? { background: '#C9A962', color: '#1A1A1C' }
 									: { background: '#1A1A1C', border: '1px solid #3A3A3C', color: '#4A4A4C' }
 							}
