@@ -5,6 +5,17 @@ import { useTranslation } from 'react-i18next';
 import { BottomNav } from '@/components/BottomNav';
 import { InstallBanner } from '@/components/InstallBanner';
 import { UpdateBanner } from '@/components/UpdateBanner';
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useVersionCheck } from '@/hooks/useVersionCheck';
 import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
 import { type BeforeInstallPromptEvent, shouldShowInstallBanner } from '@/lib/pwa';
 import { Dashboard } from '@/pages/Dashboard';
@@ -27,6 +38,7 @@ export function App() {
 		needRefresh: [needRefresh, setNeedRefresh],
 		updateServiceWorker,
 	} = useRegisterSW();
+	const { updateAvailable, dismiss: dismissVersionUpdate } = useVersionCheck();
 
 	useEffect(() => {
 		loadAll();
@@ -100,6 +112,22 @@ export function App() {
 					/>
 				)}
 			</AnimatePresence>
+			<AlertDialog open={!showOnboarding && updateAvailable}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>{t('updateBanner.title')}</AlertDialogTitle>
+						<AlertDialogDescription>{t('updateBanner.subtitle')}</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel onClick={dismissVersionUpdate}>
+							{t('updateBanner.later')}
+						</AlertDialogCancel>
+						<AlertDialogAction onClick={() => window.location.reload()}>
+							{t('updateBanner.update')}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 			<AnimatePresence>
 				{!showOnboarding && !needRefresh && installPrompt && shouldShowInstallBanner() && (
 					<InstallBanner
