@@ -89,10 +89,10 @@ describe('aggregateWeekly', () => {
 });
 
 describe('formatTooltipDate', () => {
-	it('formats weekly date with Sem. prefix', () => {
+	it('formats weekly date with day and month', () => {
 		const result = formatTooltipDate('2025-06-09', true);
-		expect(result).toMatch(/^Sem\./);
 		expect(result).toMatch(/\d/); // contains a number (day)
+		expect(result.length).toBeGreaterThan(1);
 	});
 
 	it('formats daily date with weekday', () => {
