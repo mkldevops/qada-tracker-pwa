@@ -314,7 +314,9 @@ describe('getStats', () => {
 			session_id: null,
 		});
 		const stats = await queries.getStats(db);
-		// logsInWindow = thisMonth (only the log from today, 3), effectiveDays = 30
+		expect(stats.thisMonth).toBe(3);
+		expect(stats.allTime).toBe(4);
+		// logsInWindow = logs within effective 30-day window (only today), effectiveDays = 30
 		expect(stats.avgPerDay).toBeCloseTo(3 / 30);
 	});
 });
