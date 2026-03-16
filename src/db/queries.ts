@@ -130,6 +130,7 @@ async function getTemporalStats(db: QadaDB): Promise<{
 	let thisWeek = 0;
 	let thisMonth = 0;
 	let allTime = 0;
+	let firstLogDate: Date | null = null;
 
 	for (const log of all) {
 		const logDate = new Date(log.logged_at);
@@ -137,9 +138,25 @@ async function getTemporalStats(db: QadaDB): Promise<{
 		if (logDate >= startOfToday) today += log.quantity;
 		if (logDate >= weekAgo) thisWeek += log.quantity;
 		if (logDate >= monthAgo) thisMonth += log.quantity;
+		if (!firstLogDate || logDate < firstLogDate) firstLogDate = logDate;
 	}
 
-	const avgPerDay = allTime > 0 ? thisMonth / 30 : 0;
+	let avgPerDay = 0;
+	if (allTime > 0 && firstLogDate) {
+		const daysSinceFirst = Math.max(
+			1,
+			Math.floor((now.getTime() - firstLogDate.getTime()) / 86_400_000),
+		);
+		const effectiveDays = Math.min(daysSinceFirst, 30);
+		const windowStart = new Date(now);
+		windowStart.setDate(windowStart.getDate() - effectiveDays);
+		let logsInWindow = 0;
+		for (const log of all) {
+			const logDate = new Date(log.logged_at);
+			if (logDate >= windowStart) logsInWindow += log.quantity;
+		}
+		avgPerDay = logsInWindow > 0 ? logsInWindow / effectiveDays : 0;
+	}
 
 	return { today, thisWeek, thisMonth, allTime, avgPerDay };
 }
