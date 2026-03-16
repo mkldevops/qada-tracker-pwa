@@ -21,6 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
 
     steps:
       - uses: actions/checkout@v4
@@ -35,9 +36,11 @@ jobs:
 
       - name: Determine bump type
         id: bump
+        env:
+          BUMP_TYPE: ${{ github.event.inputs.bump || 'patch' }}
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "type=${{ github.event.inputs.bump }}" >> $GITHUB_OUTPUT
+            echo "type=$BUMP_TYPE" >> $GITHUB_OUTPUT
           else
             echo "type=patch" >> $GITHUB_OUTPUT
           fi
@@ -47,7 +50,7 @@ jobs:
           node-version: 20
 
       - name: Bump version
-        run: npm version ${{ steps.bump.outputs.type }} --no-git-tag-version
+        run: pnpm version ${{ steps.bump.outputs.type }} --no-git-tag-version
 
       - name: Extract version
         id: version
@@ -55,7 +58,7 @@ jobs:
 
       - name: Commit and tag
         run: |
-          git add package.json
+          git add package.json pnpm-lock.yaml
           git commit -m "chore(release): bump to v${{ steps.version.outputs.value }} [skip ci]"
           git tag "v${{ steps.version.outputs.value }}"
           git push origin main --tags

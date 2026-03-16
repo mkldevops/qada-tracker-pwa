@@ -19,6 +19,7 @@ export function App() {
 	const [activeTab, setActiveTab] = useState<Tab>('dashboard');
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+	const [updateError, setUpdateError] = useState<string | null>(null);
 	const { loadAll, isLoading } = usePrayerStore();
 	const {
 		needRefresh: [needRefresh, setNeedRefresh],
@@ -68,6 +69,15 @@ export function App() {
 		setShowOnboarding(true);
 	}
 
+	const handleUpdate = async () => {
+		try {
+			await updateServiceWorker(true);
+		} catch (error) {
+			setUpdateError('Mise à jour échouée. Veuillez recharger la page.');
+			console.error('Update failed:', error);
+		}
+	};
+
 	const pages = {
 		dashboard: <Dashboard />,
 		log: <LogPrayers />,
@@ -81,14 +91,20 @@ export function App() {
 			<AnimatePresence>
 				{!showOnboarding && needRefresh && (
 					<UpdateBanner
-						onUpdate={() => updateServiceWorker(true)}
+						key="update-banner"
+						onUpdate={handleUpdate}
 						onDismiss={() => setNeedRefresh(false)}
+						error={updateError}
 					/>
 				)}
 			</AnimatePresence>
 			<AnimatePresence>
-				{!showOnboarding && installPrompt && shouldShowInstallBanner() && (
-					<InstallBanner prompt={installPrompt} onDismiss={() => setInstallPrompt(null)} />
+				{!showOnboarding && !needRefresh && installPrompt && shouldShowInstallBanner() && (
+					<InstallBanner
+						key="install-banner"
+						prompt={installPrompt}
+						onDismiss={() => setInstallPrompt(null)}
+					/>
 				)}
 			</AnimatePresence>
 			<BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
