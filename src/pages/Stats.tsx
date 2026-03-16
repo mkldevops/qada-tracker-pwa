@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { StatsChart } from '@/components/StatsChart';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { formatDays } from '@/lib/formatDays';
@@ -29,6 +30,7 @@ function StatTile({
 }
 
 export function Stats() {
+	const { t } = useTranslation();
 	const stats = useStats();
 	const debts = useDebts();
 	const totalRemaining = useTotalRemaining();
@@ -36,7 +38,7 @@ export function Stats() {
 	return (
 		<div className="space-y-5 px-7 pb-4 pt-1">
 			<h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
-				Statistiques
+				{t('stats.title')}
 			</h1>
 
 			<div
@@ -44,7 +46,7 @@ export function Stats() {
 				style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
 			>
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#1A1A1C88' }}>
-					TOTAL LOGUÉ
+					{t('stats.totalLogged')}
 				</p>
 				<p
 					className="text-[52px] font-light leading-[0.85] tabular-nums"
@@ -55,11 +57,11 @@ export function Stats() {
 			</div>
 
 			<div className="grid grid-cols-2 gap-3">
-				<StatTile label="aujourd'hui" value={stats.today} />
-				<StatTile label="série" value={`${stats.streak}j`} color="#C9A962" />
-				<StatTile label="cette semaine" value={stats.thisWeek} />
+				<StatTile label={t('stats.today')} value={stats.today} />
+				<StatTile label={t('stats.streak')} value={`${stats.streak}j`} color="#C9A962" />
+				<StatTile label={t('stats.thisWeek')} value={stats.thisWeek} />
 				<StatTile
-					label="moy/jour"
+					label={t('stats.avgPerDay')}
 					value={stats.avgPerDay > 0 ? stats.avgPerDay.toFixed(1) : '—'}
 					color="#6E9E6E"
 				/>
@@ -71,7 +73,7 @@ export function Stats() {
 					style={{ background: '#242426', border: '1px solid #3A3A3C80', height: 72 }}
 				>
 					<span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
-						Estimation pour finir
+						{t('stats.estimation')}
 					</span>
 					<span className="text-3xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
 						{formatDays(stats.estimatedDays!)}
@@ -83,7 +85,7 @@ export function Stats() {
 
 			<div className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					DETTE PAR PRIÈRE
+					{t('stats.debtByPrayer')}
 				</p>
 				<div
 					className="overflow-hidden rounded-[20px]"
@@ -132,7 +134,7 @@ export function Stats() {
 					style={{ background: '#242426', border: '1px solid #3A3A3C', height: 60 }}
 				>
 					<span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
-						Total restant
+						{t('stats.totalRemaining')}
 					</span>
 					<span className="text-2xl font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
 						{totalRemaining.toLocaleString()}

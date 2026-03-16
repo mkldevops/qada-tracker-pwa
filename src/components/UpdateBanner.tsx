@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface UpdateBannerProps {
 	onUpdate: () => void | Promise<void>;
@@ -8,6 +9,7 @@ interface UpdateBannerProps {
 }
 
 export function UpdateBanner({ onUpdate, onDismiss, error }: UpdateBannerProps) {
+	const { t } = useTranslation();
 	const [isUpdating, setIsUpdating] = useState(false);
 
 	const handleUpdate = async () => {
@@ -36,14 +38,14 @@ export function UpdateBanner({ onUpdate, onDismiss, error }: UpdateBannerProps) 
 				}}
 			>
 				<div className="flex flex-1 flex-col gap-1">
-					<span className="text-sm font-semibold">Mise à jour disponible</span>
+					<span className="text-sm font-semibold">{t('updateBanner.title')}</span>
 					{error ? (
 						<span className="text-xs" style={{ color: '#D45F5F' }}>
 							{error}
 						</span>
 					) : (
 						<span className="text-xs" style={{ color: '#6E6E70' }}>
-							Une nouvelle version est prête
+							{t('updateBanner.subtitle')}
 						</span>
 					)}
 				</div>
@@ -58,7 +60,7 @@ export function UpdateBanner({ onUpdate, onDismiss, error }: UpdateBannerProps) 
 							color: '#1A1A1C',
 						}}
 					>
-						{isUpdating ? '...' : 'Mettre à jour'}
+						{isUpdating ? '...' : t('updateBanner.update')}
 					</button>
 					<button
 						type="button"
@@ -70,7 +72,7 @@ export function UpdateBanner({ onUpdate, onDismiss, error }: UpdateBannerProps) 
 							color: '#F5F5F0',
 						}}
 					>
-						Plus tard
+						{t('updateBanner.later')}
 					</button>
 				</div>
 			</div>

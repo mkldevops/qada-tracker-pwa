@@ -1,4 +1,5 @@
 import { BarChart2, BookOpen, House, Settings } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 
@@ -7,14 +8,16 @@ interface BottomNavProps {
 	onTabChange: (tab: Tab) => void;
 }
 
-const TABS = [
-	{ id: 'dashboard' as Tab, icon: House, label: 'ACCUEIL' },
-	{ id: 'log' as Tab, icon: BookOpen, label: 'LOGGER' },
-	{ id: 'stats' as Tab, icon: BarChart2, label: 'STATS' },
-	{ id: 'settings' as Tab, icon: Settings, label: 'RÉGLAGES' },
-];
-
 export function BottomNav({ activeTab, onTabChange }: BottomNavProps) {
+	const { t } = useTranslation();
+
+	const TABS = [
+		{ id: 'dashboard' as Tab, icon: House, label: t('nav.home') },
+		{ id: 'log' as Tab, icon: BookOpen, label: t('nav.log') },
+		{ id: 'stats' as Tab, icon: BarChart2, label: t('nav.stats') },
+		{ id: 'settings' as Tab, icon: Settings, label: t('nav.settings') },
+	];
+
 	return (
 		<nav className="fixed bottom-0 left-0 right-0 z-50 flex justify-center px-5 pb-safe pt-3 pb-5">
 			<div

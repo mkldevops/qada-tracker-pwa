@@ -1,6 +1,7 @@
 import { CheckCircle2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
 import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
@@ -179,6 +180,8 @@ function PrayerCard({
 	prayer: PrayerName;
 	cfg: (typeof PRAYER_CONFIG)[PrayerName];
 }) {
+	const { t } = useTranslation();
+
 	return (
 		<motion.div
 			key={prayer}
@@ -203,7 +206,7 @@ function PrayerCard({
 				className="text-[11px] font-medium tracking-[3px] relative"
 				style={{ color: `${cfg.hex}80` }}
 			>
-				PROCHAINE PRIÈRE
+				{t('session.nextPrayer')}
 			</p>
 			<motion.p
 				className="font-display text-5xl font-medium relative"
@@ -216,13 +219,14 @@ function PrayerCard({
 				{cfg.labelAr}
 			</p>
 			<p className="text-sm relative" style={{ color: '#6E6E70' }}>
-				{cfg.rakat} rak'ats
+				{cfg.rakat} {t('session.rakats')}
 			</p>
 		</motion.div>
 	);
 }
 
 export function Session({ onClose }: { onClose: () => void }) {
+	const { t } = useTranslation();
 	const { logBatch } = usePrayerStore();
 	const debts = useDebts();
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
@@ -396,10 +400,10 @@ export function Session({ onClose }: { onClose: () => void }) {
 							transition={{ delay: 0.05, ...spring }}
 						>
 							<h2 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
-								Nouvelle session
+								{t('session.newSession')}
 							</h2>
 							<p className="text-sm" style={{ color: '#6E6E70' }}>
-								Combien de prières voulez-vous rattraper ?
+								{t('session.setupSubtitle')}
 							</p>
 						</motion.div>
 
@@ -452,7 +456,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							whileTap={{ scale: 0.95 }}
 							whileHover={{ scale: 1.02 }}
 						>
-							DÉMARRER
+							{t('session.start')}
 						</motion.button>
 
 						<motion.button
@@ -464,7 +468,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							transition={{ delay: 0.3 }}
 							whileTap={{ scale: 0.95 }}
 						>
-							Annuler
+							{t('session.cancel')}
 						</motion.button>
 					</motion.div>
 				)}
@@ -485,7 +489,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.05 }}
 						>
-							PROGRESSION
+							{t('session.progress')}
 						</motion.div>
 
 						<motion.div
@@ -505,7 +509,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 								animate={{ opacity: 1, y: 0 }}
 								transition={{ delay: 0.1, ...spring }}
 							>
-								{sujoodCount === 0 ? '✋ Attente du 1er sujood' : '✋ Attente du 2ème sujood'}
+								{sujoodCount === 0 ? t('session.sujood1') : t('session.sujood2')}
 							</motion.div>
 						)}
 
@@ -517,7 +521,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 								animate={{ opacity: 1, y: 0 }}
 								transition={{ delay: 0.1, ...spring }}
 							>
-								Mode capteur non supporté — utilisez le bouton "Terminé"
+								{t('session.sensorUnsupported')}
 							</motion.div>
 						)}
 
@@ -550,7 +554,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 								</motion.span>
 							) : (
 								<motion.span key="label" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-									TERMINÉ ✓
+									{t('session.done')}
 								</motion.span>
 							)}
 						</motion.button>
@@ -567,7 +571,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 										transition={spring}
 									>
 										<p className="text-sm" style={{ color: '#6E6E70' }}>
-											Quitter la session ?
+											{t('session.quitConfirm')}
 										</p>
 										<div className="flex gap-4">
 											<motion.button
@@ -576,7 +580,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 												style={{ background: '#3A3A3C', color: '#F5F5F0' }}
 												whileTap={{ scale: 0.93 }}
 											>
-												Quitter
+												{t('session.quit')}
 											</motion.button>
 											<motion.button
 												onClick={() => setConfirmQuit(false)}
@@ -584,7 +588,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 												style={{ background: '#242426', color: '#6E6E70' }}
 												whileTap={{ scale: 0.93 }}
 											>
-												Continuer
+												{t('session.continue')}
 											</motion.button>
 										</div>
 									</motion.div>
@@ -599,7 +603,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 										exit={{ opacity: 0 }}
 										whileTap={{ scale: 0.93 }}
 									>
-										Quitter la session
+										{t('session.quitSession')}
 									</motion.button>
 								)}
 							</AnimatePresence>
@@ -652,7 +656,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							transition={{ delay: 0.25, ...spring }}
 						>
 							<h2 className="font-display text-4xl font-normal" style={{ color: '#F5F5F0' }}>
-								Session terminée !
+								{t('session.completed')}
 							</h2>
 							<motion.p
 								className="text-base tabular-nums"
@@ -661,7 +665,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 								animate={{ opacity: 1 }}
 								transition={{ delay: 0.4 }}
 							>
-								{completed} prière{completed > 1 ? 's' : ''} accomplie{completed > 1 ? 's' : ''}
+								{t('session.completedCount', { count: completed })}
 							</motion.p>
 						</motion.div>
 
@@ -675,7 +679,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							whileTap={{ scale: 0.95 }}
 							whileHover={{ scale: 1.02 }}
 						>
-							FERMER
+							{t('session.close')}
 						</motion.button>
 					</motion.div>
 				)}

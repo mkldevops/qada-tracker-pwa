@@ -1,4 +1,5 @@
 import { Target } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -9,12 +10,6 @@ interface ObjectiveTrackerProps {
 	stats: StatsState;
 }
 
-const PERIOD_LABEL: Record<string, string> = {
-	daily: "aujourd'hui",
-	weekly: 'cette semaine',
-	monthly: 'ce mois',
-};
-
 const PERIOD_VALUE = (stats: StatsState, period: string): number => {
 	if (period === 'daily') return stats.today;
 	if (period === 'weekly') return stats.thisWeek;
@@ -22,9 +17,11 @@ const PERIOD_VALUE = (stats: StatsState, period: string): number => {
 };
 
 export function ObjectiveTracker({ objective, stats }: ObjectiveTrackerProps) {
+	const { t } = useTranslation();
 	const current = PERIOD_VALUE(stats, objective.period);
 	const progress = objective.target > 0 ? Math.min(100, (current / objective.target) * 100) : 0;
 	const done = current >= objective.target;
+	const periodLabel = t(`objective.periodLabel_${objective.period}`);
 
 	return (
 		<Card className="border-border bg-card">
@@ -32,7 +29,9 @@ export function ObjectiveTracker({ objective, stats }: ObjectiveTrackerProps) {
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-2">
 						<Target size={16} className="text-primary" />
-						<span className="text-sm font-medium">Objectif {PERIOD_LABEL[objective.period]}</span>
+						<span className="text-sm font-medium">
+							{t('objective.title', { period: periodLabel })}
+						</span>
 					</div>
 					<Badge variant={done ? 'default' : 'secondary'}>
 						{current} / {objective.target}
@@ -40,7 +39,9 @@ export function ObjectiveTracker({ objective, stats }: ObjectiveTrackerProps) {
 				</div>
 				<Progress value={progress} className="mt-3 h-2" />
 				{done && (
-					<p className="mt-2 text-center text-xs font-medium text-primary">Objectif atteint ! 🎉</p>
+					<p className="mt-2 text-center text-xs font-medium text-primary">
+						{t('objective.achieved')}
+					</p>
 				)}
 			</CardContent>
 		</Card>

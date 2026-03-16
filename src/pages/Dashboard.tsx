@@ -1,6 +1,7 @@
 import { Plus } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Session } from '@/components/Session';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { formatDays } from '@/lib/formatDays';
@@ -48,6 +49,7 @@ function PrayerRow({
 	totalCompleted: number;
 	onLog: (p: PrayerName) => void;
 }) {
+	const { t } = useTranslation();
 	const cfg = PRAYER_CONFIG[prayer];
 	const progress = totalOwed > 0 ? Math.min(100, (totalCompleted / totalOwed) * 100) : 0;
 	const done = remaining === 0;
@@ -66,7 +68,7 @@ function PrayerRow({
 						{cfg.labelAr}
 					</span>
 					<span className="text-[11px]" style={{ color: '#6E6E70' }}>
-						{remaining.toLocaleString()} restantes
+						{t('dashboard.remaining', { count: remaining })}
 					</span>
 				</div>
 				<div className="flex items-center gap-2">
@@ -98,6 +100,7 @@ function PrayerRow({
 }
 
 export function Dashboard() {
+	const { t } = useTranslation();
 	const { logPrayer } = usePrayerStore();
 	const debts = useDebts();
 	const stats = useStats();
@@ -113,7 +116,7 @@ export function Dashboard() {
 							قضاء
 						</h1>
 						<p className="text-xs font-medium tracking-[1px]" style={{ color: '#6E6E70' }}>
-							PRIÈRES À RATTRAPER
+							{t('dashboard.subtitle')}
 						</p>
 					</div>
 				</div>
@@ -123,7 +126,7 @@ export function Dashboard() {
 					style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
 				>
 					<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#1A1A1C99' }}>
-						TOTAL RESTANT
+						{t('dashboard.totalRemaining')}
 					</p>
 					<p
 						className="text-[80px] font-semibold leading-[0.85] tabular-nums"
@@ -132,7 +135,7 @@ export function Dashboard() {
 						{totalRemaining.toLocaleString()}
 					</p>
 					<p className="text-sm" style={{ color: '#1A1A1C88' }}>
-						prières manquées
+						{t('dashboard.missedPrayers')}
 					</p>
 				</div>
 
@@ -143,21 +146,21 @@ export function Dashboard() {
 					className="w-full rounded-[28px] py-4 font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30"
 					style={{ background: '#242426', border: '1px solid #C9A962', color: '#C9A962' }}
 				>
-					Lancer une session
+					{t('dashboard.launchSession')}
 				</button>
 
 				<div className="flex gap-3">
-					<StatPill label="aujourd'hui" value={stats.today} color="#C9A962" />
-					<StatPill label="série" value={`${stats.streak}j`} color="#6E9E6E" />
+					<StatPill label={t('dashboard.today')} value={stats.today} color="#C9A962" />
+					<StatPill label={t('dashboard.streak')} value={`${stats.streak}j`} color="#6E9E6E" />
 					<StatPill
-						label="estimation"
+						label={t('dashboard.estimation')}
 						value={stats.estimatedDays ? formatDays(stats.estimatedDays) : '—'}
 					/>
 				</div>
 
 				<div className="flex flex-col gap-2.5">
 					<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-						PRIÈRES
+						{t('dashboard.prayers')}
 					</p>
 					{PRAYER_NAMES.map((prayer) => (
 						<PrayerRow

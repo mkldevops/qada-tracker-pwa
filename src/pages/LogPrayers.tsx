@@ -1,6 +1,7 @@
 import { Check, Minus, Plus, RotateCcw } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -20,7 +21,7 @@ import { PRAYER_NAMES } from '@/types';
 
 const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
-const TABS = ['Logger', 'Historique'] as const;
+const TABS = ['logger', 'history'] as const;
 type Tab = (typeof TABS)[number];
 
 const EMPTY = (): Record<PrayerName, number> =>
@@ -37,6 +38,7 @@ function PrayerRow({
 	onChange: (p: PrayerName, q: number) => void;
 	index: number;
 }) {
+	const { t } = useTranslation();
 	const cfg = PRAYER_CONFIG[prayer];
 	const active = qty > 0;
 
@@ -53,7 +55,7 @@ function PrayerRow({
 						{cfg.labelFr}
 					</span>
 					<span className="text-[11px]" style={{ color: '#4A4A4C' }}>
-						{cfg.labelAr} · {cfg.rakat} rak'at
+						{cfg.labelAr} · {cfg.rakat} {t('log.rakat')}
 					</span>
 				</div>
 				<div className="flex items-center gap-0">
@@ -107,6 +109,7 @@ function LoggerTab({
 	total: number;
 	onLog: () => void;
 }) {
+	const { t } = useTranslation();
 	return (
 		<div className="flex flex-col gap-5 pt-4">
 			<motion.div
@@ -135,7 +138,7 @@ function LoggerTab({
 				transition={{ delay: 0.08, ...spring }}
 			>
 				<span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
-					Total à logger
+					{t('log.totalToLog')}
 				</span>
 				<AnimatePresence mode="popLayout">
 					<motion.span
@@ -147,7 +150,7 @@ function LoggerTab({
 						exit={{ opacity: 0, y: 8 }}
 						transition={{ type: 'spring' as const, stiffness: 500, damping: 25 }}
 					>
-						{total > 0 ? `${total} prière${total > 1 ? 's' : ''}` : '—'}
+						{total > 0 ? t('log.totalCount', { count: total }) : '—'}
 					</motion.span>
 				</AnimatePresence>
 			</motion.div>
@@ -165,7 +168,7 @@ function LoggerTab({
 			>
 				<Check size={18} style={{ color: '#1A1A1C' }} strokeWidth={2.5} />
 				<span className="text-[13px] font-semibold tracking-[1.5px]" style={{ color: '#1A1A1C' }}>
-					CONFIRMER LE LOG
+					{t('log.confirm')}
 				</span>
 			</motion.button>
 		</div>
@@ -173,6 +176,7 @@ function LoggerTab({
 }
 
 function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void }) {
+	const { t, i18n } = useTranslation();
 	const groups = groupBySession(logs);
 
 	if (groups.length === 0) {
@@ -187,7 +191,7 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 					—
 				</p>
 				<p className="text-sm" style={{ color: '#4A4A4C' }}>
-					Aucun log enregistré
+					{t('log.emptyHistory')}
 				</p>
 			</motion.div>
 		);
@@ -209,29 +213,27 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 							whileTap={{ scale: 0.93 }}
 						>
 							<RotateCcw size={12} />
-							Annuler le dernier
+							{t('log.undoLast')}
 						</motion.button>
 					</AlertDialogTrigger>
 					<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
 						<AlertDialogHeader>
-							<AlertDialogTitle style={{ color: '#F5F5F0' }}>
-								Annuler la dernière entrée ?
-							</AlertDialogTitle>
+							<AlertDialogTitle style={{ color: '#F5F5F0' }}>{t('log.undoTitle')}</AlertDialogTitle>
 							<AlertDialogDescription style={{ color: '#6E6E70' }}>
-								Supprime la dernière session et remet les compteurs à jour.
+								{t('log.undoDesc')}
 							</AlertDialogDescription>
 						</AlertDialogHeader>
 						<AlertDialogFooter>
 							<AlertDialogCancel
 								style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
 							>
-								Annuler
+								{t('log.undoCancel')}
 							</AlertDialogCancel>
 							<AlertDialogAction
 								onClick={onUndo}
 								style={{ background: '#D45F5F', color: '#F5F5F0' }}
 							>
-								Confirmer
+								{t('log.undoConfirm')}
 							</AlertDialogAction>
 						</AlertDialogFooter>
 					</AlertDialogContent>
@@ -248,7 +250,7 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 					>
 						<div className="mb-1.5 flex items-center gap-2 px-1">
 							<span className="text-[10px] font-medium tracking-[2px]" style={{ color: '#3A3A3C' }}>
-								{new Date(group.date).toLocaleString('fr-FR', {
+								{new Date(group.date).toLocaleString(i18n.language, {
 									day: '2-digit',
 									month: '2-digit',
 									hour: '2-digit',
@@ -260,7 +262,7 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 									className="rounded-full px-2 py-0.5 text-[9px] font-medium tracking-wider"
 									style={{ background: '#C9A96215', color: '#C9A96280' }}
 								>
-									SESSION
+									{t('log.session')}
 								</span>
 							)}
 						</div>
@@ -322,11 +324,12 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 }
 
 export function LogPrayers() {
+	const { t } = useTranslation();
 	const { logBatch, undoLastLog, recentLogs } = usePrayerStore();
 	const [quantities, setQuantities] = useState<Record<PrayerName, number>>(EMPTY);
-	const [activeTab, setActiveTab] = useState<Tab>('Logger');
+	const [activeTab, setActiveTab] = useState<Tab>('logger');
 	const [tabDir, setTabDir] = useState<1 | -1>(1);
-	const prevTabRef = useRef<Tab>('Logger');
+	const prevTabRef = useRef<Tab>('logger');
 
 	const total = PRAYER_NAMES.reduce((sum, p) => sum + quantities[p], 0);
 
@@ -349,7 +352,7 @@ export function LogPrayers() {
 		}));
 		await logBatch(entries, `batch-${Date.now()}`);
 		setQuantities(EMPTY());
-		switchTab('Historique');
+		switchTab('history');
 	}
 
 	return (
@@ -357,10 +360,10 @@ export function LogPrayers() {
 			{/* Header */}
 			<div className="mb-5 flex flex-col gap-0.5">
 				<h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
-					Logger
+					{t('log.title')}
 				</h1>
 				<p className="text-[13px]" style={{ color: '#6E6E70' }}>
-					Sélectionne les prières à compter
+					{t('log.subtitle')}
 				</p>
 			</div>
 
@@ -385,8 +388,10 @@ export function LogPrayers() {
 								transition={{ type: 'spring' as const, stiffness: 500, damping: 35 }}
 							/>
 						)}
-						<span className="relative z-10">{tab}</span>
-						{tab === 'Historique' && recentLogs.length > 0 && (
+						<span className="relative z-10">
+							{tab === 'logger' ? t('log.tabLogger') : t('log.tabHistory')}
+						</span>
+						{tab === 'history' && recentLogs.length > 0 && (
 							<motion.span
 								className="relative z-10 ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums"
 								style={{
@@ -407,7 +412,7 @@ export function LogPrayers() {
 			{/* Tab content */}
 			<div className="relative overflow-hidden flex-1">
 				<AnimatePresence mode="wait" custom={tabDir}>
-					{activeTab === 'Logger' ? (
+					{activeTab === 'logger' ? (
 						<motion.div
 							key="logger"
 							custom={tabDir}

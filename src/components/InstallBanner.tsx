@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { type BeforeInstallPromptEvent, dismissInstallBanner } from '@/lib/pwa';
 
 interface InstallBannerProps {
@@ -8,6 +9,7 @@ interface InstallBannerProps {
 }
 
 export function InstallBanner({ prompt, onDismiss }: InstallBannerProps) {
+	const { t } = useTranslation();
 	const [isPrompting, setIsPrompting] = useState(false);
 
 	const handleInstall = async () => {
@@ -48,9 +50,9 @@ export function InstallBanner({ prompt, onDismiss }: InstallBannerProps) {
 				}}
 			>
 				<div className="flex flex-col gap-1 flex-1">
-					<span className="text-sm font-semibold">Ajouter à l'écran d'accueil</span>
+					<span className="text-sm font-semibold">{t('installBanner.title')}</span>
 					<span className="text-xs" style={{ color: '#6E6E70' }}>
-						Accès rapide à l'app
+						{t('installBanner.subtitle')}
 					</span>
 				</div>
 				<div className="flex gap-2 ml-4">
@@ -64,7 +66,7 @@ export function InstallBanner({ prompt, onDismiss }: InstallBannerProps) {
 							color: '#1A1A1C',
 						}}
 					>
-						{isPrompting ? '...' : 'Installer'}
+						{isPrompting ? '...' : t('installBanner.install')}
 					</button>
 					<button
 						type="button"
@@ -76,7 +78,7 @@ export function InstallBanner({ prompt, onDismiss }: InstallBannerProps) {
 							color: '#F5F5F0',
 						}}
 					>
-						Plus tard
+						{t('installBanner.later')}
 					</button>
 				</div>
 			</div>
