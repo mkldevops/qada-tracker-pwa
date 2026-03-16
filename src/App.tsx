@@ -112,7 +112,7 @@ export function App() {
 					/>
 				)}
 			</AnimatePresence>
-			<AlertDialog open={!showOnboarding && updateAvailable}>
+			<AlertDialog open={!showOnboarding && updateAvailable && !needRefresh}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
 						<AlertDialogTitle>{t('updateBanner.title')}</AlertDialogTitle>

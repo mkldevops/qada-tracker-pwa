@@ -5,6 +5,7 @@ const POLL_INTERVAL_MS = 5 * 60 * 1000;
 export function useVersionCheck(): { updateAvailable: boolean; dismiss: () => void } {
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 	const currentVersionRef = useRef<string | null>(null);
+	const latestVersionRef = useRef<string | null>(null);
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
 	useEffect(() => {
@@ -21,6 +22,7 @@ export function useVersionCheck(): { updateAvailable: boolean; dismiss: () => vo
 				}
 
 				if (data.version !== currentVersionRef.current) {
+					latestVersionRef.current = data.version;
 					setUpdateAvailable(true);
 				}
 			} catch {
@@ -58,5 +60,12 @@ export function useVersionCheck(): { updateAvailable: boolean; dismiss: () => vo
 		};
 	}, []);
 
-	return { updateAvailable, dismiss: () => setUpdateAvailable(false) };
+	function dismiss() {
+		if (latestVersionRef.current !== null) {
+			currentVersionRef.current = latestVersionRef.current;
+		}
+		setUpdateAvailable(false);
+	}
+
+	return { updateAvailable, dismiss };
 }
