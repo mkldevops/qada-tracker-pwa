@@ -504,6 +504,24 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 				</div>
 			</section>
 
+			{/* Version */}
+			<section className="flex flex-col gap-2.5">
+				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+					APPLICATION
+				</p>
+				<div
+					className="flex items-center justify-between rounded-[20px] px-5 py-4"
+					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				>
+					<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
+						Version
+					</span>
+					<span className="text-sm" style={{ color: '#6E6E70' }}>
+						{__APP_VERSION__}
+					</span>
+				</div>
+			</section>
+
 			{/* Danger zone */}
 			<section className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>

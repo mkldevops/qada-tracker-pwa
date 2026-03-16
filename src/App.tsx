@@ -1,7 +1,9 @@
+import { useRegisterSW } from 'virtual:pwa-register/react';
 import { AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { BottomNav } from '@/components/BottomNav';
 import { InstallBanner } from '@/components/InstallBanner';
+import { UpdateBanner } from '@/components/UpdateBanner';
 import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
 import { type BeforeInstallPromptEvent, shouldShowInstallBanner } from '@/lib/pwa';
 import { Dashboard } from '@/pages/Dashboard';
@@ -17,7 +19,12 @@ export function App() {
 	const [activeTab, setActiveTab] = useState<Tab>('dashboard');
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+	const [updateError, setUpdateError] = useState<string | null>(null);
 	const { loadAll, isLoading } = usePrayerStore();
+	const {
+		needRefresh: [needRefresh, setNeedRefresh],
+		updateServiceWorker,
+	} = useRegisterSW();
 
 	useEffect(() => {
 		loadAll();
@@ -62,6 +69,15 @@ export function App() {
 		setShowOnboarding(true);
 	}
 
+	const handleUpdate = async () => {
+		try {
+			await updateServiceWorker(true);
+		} catch (error) {
+			setUpdateError('Mise à jour échouée. Veuillez recharger la page.');
+			console.error('Update failed:', error);
+		}
+	};
+
 	const pages = {
 		dashboard: <Dashboard />,
 		log: <LogPrayers />,
@@ -73,8 +89,22 @@ export function App() {
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
 			<main className="mx-auto max-w-lg pt-4 pb-28">{pages[activeTab]}</main>
 			<AnimatePresence>
-				{!showOnboarding && installPrompt && shouldShowInstallBanner() && (
-					<InstallBanner prompt={installPrompt} onDismiss={() => setInstallPrompt(null)} />
+				{!showOnboarding && needRefresh && (
+					<UpdateBanner
+						key="update-banner"
+						onUpdate={handleUpdate}
+						onDismiss={() => setNeedRefresh(false)}
+						error={updateError}
+					/>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{!showOnboarding && !needRefresh && installPrompt && shouldShowInstallBanner() && (
+					<InstallBanner
+						key="install-banner"
+						prompt={installPrompt}
+						onDismiss={() => setInstallPrompt(null)}
+					/>
 				)}
 			</AnimatePresence>
 			<BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
