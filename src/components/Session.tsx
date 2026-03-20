@@ -317,7 +317,10 @@ export function Session({ onClose }: { onClose: () => void }) {
 	}, [phase]);
 
 	async function handleStart() {
-		if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+		if (
+			typeof DeviceOrientationEvent !== 'undefined' &&
+			typeof (DeviceOrientationEvent as any).requestPermission === 'function'
+		) {
 			try {
 				await (DeviceOrientationEvent as any).requestPermission();
 			} catch {}

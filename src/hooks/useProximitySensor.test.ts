@@ -142,10 +142,11 @@ describe('useProximitySensor', () => {
 		}
 
 		beforeEach(() => {
-			vi.useFakeTimers({ toFake: ['Date'], now: PINNED_NOW });
+			vi.useFakeTimers({ toFake: ['Date', 'setTimeout', 'clearTimeout'], now: PINNED_NOW });
 		});
 
 		afterEach(() => {
+			vi.runAllTimers();
 			delete (window as any).DeviceOrientationEvent;
 		});
 
@@ -230,6 +231,48 @@ describe('useProximitySensor', () => {
 			unmount();
 
 			expect(removeSpy).toHaveBeenCalledWith('deviceorientation', expect.any(Function));
+		});
+
+		it('falls back to unsupported after 3s startup timeout with no events', () => {
+			(window as any).DeviceOrientationEvent = class {};
+			const { result } = renderHook(() => useProximitySensor(true, vi.fn(), vi.fn()));
+
+			expect(result.current.isSupported).toBe(true);
+
+			act(() => vi.advanceTimersByTime(3000));
+
+			expect(result.current.isSupported).toBe(false);
+			expect(result.current.currentState).toBe('unsupported');
+		});
+
+		it('cancels startup timeout once baseline is captured', () => {
+			(window as any).DeviceOrientationEvent = class {};
+			const { result } = renderHook(() => useProximitySensor(true, vi.fn(), vi.fn()));
+
+			act(() => dispatchOrientation(10)); // baseline captured → timer cleared
+			act(() => vi.advanceTimersByTime(3000));
+
+			expect(result.current.isSupported).toBe(true);
+		});
+
+		it('resets sujood-down state after 5s without returning to baseline', () => {
+			(window as any).DeviceOrientationEvent = class {};
+			const onFirst = vi.fn();
+			renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
+
+			act(() => dispatchOrientation(10)); // baseline = 10
+			act(() => dispatchOrientation(65)); // delta = 55 → sujood down at PINNED_NOW
+			vi.setSystemTime(PINNED_NOW + 5001);
+			act(() => dispatchOrientation(12)); // elapsed > 5000 → reset, no callback
+
+			expect(onFirst).not.toHaveBeenCalled();
+
+			// A fresh sujood sequence now works
+			act(() => dispatchOrientation(65)); // delta = 55 → new sujood down
+			vi.setSystemTime(PINNED_NOW + 5500);
+			act(() => dispatchOrientation(12)); // delta = 2 < 25, elapsed 499ms → fires
+
+			expect(onFirst).toHaveBeenCalledOnce();
 		});
 	});
 });
