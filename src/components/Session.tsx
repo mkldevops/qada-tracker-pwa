@@ -316,7 +316,15 @@ export function Session({ onClose }: { onClose: () => void }) {
 		};
 	}, [phase]);
 
-	function handleStart() {
+	async function handleStart() {
+		if (
+			typeof DeviceOrientationEvent !== 'undefined' &&
+			typeof (DeviceOrientationEvent as any).requestPermission === 'function'
+		) {
+			try {
+				await (DeviceOrientationEvent as any).requestPermission();
+			} catch {}
+		}
 		const order = getSortedPrayerOrder(debts, sessionOrder);
 		setPrayerOrder(order);
 		const next = getNextPrayer(debts, order, 0);
