@@ -16,6 +16,7 @@ import {
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { db } from '@/db/database';
 import { exportBackup, importBackup } from '@/db/queries';
+import { useNotifications } from '@/hooks/useNotifications';
 import { markOnboardingUndone } from '@/lib/onboarding';
 import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
@@ -70,6 +71,9 @@ function CollapsibleSection({
 
 export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
 	const { t, i18n } = useTranslation();
+	const { permission, isEnabled, reminderTime, enable, disable, updateTime } = useNotifications(
+		t('settings.notificationsBody')
+	);
 
 	const PERIODS: { value: Period; label: string }[] = [
 		{ value: 'daily', label: t('common.day_cap') },
@@ -569,6 +573,62 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 					{/* ── APP tab ── */}
 					{activeTab === 'app' && (
 						<>
+							{/* Notifications */}
+							<CollapsibleSection label={t('settings.notifications')} defaultOpen={true}>
+								<div
+									className="flex flex-col gap-4 rounded-[20px] p-5"
+									style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+								>
+									{/* Toggle row */}
+									<div className="flex items-center justify-between">
+										<div className="flex flex-col gap-0.5">
+											<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
+												{t('settings.notificationsDesc')}
+											</span>
+										</div>
+										<button
+											type="button"
+											role="switch"
+											aria-checked={isEnabled}
+											aria-label={t('settings.notifications')}
+											onClick={() => (isEnabled ? disable() : enable(reminderTime))}
+											className="relative h-7 w-12 rounded-full transition-colors"
+											style={{ background: isEnabled ? '#C9A962' : '#3A3A3C' }}
+										>
+											<span
+												className="absolute top-1 h-5 w-5 rounded-full transition-all"
+												style={{
+													background: '#F5F5F0',
+													left: isEnabled ? '50%' : '4px',
+												}}
+											/>
+										</button>
+									</div>
+
+									{/* Time input - show only when enabled */}
+									{isEnabled && permission === 'granted' && (
+										<div className="flex flex-col gap-1.5">
+											<label className="text-xs font-medium" style={{ color: '#6E6E70' }}>
+												{t('settings.notificationsTime')}
+											</label>
+											<input
+												type="time"
+												value={reminderTime}
+												onChange={(e) => updateTime(e.target.value)}
+												style={inputStyle}
+											/>
+										</div>
+									)}
+
+									{/* Permission denied message */}
+									{permission === 'denied' && (
+										<p className="text-[11px]" style={{ color: '#D45F5F' }}>
+											{t('settings.notificationsPermissionDenied')}
+										</p>
+									)}
+								</div>
+							</CollapsibleSection>
+
 							{/* Données */}
 							<CollapsibleSection label={t('settings.data')} defaultOpen={true}>
 								<div

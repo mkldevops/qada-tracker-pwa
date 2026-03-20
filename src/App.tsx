@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BottomNav } from '@/components/BottomNav';
 import { InstallBanner } from '@/components/InstallBanner';
-import { UpdateBanner } from '@/components/UpdateBanner';
+import { MilestoneModal } from '@/components/MilestoneModal';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -15,6 +15,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useNotifications } from '@/hooks/useNotifications';
 import { useVersionCheck } from '@/hooks/useVersionCheck';
 import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
 import { type BeforeInstallPromptEvent, shouldShowInstallBanner } from '@/lib/pwa';
@@ -29,11 +30,12 @@ type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 
 export function App() {
 	const { t } = useTranslation();
+	useNotifications(t('settings.notificationsBody'));
 	const [activeTab, setActiveTab] = useState<Tab>('dashboard');
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 	const [updateError, setUpdateError] = useState<string | null>(null);
-	const { loadAll, isLoading } = usePrayerStore();
+	const { loadAll, isLoading, pendingMilestone, clearMilestone } = usePrayerStore();
 	const {
 		needRefresh: [needRefresh, setNeedRefresh],
 		updateServiceWorker,
@@ -102,27 +104,30 @@ export function App() {
 	return (
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
 			<main className="mx-auto max-w-lg pt-4 pb-28">{pages[activeTab]}</main>
-			<AnimatePresence>
-				{!showOnboarding && needRefresh && (
-					<UpdateBanner
-						key="update-banner"
-						onUpdate={handleUpdate}
-						onDismiss={() => setNeedRefresh(false)}
-						error={updateError}
-					/>
-				)}
-			</AnimatePresence>
-			<AlertDialog open={!showOnboarding && updateAvailable && !needRefresh}>
-				<AlertDialogContent>
+			<AlertDialog open={!showOnboarding && (needRefresh || updateAvailable)}>
+				<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
 					<AlertDialogHeader>
-						<AlertDialogTitle>{t('updateBanner.title')}</AlertDialogTitle>
-						<AlertDialogDescription>{t('updateBanner.subtitle')}</AlertDialogDescription>
+						<AlertDialogTitle style={{ color: '#F5F5F0' }}>
+							{t('updateBanner.title')}
+						</AlertDialogTitle>
+						<AlertDialogDescription style={{ color: '#6E6E70' }}>
+							{updateError ?? t('updateBanner.subtitle')}
+						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel onClick={dismissVersionUpdate}>
+						<AlertDialogCancel
+							style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
+							onClick={() => {
+								setNeedRefresh(false);
+								dismissVersionUpdate();
+							}}
+						>
 							{t('updateBanner.later')}
 						</AlertDialogCancel>
-						<AlertDialogAction onClick={() => window.location.reload()}>
+						<AlertDialogAction
+							style={{ background: '#C9A962', color: '#1A1A1C' }}
+							onClick={needRefresh ? handleUpdate : () => window.location.reload()}
+						>
 							{t('updateBanner.update')}
 						</AlertDialogAction>
 					</AlertDialogFooter>
@@ -137,6 +142,7 @@ export function App() {
 					/>
 				)}
 			</AnimatePresence>
+			<MilestoneModal milestone={pendingMilestone} onClose={clearMilestone} />
 			<BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 		</div>
 	);

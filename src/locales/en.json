@@ -39,6 +39,8 @@
 		"thisWeek": "this week",
 		"avgPerDay": "avg/day",
 		"estimation": "Estimated time to finish",
+		"debtEvolution": "DEBT EVOLUTION",
+		"debtEvolutionEmpty": "No data yet",
 		"debtByPrayer": "DEBT BY PRAYER",
 		"totalRemaining": "Total remaining",
 		"prayerCount_one": "{{count}} prayer",
@@ -111,6 +113,11 @@
 		"prayerOrderDesc": "Order in which prayers are offered during session",
 		"chronological": "Chronological",
 		"highestDebt": "Debt priority",
+		"notifications": "DAILY REMINDER",
+		"notificationsDesc": "Reminder to complete your session",
+		"notificationsTime": "Reminder time",
+		"notificationsPermissionDenied": "Notifications blocked — update your browser settings",
+		"notificationsBody": "Don't forget your qada session today 🤲",
 		"configuration": "CONFIGURATION",
 		"restartOnboarding": "RESTART ONBOARDING",
 		"data": "DATA",
@@ -195,5 +202,10 @@
 		"update": "Update",
 		"later": "Later",
 		"error": "Update failed. Please reload the page."
+	},
+	"milestone": {
+		"title": "Keep it up!",
+		"subtitle": "{{count}} prayers made up",
+		"close": "Continue"
 	}
 }
