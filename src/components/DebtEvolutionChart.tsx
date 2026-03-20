@@ -109,7 +109,7 @@ export function DebtEvolutionChart() {
 							key={`tooltip-${hoveredIndex}`}
 							className="absolute -top-10 z-10 flex flex-col items-center"
 							style={{
-								left: `${(hoveredIndex / points.length) * 100}%`,
+								left: `${(hoveredIndex / Math.max(1, points.length - 1)) * 100}%`,
 								transform: 'translateX(-50%)',
 							}}
 							initial={{ opacity: 0, y: 4, scale: 0.9 }}

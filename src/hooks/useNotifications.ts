@@ -7,6 +7,7 @@ interface ReminderConfig {
 }
 
 const STORAGE_KEY = 'qada-reminder';
+let notificationChecked = false;
 
 function loadConfig(): ReminderConfig {
 	try {
@@ -24,7 +25,7 @@ function saveConfig(config: ReminderConfig): void {
 
 export function useNotifications(notificationBody: string) {
 	const [permission, setPermission] = useState<NotificationPermission>(
-		typeof Notification !== 'undefined' ? Notification.permission : 'denied'
+		typeof Notification !== 'undefined' ? Notification.permission : 'denied',
 	);
 	const [config, setConfig] = useState<ReminderConfig>(loadConfig);
 
@@ -50,24 +51,24 @@ export function useNotifications(notificationBody: string) {
 	}, [config, permission, notificationBody]);
 
 	useEffect(() => {
-		checkAndNotify();
+		if (!notificationChecked) {
+			notificationChecked = true;
+			checkAndNotify();
+		}
 	}, [checkAndNotify]);
 
-	const enable = useCallback(
-		async (time: string) => {
-			if (typeof Notification === 'undefined') return;
+	const enable = useCallback(async (time: string) => {
+		if (typeof Notification === 'undefined') return;
 
-			const result = await Notification.requestPermission();
-			setPermission(result);
+		const result = await Notification.requestPermission();
+		setPermission(result);
 
-			if (result === 'granted') {
-				const updated: ReminderConfig = { enabled: true, time, lastShown: null };
-				saveConfig(updated);
-				setConfig(updated);
-			}
-		},
-		[]
-	);
+		if (result === 'granted') {
+			const updated: ReminderConfig = { enabled: true, time, lastShown: null };
+			saveConfig(updated);
+			setConfig(updated);
+		}
+	}, []);
 
 	const disable = useCallback(() => {
 		const updated: ReminderConfig = { ...config, enabled: false };
@@ -81,7 +82,7 @@ export function useNotifications(notificationBody: string) {
 			saveConfig(updated);
 			setConfig(updated);
 		},
-		[config]
+		[config],
 	);
 
 	return {

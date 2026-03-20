@@ -117,7 +117,10 @@ export function App() {
 					<AlertDialogFooter>
 						<AlertDialogCancel
 							style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
-							onClick={needRefresh ? () => setNeedRefresh(false) : dismissVersionUpdate}
+							onClick={() => {
+								setNeedRefresh(false);
+								dismissVersionUpdate();
+							}}
 						>
 							{t('updateBanner.later')}
 						</AlertDialogCancel>
