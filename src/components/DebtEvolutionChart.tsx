@@ -61,7 +61,8 @@ export function DebtEvolutionChart() {
 	const points = hasData
 		? data.map((d, i) => {
 				const x = (i / Math.max(1, data.length - 1)) * CHART_WIDTH + PADDING;
-				const y = SVG_HEIGHT - PADDING - ((d.remaining - minRemaining) / range) * CHART_HEIGHT * 0.8;
+				const y =
+					SVG_HEIGHT - PADDING - ((d.remaining - minRemaining) / range) * CHART_HEIGHT * 0.8;
 				return { ...d, x, y, i };
 			})
 		: [];
@@ -135,6 +136,7 @@ export function DebtEvolutionChart() {
 						className="w-full"
 						style={{ height: 200 }}
 					>
+						<title>{t('stats.debtEvolution')}</title>
 						<defs>
 							<linearGradient id="debtGradient" x1="0%" y1="0%" x2="0%" y2="100%">
 								<stop offset="0%" style={{ stopColor: '#6E9E6E', stopOpacity: 0.3 }} />
@@ -142,13 +144,7 @@ export function DebtEvolutionChart() {
 							</linearGradient>
 						</defs>
 
-						{fillPath && (
-							<path
-								d={fillPath}
-								fill="url(#debtGradient)"
-								strokeWidth="0"
-							/>
-						)}
+						{fillPath && <path d={fillPath} fill="url(#debtGradient)" strokeWidth="0" />}
 
 						{pathData && (
 							<path
@@ -163,7 +159,7 @@ export function DebtEvolutionChart() {
 						<g>
 							{points.map((p, i) => (
 								<circle
-									key={`point-${i}`}
+									key={p.date}
 									cx={p.x}
 									cy={p.y}
 									r={hoveredIndex === i ? 3.5 : 2}
