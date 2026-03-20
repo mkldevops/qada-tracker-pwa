@@ -19,16 +19,18 @@ export function useProximitySensor(
 	const lastDetectionRef = useRef<number>(0);
 	const sujoodCountRef = useRef<0 | 1>(0);
 	const callbacksRef = useRef({ onFirstSujood, onSecondSujood });
+	const betaBaselineRef = useRef<number | null>(null);
+	const sujoodDownTimeRef = useRef<number>(0);
 
 	useEffect(() => {
 		callbacksRef.current = { onFirstSujood, onSecondSujood };
 	}, [onFirstSujood, onSecondSujood]);
 
 	useEffect(() => {
-		// Check for sensor support
 		const hasProximitySensor = typeof (window as any).ProximitySensor !== 'undefined';
 		const hasDeviceProximity = typeof (window as any).ondeviceproximity !== 'undefined';
-		const hasSupport = hasProximitySensor || hasDeviceProximity;
+		const hasDeviceOrientation = typeof window.DeviceOrientationEvent !== 'undefined';
+		const hasSupport = hasProximitySensor || hasDeviceProximity || hasDeviceOrientation;
 
 		setIsSupported(hasSupport);
 
@@ -46,6 +48,8 @@ export function useProximitySensor(
 		setCurrentState('waiting_first');
 		lastDetectionRef.current = 0;
 		sujoodCountRef.current = 0;
+		betaBaselineRef.current = null;
+		sujoodDownTimeRef.current = 0;
 
 		function handleProximityDetection(isNear: boolean) {
 			if (!isNear) return;
@@ -76,10 +80,13 @@ export function useProximitySensor(
 							sensorRef.current.stop();
 						} else if (typeof sensorRef.current === 'function') {
 							window.removeEventListener('deviceproximity', sensorRef.current);
+							window.removeEventListener('deviceorientation', sensorRef.current);
 						}
 					} catch {}
 					sensorRef.current = null;
 				}
+				betaBaselineRef.current = null;
+				sujoodDownTimeRef.current = 0;
 				setCurrentState('idle');
 			};
 		}
@@ -118,7 +125,47 @@ export function useProximitySensor(
 			sensorRef.current = handleDeviceProximity;
 		}
 
-		setupDeviceProximityFallback();
+		// Fallback to DeviceOrientationEvent (Chrome Android, iOS 13+)
+		function setupDeviceOrientationFallback() {
+			function handleDeviceOrientation(event: DeviceOrientationEvent) {
+				if (event.beta === null) {
+					// No real orientation sensor (desktop) — fall back to manual
+					setIsSupported(false);
+					setCurrentState('unsupported');
+					window.removeEventListener('deviceorientation', handleDeviceOrientation);
+					sensorRef.current = null;
+					return;
+				}
+
+				if (betaBaselineRef.current === null) {
+					betaBaselineRef.current = event.beta;
+					return;
+				}
+
+				const delta = Math.abs(event.beta - betaBaselineRef.current);
+
+				if (sujoodDownTimeRef.current === 0) {
+					if (delta > 50) {
+						sujoodDownTimeRef.current = Date.now();
+					}
+				} else {
+					const elapsed = Date.now() - sujoodDownTimeRef.current;
+					if (delta < 25 && elapsed >= 300) {
+						sujoodDownTimeRef.current = 0;
+						handleProximityDetection(true);
+					}
+				}
+			}
+
+			window.addEventListener('deviceorientation', handleDeviceOrientation);
+			sensorRef.current = handleDeviceOrientation;
+		}
+
+		if (typeof (window as any).ondeviceproximity !== 'undefined') {
+			setupDeviceProximityFallback();
+		} else {
+			setupDeviceOrientationFallback();
+		}
 		return setupCleanup();
 	}, [active]);
 
