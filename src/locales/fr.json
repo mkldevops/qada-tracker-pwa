@@ -139,6 +139,7 @@
 		"language": "LANGUE",
 		"application": "APPLICATION",
 		"version": "Version",
+		"changelog": "Nouveautés",
 		"dangerZone": "ZONE DANGER",
 		"resetAll": "RÉINITIALISER TOUTES LES DONNÉES",
 		"resetDialogTitle": "Tout réinitialiser ?",
