@@ -424,3 +424,14 @@ export async function getDebtEvolution(
 
 	return points.reverse();
 }
+
+export async function getActivityByDay(db: QadaDB, days: number): Promise<Map<string, number>> {
+	const since = new Date(Date.now() - days * 86400000).toISOString();
+	const logs = await db.prayer_logs.where('logged_at').aboveOrEqual(since).toArray();
+	const map = new Map<string, number>();
+	for (const log of logs) {
+		const date = log.logged_at.slice(0, 10);
+		map.set(date, (map.get(date) ?? 0) + log.quantity);
+	}
+	return map;
+}

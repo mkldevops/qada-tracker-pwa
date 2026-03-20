@@ -48,6 +48,22 @@ export default defineConfig({
 						purpose: 'maskable',
 					},
 				],
+				shortcuts: [
+					{
+						name: 'Logger',
+						short_name: 'Logger',
+						description: 'Logger des prières',
+						url: '/?tab=log',
+						icons: [{ src: 'icon-192.png', sizes: '192x192', type: 'image/png' }],
+					},
+					{
+						name: 'Stats',
+						short_name: 'Stats',
+						description: 'Voir les statistiques',
+						url: '/?tab=stats',
+						icons: [{ src: 'icon-192.png', sizes: '192x192', type: 'image/png' }],
+					},
+				],
 			},
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
