@@ -41,6 +41,7 @@
 		"avgPerDay": "moy/jour",
 		"estimation": "Estimation pour finir",
 		"debtByPrayer": "DETTE PAR PRIÈRE",
+		"catchUpDaysCompleted": "≈ {{years}} ans {{months}} mois {{days}} jours rattrapés (5/j)",
 		"totalRemaining": "Total restant",
 		"prayerCount_one": "{{count}} prière",
 		"prayerCount_other": "{{count}} prières",

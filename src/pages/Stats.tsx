@@ -35,6 +35,11 @@ export function Stats() {
 	const debts = useDebts();
 	const totalRemaining = useTotalRemaining();
 
+	const donedays = Math.floor(stats.allTime / 5);
+	const doneYears = Math.floor(donedays / 365);
+	const doneMonths = Math.floor((donedays % 365) / 30);
+	const doneDays = (donedays % 365) % 30;
+
 	return (
 		<div className="space-y-5 px-7 pb-4 pt-1">
 			<h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
@@ -53,6 +58,13 @@ export function Stats() {
 					style={{ color: '#1A1A1C' }}
 				>
 					{stats.allTime.toLocaleString()}
+				</p>
+				<p className="text-sm" style={{ color: '#1A1A1C88' }}>
+					{t('stats.catchUpDaysCompleted', {
+						years: doneYears,
+						months: doneMonths,
+						days: doneDays,
+					})}
 				</p>
 			</div>
 
