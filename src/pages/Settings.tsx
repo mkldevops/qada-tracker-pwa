@@ -72,7 +72,7 @@ function CollapsibleSection({
 export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
 	const { t, i18n } = useTranslation();
 	const { permission, isEnabled, reminderTime, enable, disable, updateTime } = useNotifications(
-		t('settings.notificationsBody')
+		t('settings.notificationsBody'),
 	);
 
 	const PERIODS: { value: Period; label: string }[] = [
@@ -529,51 +529,44 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 
 					{/* ── SESSION tab ── */}
 					{activeTab === 'session' && (
-						<section className="flex flex-col gap-2.5">
-							<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-								{t('settings.session')}
-							</p>
-							<div
-								className="flex flex-col gap-4 rounded-[20px] p-5"
-								style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-							>
-								<div className="flex flex-col gap-1">
-									<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
-										{t('settings.prayerOrder')}
-									</span>
-									<span className="text-[11px]" style={{ color: '#6E6E70' }}>
-										{t('settings.prayerOrderDesc')}
-									</span>
-								</div>
-								<div className="flex gap-2">
-									{SESSION_ORDERS.map(({ value, label }) => (
-										<button
-											type="button"
-											key={value}
-											onClick={() => setSessionOrder(value)}
-											className="flex-1 rounded-[20px] py-2.5 text-[13px] font-medium transition-colors"
-											style={
-												sessionOrder === value
-													? { background: '#C9A962', color: '#1A1A1C', fontWeight: 600 }
-													: {
-															background: '#1A1A1C',
-															border: '1px solid #3A3A3C',
-															color: '#4A4A4C',
-														}
-											}
-										>
-											{label}
-										</button>
-									))}
-								</div>
-							</div>
-						</section>
-					)}
-
-					{/* ── APP tab ── */}
-					{activeTab === 'app' && (
 						<>
-							{/* Notifications */}
+							<CollapsibleSection label={t('settings.session')} defaultOpen={true}>
+								<div
+									className="flex flex-col gap-4 rounded-[20px] p-5"
+									style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+								>
+									<div className="flex flex-col gap-1">
+										<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
+											{t('settings.prayerOrder')}
+										</span>
+										<span className="text-[11px]" style={{ color: '#6E6E70' }}>
+											{t('settings.prayerOrderDesc')}
+										</span>
+									</div>
+									<div className="flex gap-2">
+										{SESSION_ORDERS.map(({ value, label }) => (
+											<button
+												type="button"
+												key={value}
+												onClick={() => setSessionOrder(value)}
+												className="flex-1 rounded-[20px] py-2.5 text-[13px] font-medium transition-colors"
+												style={
+													sessionOrder === value
+														? { background: '#C9A962', color: '#1A1A1C', fontWeight: 600 }
+														: {
+																background: '#1A1A1C',
+																border: '1px solid #3A3A3C',
+																color: '#4A4A4C',
+															}
+												}
+											>
+												{label}
+											</button>
+										))}
+									</div>
+								</div>
+							</CollapsibleSection>
+
 							<CollapsibleSection label={t('settings.notifications')} defaultOpen={true}>
 								<div
 									className="flex flex-col gap-4 rounded-[20px] p-5"
@@ -605,13 +598,17 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 										</button>
 									</div>
 
-									{/* Time input - show only when enabled */}
 									{isEnabled && permission === 'granted' && (
 										<div className="flex flex-col gap-1.5">
-											<label className="text-xs font-medium" style={{ color: '#6E6E70' }}>
+											<label
+												htmlFor="input-reminder-time"
+												className="text-xs font-medium"
+												style={{ color: '#6E6E70' }}
+											>
 												{t('settings.notificationsTime')}
 											</label>
 											<input
+												id="input-reminder-time"
 												type="time"
 												value={reminderTime}
 												onChange={(e) => updateTime(e.target.value)}
@@ -620,7 +617,6 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 										</div>
 									)}
 
-									{/* Permission denied message */}
 									{permission === 'denied' && (
 										<p className="text-[11px]" style={{ color: '#D45F5F' }}>
 											{t('settings.notificationsPermissionDenied')}
@@ -628,7 +624,12 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 									)}
 								</div>
 							</CollapsibleSection>
+						</>
+					)}
 
+					{/* ── APP tab ── */}
+					{activeTab === 'app' && (
+						<>
 							{/* Données */}
 							<CollapsibleSection label={t('settings.data')} defaultOpen={true}>
 								<div
