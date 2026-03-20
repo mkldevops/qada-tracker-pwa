@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Session } from '@/components/Session';
 import { PRAYER_CONFIG } from '@/constants/prayers';
-import { formatDays } from '@/lib/formatDays';
+import { formatDays, prayersToDuration } from '@/lib/formatDays';
 import { useDebts, usePrayerStore, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import type { PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -107,10 +107,11 @@ export function Dashboard() {
 	const totalRemaining = useTotalRemaining();
 	const [showSession, setShowSession] = useState(false);
 
-	const daysToComplete = Math.ceil(totalRemaining / 5);
-	const catchUpYears = Math.floor(daysToComplete / 365);
-	const catchUpMonths = Math.floor((daysToComplete % 365) / 30);
-	const catchUpDays = (daysToComplete % 365) % 30;
+	const {
+		years: catchUpYears,
+		months: catchUpMonths,
+		days: catchUpDays,
+	} = prayersToDuration(totalRemaining);
 	const catchUpLabel =
 		totalRemaining > 0
 			? t('dashboard.catchUp', { years: catchUpYears, months: catchUpMonths, days: catchUpDays })

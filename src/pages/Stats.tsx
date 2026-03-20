@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { StatsChart } from '@/components/StatsChart';
 import { PRAYER_CONFIG } from '@/constants/prayers';
-import { formatDays } from '@/lib/formatDays';
+import { formatDays, prayersToDuration } from '@/lib/formatDays';
 import { useDebts, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import { PRAYER_NAMES } from '@/types';
 
@@ -35,10 +35,7 @@ export function Stats() {
 	const debts = useDebts();
 	const totalRemaining = useTotalRemaining();
 
-	const donedays = Math.floor(stats.allTime / 5);
-	const doneYears = Math.floor(donedays / 365);
-	const doneMonths = Math.floor((donedays % 365) / 30);
-	const doneDays = (donedays % 365) % 30;
+	const { years: doneYears, months: doneMonths, days: doneDays } = prayersToDuration(stats.allTime);
 
 	return (
 		<div className="space-y-5 px-7 pb-4 pt-1">
@@ -59,13 +56,15 @@ export function Stats() {
 				>
 					{stats.allTime.toLocaleString()}
 				</p>
-				<p className="text-sm" style={{ color: '#1A1A1C88' }}>
-					{t('stats.catchUpDaysCompleted', {
-						years: doneYears,
-						months: doneMonths,
-						days: doneDays,
-					})}
-				</p>
+				{stats.allTime > 0 && (
+					<p className="text-sm" style={{ color: '#1A1A1C88' }}>
+						{t('stats.catchUpDaysCompleted', {
+							years: doneYears,
+							months: doneMonths,
+							days: doneDays,
+						})}
+					</p>
+				)}
 			</div>
 
 			<div className="grid grid-cols-2 gap-3">
