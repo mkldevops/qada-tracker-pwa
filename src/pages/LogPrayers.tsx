@@ -247,8 +247,8 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 					const durationMin =
 						isSession && group.entries.length > 1
 							? Math.floor(
-									(new Date(group.entries[group.entries.length - 1].logged_at).getTime() -
-										new Date(group.entries[0].logged_at).getTime()) /
+									(new Date(group.entries[0].logged_at).getTime() -
+										new Date(group.entries[group.entries.length - 1].logged_at).getTime()) /
 										60000,
 								)
 							: 0;

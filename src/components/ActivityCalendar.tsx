@@ -75,7 +75,7 @@ export function ActivityCalendar() {
 			<div style={{ minHeight: 18 }}>
 				{selected && (
 					<p className="text-center text-[11px]" style={{ color: '#6E6E70' }}>
-						{new Date(selected.date).toLocaleDateString(i18n.language, {
+						{new Date(`${selected.date}T00:00:00`).toLocaleDateString(i18n.language, {
 							day: 'numeric',
 							month: 'long',
 						})}
