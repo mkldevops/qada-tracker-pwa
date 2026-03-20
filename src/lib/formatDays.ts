@@ -1,5 +1,17 @@
 import type { TFunction } from 'i18next';
 
+export function prayersToDuration(prayers: number): {
+	years: number;
+	months: number;
+	days: number;
+} {
+	const total = Math.ceil(prayers / 5);
+	const years = Math.floor(total / 365);
+	const months = Math.floor((total % 365) / 30);
+	const days = (total % 365) % 30;
+	return { years, months, days };
+}
+
 export function formatDays(days: number, t: TFunction): string {
 	if (days <= 0) return t('common.lessThanOneDay');
 	const years = Math.floor(days / 365);

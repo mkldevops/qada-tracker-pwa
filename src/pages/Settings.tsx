@@ -118,8 +118,6 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 		return () => clearTimeout(timeout);
 	}, [dataFeedback]);
 
-	const hasDebt = PRAYER_NAMES.some((p) => (debts[p]?.total_owed ?? 0) > 0);
-	const hasObjective = activeObjective != null;
 	const hasManualChanges = Object.values(manualAmounts).some((v) => v !== undefined && v !== '');
 
 	const haydExclusion = isFemme
@@ -255,7 +253,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 					{activeTab === 'debt' && (
 						<>
 							{/* Merged debt section */}
-							<CollapsibleSection label={t('settings.calculateDebt')} defaultOpen={!hasDebt}>
+							<CollapsibleSection label={t('settings.calculateDebt')} defaultOpen={true}>
 								<div
 									className="flex flex-col gap-4 rounded-[20px] p-5"
 									style={{ background: '#242426', border: '1px solid #3A3A3C' }}
@@ -462,7 +460,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 							</CollapsibleSection>
 
 							{/* Objective */}
-							<CollapsibleSection label={t('settings.objective')} defaultOpen={!hasObjective}>
+							<CollapsibleSection label={t('settings.objective')} defaultOpen={true}>
 								<div
 									className="flex flex-col gap-4 rounded-[20px] p-5"
 									style={{ background: '#242426', border: '1px solid #3A3A3C' }}
@@ -662,7 +660,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 							</CollapsibleSection>
 
 							{/* Configuration */}
-							<CollapsibleSection label={t('settings.configuration')} defaultOpen={false}>
+							<CollapsibleSection label={t('settings.configuration')} defaultOpen={true}>
 								<div className="flex flex-col gap-3">
 									{/* Language */}
 									<div
@@ -723,7 +721,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 							</div>
 
 							{/* Zone Danger */}
-							<CollapsibleSection label={t('settings.dangerZone')} defaultOpen={false}>
+							<CollapsibleSection label={t('settings.dangerZone')} defaultOpen={true}>
 								<AlertDialog>
 									<AlertDialogTrigger asChild>
 										<button
