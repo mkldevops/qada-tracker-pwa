@@ -24,6 +24,7 @@
 		"subtitle": "PRAYERS TO MAKE UP",
 		"totalRemaining": "TOTAL REMAINING",
 		"missedPrayers": "missed prayers",
+		"catchUp": "≈ {{years}} yrs {{months}} mo {{days}} d to catch up (5/d)",
 		"launchSession": "Start a session",
 		"today": "today",
 		"streak": "streak",

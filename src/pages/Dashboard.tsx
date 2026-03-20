@@ -107,6 +107,16 @@ export function Dashboard() {
 	const totalRemaining = useTotalRemaining();
 	const [showSession, setShowSession] = useState(false);
 
+	const daysToComplete = Math.ceil(totalRemaining / 5);
+	const catchUpYears = Math.floor(daysToComplete / 365);
+	const catchUpMonths = Math.floor((daysToComplete % 365) / 30);
+	const catchUpDays = daysToComplete % 30;
+	const catchUpLabel = t('dashboard.catchUp', {
+		years: catchUpYears,
+		months: catchUpMonths,
+		days: catchUpDays,
+	});
+
 	return (
 		<>
 			<div className="space-y-5 px-7 pb-4 pt-1">
@@ -135,7 +145,7 @@ export function Dashboard() {
 						{totalRemaining.toLocaleString()}
 					</p>
 					<p className="text-sm" style={{ color: '#1A1A1C88' }}>
-						{t('dashboard.missedPrayers')}
+						{catchUpLabel}
 					</p>
 				</div>
 

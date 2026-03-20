@@ -24,6 +24,7 @@
 		"subtitle": "PRIÈRES À RATTRAPER",
 		"totalRemaining": "TOTAL RESTANT",
 		"missedPrayers": "prières manquées",
+		"catchUp": "≈ {{years}} ans {{months}} mois {{days}} jours à rattraper (5/j)",
 		"launchSession": "Lancer une session",
 		"today": "aujourd'hui",
 		"streak": "série",
