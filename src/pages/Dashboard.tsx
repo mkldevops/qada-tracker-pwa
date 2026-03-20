@@ -110,12 +110,11 @@ export function Dashboard() {
 	const daysToComplete = Math.ceil(totalRemaining / 5);
 	const catchUpYears = Math.floor(daysToComplete / 365);
 	const catchUpMonths = Math.floor((daysToComplete % 365) / 30);
-	const catchUpDays = daysToComplete % 30;
-	const catchUpLabel = t('dashboard.catchUp', {
-		years: catchUpYears,
-		months: catchUpMonths,
-		days: catchUpDays,
-	});
+	const catchUpDays = (daysToComplete % 365) % 30;
+	const catchUpLabel =
+		totalRemaining > 0
+			? t('dashboard.catchUp', { years: catchUpYears, months: catchUpMonths, days: catchUpDays })
+			: null;
 
 	return (
 		<>
@@ -144,9 +143,11 @@ export function Dashboard() {
 					>
 						{totalRemaining.toLocaleString()}
 					</p>
-					<p className="text-sm" style={{ color: '#1A1A1C88' }}>
-						{catchUpLabel}
-					</p>
+					{catchUpLabel && (
+						<p className="text-sm" style={{ color: '#1A1A1C88' }}>
+							{catchUpLabel}
+						</p>
+					)}
 				</div>
 
 				<button
