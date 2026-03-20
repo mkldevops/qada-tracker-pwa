@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { StatsChart } from '@/components/StatsChart';
 import { PRAYER_CONFIG } from '@/constants/prayers';
-import { formatDays, prayersToDuration } from '@/lib/formatDays';
+import { formatCatchUpLabel, formatDays } from '@/lib/formatDays';
 import { useDebts, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import { PRAYER_NAMES } from '@/types';
 
@@ -35,7 +35,7 @@ export function Stats() {
 	const debts = useDebts();
 	const totalRemaining = useTotalRemaining();
 
-	const { years: doneYears, months: doneMonths, days: doneDays } = prayersToDuration(stats.allTime);
+	const doneLabel = formatCatchUpLabel(stats.allTime, t);
 
 	return (
 		<div className="space-y-5 px-7 pb-4 pt-1">
@@ -56,13 +56,9 @@ export function Stats() {
 				>
 					{stats.allTime.toLocaleString()}
 				</p>
-				{stats.allTime > 0 && (
+				{doneLabel && (
 					<p className="text-sm" style={{ color: '#1A1A1C88' }}>
-						{t('stats.catchUpDaysCompleted', {
-							years: doneYears,
-							months: doneMonths,
-							days: doneDays,
-						})}
+						{doneLabel}
 					</p>
 				)}
 			</div>
