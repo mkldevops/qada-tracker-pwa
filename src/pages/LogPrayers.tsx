@@ -241,83 +241,110 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 			</motion.div>
 
 			<div className="flex flex-col gap-3">
-				{groups.map((group, gi) => (
-					<motion.div
-						key={group.sessionId ?? `solo-${gi}`}
-						initial={{ opacity: 0, y: 16 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: gi * 0.04, ...spring }}
-					>
-						<div className="mb-1.5 flex items-center gap-2 px-1">
-							<span className="text-[10px] font-medium tracking-[2px]" style={{ color: '#3A3A3C' }}>
-								{new Date(group.date).toLocaleString(i18n.language, {
-									day: '2-digit',
-									month: '2-digit',
-									hour: '2-digit',
-									minute: '2-digit',
-								})}
-							</span>
-							{group.sessionId?.startsWith('session-') && (
-								<span
-									className="rounded-full px-2 py-0.5 text-[9px] font-medium tracking-wider"
-									style={{ background: '#C9A96215', color: '#C9A96280' }}
-								>
-									{t('log.session')}
-								</span>
-							)}
-						</div>
+				{groups.map((group, gi) => {
+					const totalPrayers = group.entries.reduce((s, e) => s + e.quantity, 0);
+					const isSession = group.sessionId?.startsWith('session-') ?? false;
+					const durationMin =
+						isSession && group.entries.length > 1
+							? Math.floor(
+									(new Date(group.entries[0].logged_at).getTime() -
+										new Date(group.entries[group.entries.length - 1].logged_at).getTime()) /
+										60000,
+								)
+							: 0;
 
-						<div
-							className="overflow-hidden rounded-[18px]"
-							style={{ background: '#242426', border: '1px solid #2A2A2C' }}
+					return (
+						<motion.div
+							key={group.sessionId ?? `solo-${gi}`}
+							initial={{ opacity: 0, y: 16 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ delay: gi * 0.04, ...spring }}
 						>
-							{group.entries.map((log, li) => {
-								const cfg = PRAYER_CONFIG[log.prayer];
-								return (
-									<div key={log.id}>
-										{li > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
-										<motion.div
-											className="flex items-center justify-between px-5 py-3"
-											initial={{ opacity: 0 }}
-											animate={{ opacity: 1 }}
-											transition={{ delay: gi * 0.04 + li * 0.03 }}
-										>
-											<div className="flex items-center gap-2.5">
-												<div
-													className="h-2 w-2 rounded-full flex-shrink-0"
-													style={{ background: cfg.hex }}
-												/>
-												<span
-													className="font-display text-[15px] font-medium"
-													style={{ color: cfg.hex }}
-												>
-													{cfg.labelFr}
-												</span>
-												<span className="text-xs" style={{ color: '#3A3A3C' }}>
-													{cfg.labelAr}
-												</span>
-											</div>
-											<motion.span
-												className="font-display text-lg font-medium tabular-nums"
-												style={{ color: '#C9A962' }}
-												initial={{ scale: 0.8, opacity: 0 }}
-												animate={{ scale: 1, opacity: 1 }}
-												transition={{
-													delay: gi * 0.04 + li * 0.03 + 0.05,
-													type: 'spring' as const,
-													stiffness: 500,
-													damping: 22,
-												}}
+							<div className="mb-1.5 flex items-center gap-2 px-1">
+								<span
+									className="text-[10px] font-medium tracking-[2px]"
+									style={{ color: '#3A3A3C' }}
+								>
+									{new Date(group.date).toLocaleString(i18n.language, {
+										day: '2-digit',
+										month: '2-digit',
+										hour: '2-digit',
+										minute: '2-digit',
+									})}
+								</span>
+								{group.sessionId?.startsWith('session-') && (
+									<span
+										className="rounded-full px-2 py-0.5 text-[9px] font-medium tracking-wider"
+										style={{ background: '#C9A96215', color: '#C9A96280' }}
+									>
+										{t('log.session')}
+									</span>
+								)}
+								<span
+									className="text-[11px] font-medium tabular-nums"
+									style={{ color: '#C9A96280' }}
+								>
+									+{totalPrayers}
+								</span>
+								{durationMin >= 1 && (
+									<span className="text-[10px]" style={{ color: '#4A4A4C' }}>
+										{durationMin} min
+									</span>
+								)}
+							</div>
+
+							<div
+								className="overflow-hidden rounded-[18px]"
+								style={{ background: '#242426', border: '1px solid #2A2A2C' }}
+							>
+								{group.entries.map((log, li) => {
+									const cfg = PRAYER_CONFIG[log.prayer];
+									return (
+										<div key={log.id}>
+											{li > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+											<motion.div
+												className="flex items-center justify-between px-5 py-3"
+												initial={{ opacity: 0 }}
+												animate={{ opacity: 1 }}
+												transition={{ delay: gi * 0.04 + li * 0.03 }}
 											>
-												+{log.quantity}
-											</motion.span>
-										</motion.div>
-									</div>
-								);
-							})}
-						</div>
-					</motion.div>
-				))}
+												<div className="flex items-center gap-2.5">
+													<div
+														className="h-2 w-2 rounded-full flex-shrink-0"
+														style={{ background: cfg.hex }}
+													/>
+													<span
+														className="font-display text-[15px] font-medium"
+														style={{ color: cfg.hex }}
+													>
+														{cfg.labelFr}
+													</span>
+													<span className="text-xs" style={{ color: '#3A3A3C' }}>
+														{cfg.labelAr}
+													</span>
+												</div>
+												<motion.span
+													className="font-display text-lg font-medium tabular-nums"
+													style={{ color: '#C9A962' }}
+													initial={{ scale: 0.8, opacity: 0 }}
+													animate={{ scale: 1, opacity: 1 }}
+													transition={{
+														delay: gi * 0.04 + li * 0.03 + 0.05,
+														type: 'spring' as const,
+														stiffness: 500,
+														damping: 22,
+													}}
+												>
+													+{log.quantity}
+												</motion.span>
+											</motion.div>
+										</div>
+									);
+								})}
+							</div>
+						</motion.div>
+					);
+				})}
 			</div>
 		</div>
 	);

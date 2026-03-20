@@ -31,7 +31,11 @@ type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 export function App() {
 	const { t } = useTranslation();
 	useNotifications(t('settings.notificationsBody'));
-	const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+	const [activeTab, setActiveTab] = useState<Tab>(() => {
+		const param = new URLSearchParams(window.location.search).get('tab');
+		if (param === 'log' || param === 'stats' || param === 'settings') return param as Tab;
+		return 'dashboard';
+	});
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
 	const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 	const [updateError, setUpdateError] = useState<string | null>(null);

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { ActivityCalendar } from '@/components/ActivityCalendar';
 import { DebtEvolutionChart } from '@/components/DebtEvolutionChart';
 import { StatsChart } from '@/components/StatsChart';
 import { PRAYER_CONFIG } from '@/constants/prayers';
@@ -97,9 +98,24 @@ export function Stats() {
 
 			<div className="flex flex-col gap-2.5">
 				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+					{t('stats.activity')}
+				</p>
+				<div
+					className="rounded-[20px] p-4"
+					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				>
+					<ActivityCalendar />
+				</div>
+			</div>
+
+			<div className="flex flex-col gap-2.5">
+				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
 					{t('stats.debtEvolution')}
 				</p>
-				<div className="rounded-[20px] p-4" style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
+				<div
+					className="rounded-[20px] p-4"
+					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				>
 					<DebtEvolutionChart />
 				</div>
 			</div>
