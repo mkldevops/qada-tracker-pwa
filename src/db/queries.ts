@@ -393,3 +393,30 @@ export async function importBackup(
 
 	await loadAll();
 }
+
+export async function getDebtEvolution(
+	db: QadaDB,
+	days: number,
+): Promise<{ date: string; remaining: number }[]> {
+	const debts = await db.prayer_debts.toArray();
+	const currentRemaining = debts.reduce((s, r) => s + Math.max(0, r.total_owed - r.total_completed), 0);
+
+	const dateLimitISO = new Date(Date.now() - (days + 1) * 86400000).toISOString();
+	const logs = await db.prayer_logs.where('logged_at').aboveOrEqual(dateLimitISO).toArray();
+
+	const byDate = new Map<string, number>();
+	for (const log of logs) {
+		const d = log.logged_at.slice(0, 10);
+		byDate.set(d, (byDate.get(d) ?? 0) + log.quantity);
+	}
+
+	const points: { date: string; remaining: number }[] = [];
+	let remaining = currentRemaining;
+	for (let i = 0; i <= days; i++) {
+		const date = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+		points.push({ date, remaining });
+		remaining += byDate.get(date) ?? 0;
+	}
+
+	return points.reverse();
+}

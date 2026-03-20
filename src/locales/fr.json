@@ -39,6 +39,8 @@
 		"thisWeek": "cette semaine",
 		"avgPerDay": "moy/jour",
 		"estimation": "Estimation pour finir",
+		"debtEvolution": "ÉVOLUTION DE LA DETTE",
+		"debtEvolutionEmpty": "Pas encore de données",
 		"debtByPrayer": "DETTE PAR PRIÈRE",
 		"totalRemaining": "Total restant",
 		"prayerCount_one": "{{count}} prière",
@@ -111,6 +113,11 @@
 		"prayerOrderDesc": "Ordre dans lequel les prières sont proposées en session",
 		"chronological": "Chronologique",
 		"highestDebt": "Priorité dette",
+		"notifications": "RAPPEL QUOTIDIEN",
+		"notificationsDesc": "Rappel pour ne pas oublier votre session",
+		"notificationsTime": "Heure du rappel",
+		"notificationsPermissionDenied": "Notifications bloquées — modifiez les paramètres de votre navigateur",
+		"notificationsBody": "N'oubliez pas votre session de qada aujourd'hui 🤲",
 		"configuration": "CONFIGURATION",
 		"restartOnboarding": "RECONFIGURER L'ONBOARDING",
 		"data": "DONNÉES",
@@ -195,5 +202,10 @@
 		"update": "Mettre à jour",
 		"later": "Plus tard",
 		"error": "Mise à jour échouée. Veuillez recharger la page."
+	},
+	"milestone": {
+		"title": "Bravo, continue ainsi !",
+		"subtitle": "{{count}} prières rattrapées",
+		"close": "Continuer"
 	}
 }

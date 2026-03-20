@@ -12,6 +12,29 @@ import type {
 } from '../types';
 import { PRAYER_NAMES } from '../types';
 
+const MILESTONES = [100, 500, 1000, 2500, 5000, 10000] as const;
+
+function checkMilestone(allTime: number): number | null {
+	let largestMilestone: number | null = null;
+	for (const milestone of MILESTONES) {
+		if (milestone <= allTime) {
+			largestMilestone = milestone;
+		} else {
+			break;
+		}
+	}
+
+	if (largestMilestone === null) return null;
+
+	const key = `celebrated-milestone-${largestMilestone}`;
+	if (localStorage.getItem(key)) {
+		return null;
+	}
+
+	localStorage.setItem(key, '1');
+	return largestMilestone;
+}
+
 const EMPTY_STATS: StatsState = {
 	today: 0,
 	thisWeek: 0,
@@ -51,6 +74,7 @@ interface PrayerStore {
 	activeObjective: Objective | null;
 	isLoading: boolean;
 	sessionOrder: SessionOrder;
+	pendingMilestone: number | null;
 
 	loadAll: () => Promise<void>;
 	refresh: () => Promise<void>;
@@ -61,6 +85,7 @@ interface PrayerStore {
 	setDebtFromYears: (years: number, excludedDays: number) => Promise<void>;
 	setObjective: (period: Period, target: number) => Promise<void>;
 	setSessionOrder: (order: SessionOrder) => void;
+	clearMilestone: () => void;
 	resetAll: () => Promise<void>;
 }
 
@@ -74,6 +99,7 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 		const raw = localStorage.getItem(SESSION_ORDER_KEY);
 		return raw === 'chronological' || raw === 'highest-debt' ? raw : 'chronological';
 	})(),
+	pendingMilestone: null,
 
 	loadAll: async () => {
 		set({ isLoading: true });
@@ -98,6 +124,8 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 			queries.getRecentLogs(db, 50),
 		]);
 		set({ debts, stats, recentLogs });
+		const milestone = checkMilestone(stats.allTime);
+		if (milestone) set({ pendingMilestone: milestone });
 	},
 
 	logBatch: async (entries, sessionId) => {
@@ -112,6 +140,8 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 			queries.getRecentLogs(db, 50),
 		]);
 		set({ debts, stats, recentLogs });
+		const milestone = checkMilestone(stats.allTime);
+		if (milestone) set({ pendingMilestone: milestone });
 	},
 
 	undoLastLog: async () => {
@@ -148,6 +178,10 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 	setSessionOrder: (order) => {
 		localStorage.setItem(SESSION_ORDER_KEY, order);
 		set({ sessionOrder: order });
+	},
+
+	clearMilestone: () => {
+		set({ pendingMilestone: null });
 	},
 
 	resetAll: async () => {
