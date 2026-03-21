@@ -145,7 +145,7 @@ export function DebtEvolutionChart() {
 							</span>
 						</div>
 					)}
-					{deltaPercent !== null && (
+					{delta !== null && (
 						<div
 							className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5"
 							style={{ background: '#1A1A1C', border: '1px solid #2A2A2C' }}
@@ -153,11 +153,17 @@ export function DebtEvolutionChart() {
 							<span
 								className="text-base font-semibold tabular-nums"
 								style={{
-									color: deltaPercent < 0 ? '#6E9E6E' : deltaPercent > 0 ? '#D45F5F' : '#6E6E70',
+									color:
+										deltaPercent === null
+											? '#6E6E70'
+											: deltaPercent < 0
+												? '#6E9E6E'
+												: deltaPercent > 0
+													? '#D45F5F'
+													: '#6E6E70',
 								}}
 							>
-								{deltaPercent > 0 ? '+' : ''}
-								{deltaPercent}%
+								{deltaPercent === null ? '—' : `${deltaPercent > 0 ? '+' : ''}${deltaPercent}%`}
 							</span>
 							<span className="text-[9px] font-medium" style={{ color: '#4A4A4C' }}>
 								{t('stats.deltaPercent')}
@@ -238,12 +244,20 @@ export function DebtEvolutionChart() {
 							))}
 						</g>
 
-						<text x="1" y={yMax + 4} fontSize="5" fill="#3A3A3C" textAnchor="start">
-							{maxRemaining.toLocaleString()}
-						</text>
-						<text x="1" y={yMin - 2} fontSize="5" fill="#3A3A3C" textAnchor="start">
-							{minRemaining.toLocaleString()}
-						</text>
+						{minRemaining === maxRemaining ? (
+							<text x="1" y={(yMax + yMin) / 2} fontSize="5" fill="#3A3A3C" textAnchor="start">
+								{minRemaining.toLocaleString()}
+							</text>
+						) : (
+							<>
+								<text x="1" y={yMax + 4} fontSize="5" fill="#3A3A3C" textAnchor="start">
+									{maxRemaining.toLocaleString()}
+								</text>
+								<text x="1" y={yMin - 2} fontSize="5" fill="#3A3A3C" textAnchor="start">
+									{minRemaining.toLocaleString()}
+								</text>
+							</>
+						)}
 					</svg>
 				) : (
 					<div className="flex h-48 items-center justify-center" style={{ color: '#4A4A4C' }}>
@@ -252,7 +266,13 @@ export function DebtEvolutionChart() {
 				)}
 			</div>
 			{hasData && (
-				<div className="flex justify-between" style={{ paddingLeft: '16%', paddingRight: '16%' }}>
+				<div
+					className="flex justify-between"
+					style={{
+						paddingLeft: `${(PADDING / SVG_WIDTH) * 100}%`,
+						paddingRight: `${(PADDING / SVG_WIDTH) * 100}%`,
+					}}
+				>
 					<span className="text-[9px] tabular-nums" style={{ color: '#4A4A4C' }}>
 						{data[0].date}
 					</span>
