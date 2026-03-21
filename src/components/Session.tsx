@@ -33,19 +33,22 @@ const MAX_PICKER_VALUE = 999;
 function RakatDots({ total, current, color }: { total: number; current: number; color: string }) {
 	return (
 		<div className="flex items-center justify-center gap-3 py-2 mb-2">
-			{[1, 2, 3, 4].slice(0, total).map((rakatNum) => {
-				const i = rakatNum - 1;
+			{Array.from({ length: total }).map((_, i) => {
 				const isPast = i < current;
 				const isActive = i === current;
 				return (
 					<motion.div
-						key={rakatNum}
+						key={i}
 						animate={
 							isActive
 								? { scale: [1, 1.18, 1], opacity: 1 }
 								: { scale: 1, opacity: isPast ? 0.5 : 0.3 }
 						}
-						transition={isActive ? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } : spring}
+						transition={
+							isActive
+								? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }
+								: spring
+						}
 						style={{
 							width: isActive ? 20 : 14,
 							height: isActive ? 20 : 14,
@@ -724,7 +727,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</motion.button>
 						)}
 
-						{sujoodTrackingEnabled && cfg.rakat > 1 && (
+						{cfg.rakat > 1 && (
 							<RakatDots total={cfg.rakat} current={currentRakat} color={cfg.hex} />
 						)}
 
