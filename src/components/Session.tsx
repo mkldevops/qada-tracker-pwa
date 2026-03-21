@@ -363,6 +363,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 			handleAutoIncrement();
 		} else {
 			setCurrentRakat(next);
+			setConfirmDone(false);
 		}
 	}
 
@@ -692,6 +693,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 									<div className="flex gap-4">
 										<motion.button
 											onClick={() => handleIncrement(true)}
+											disabled={pressing}
 											className="px-5 py-2 rounded-2xl text-sm font-medium"
 											style={{ background: '#C9A962', color: '#1A1A1C' }}
 											whileTap={{ scale: 0.93 }}
