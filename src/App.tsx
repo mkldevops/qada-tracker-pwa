@@ -49,6 +49,7 @@ export function App() {
 	const directionRef = useRef(0);
 
 	function handleTabChange(tab: Tab) {
+		if (tab === activeTab) return;
 		directionRef.current = TAB_ORDER.indexOf(tab) > TAB_ORDER.indexOf(activeTab) ? 1 : -1;
 		setActiveTab(tab);
 	}

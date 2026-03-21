@@ -26,6 +26,16 @@ import { PRAYER_NAMES } from '@/types';
 type Tab = 'debt' | 'session' | 'app';
 type DebtMode = 'years' | 'manual';
 
+const SETTINGS_TAB_ORDER: Tab[] = ['debt', 'session', 'app'];
+
+const settingsSlideVariants = {
+	initial: (dir: number) => ({ x: dir * 100 + '%', opacity: 0 }),
+	animate: { x: 0, opacity: 1 },
+	exit: (dir: number) => ({ x: dir * -100 + '%', opacity: 0 }),
+};
+
+const settingsSlideTransition = { duration: 0.22, ease: [0.32, 0.72, 0, 1] as const };
+
 function CollapsibleSection({
 	label,
 	defaultOpen,
@@ -100,12 +110,12 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	const debts = useDebts();
 
 	const [activeTab, setActiveTab] = useState<Tab>('debt');
-	const settingsTabOrder: Tab[] = ['debt', 'session', 'app'];
 	const settingsDirRef = useRef(0);
 
 	function handleSettingsTabChange(tab: Tab) {
+		if (tab === activeTab) return;
 		settingsDirRef.current =
-			settingsTabOrder.indexOf(tab) > settingsTabOrder.indexOf(activeTab) ? 1 : -1;
+			SETTINGS_TAB_ORDER.indexOf(tab) > SETTINGS_TAB_ORDER.indexOf(activeTab) ? 1 : -1;
 		setActiveTab(tab);
 	}
 	const [debtMode, setDebtMode] = useState<DebtMode>('years');
@@ -262,15 +272,11 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 					<motion.div
 						key={activeTab}
 						custom={settingsDirRef.current}
-						variants={{
-							initial: (dir: number) => ({ x: dir * 100 + '%', opacity: 0 }),
-							animate: { x: 0, opacity: 1 },
-							exit: (dir: number) => ({ x: dir * -100 + '%', opacity: 0 }),
-						}}
+						variants={settingsSlideVariants}
 						initial="initial"
 						animate="animate"
 						exit="exit"
-						transition={{ duration: 0.22, ease: [0.32, 0.72, 0, 1] }}
+						transition={settingsSlideTransition}
 						className="flex flex-col gap-5 overflow-hidden"
 					>
 						{/* ── DETTE tab ── */}
