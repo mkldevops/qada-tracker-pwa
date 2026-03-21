@@ -29,7 +29,7 @@ import { usePrayerStore } from '@/stores/prayerStore';
 type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 
 export function App() {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	useNotifications(t('settings.notificationsBody'));
 	const [activeTab, setActiveTab] = useState<Tab>(() => {
 		const param = new URLSearchParams(window.location.search).get('tab');
@@ -49,6 +49,15 @@ export function App() {
 	useEffect(() => {
 		loadAll();
 	}, [loadAll]);
+
+	useEffect(() => {
+		const tabLabel = { dashboard: t('nav.home'), log: t('nav.log'), stats: t('nav.stats'), settings: t('nav.settings') }[activeTab];
+		document.title = `Qada Tracker — ${tabLabel}`;
+	}, [activeTab, t]);
+
+	useEffect(() => {
+		document.documentElement.lang = i18n.language;
+	}, [i18n.language]);
 
 	useEffect(() => {
 		const handleBeforeInstallPrompt = (e: Event) => {

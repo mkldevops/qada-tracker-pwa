@@ -26,11 +26,12 @@ export default defineConfig({
 		},
 		VitePWA({
 			registerType: 'prompt',
-			includeAssets: ['icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png'],
+			includeAssets: ['icon-180.png', 'icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'og-image.png'],
 			manifest: {
-				name: 'Qada Tracker',
+				name: 'Qada Tracker — Prières manquées',
 				short_name: 'Qada',
-				description: 'Tracker de prières à rattraper — 100% offline',
+				lang: 'fr',
+				description: 'Tracker de prières à rattraper — 100% offline | Missed Islamic prayer tracker',
 				theme_color: '#1A1A1C',
 				background_color: '#1A1A1C',
 				display: 'standalone',
