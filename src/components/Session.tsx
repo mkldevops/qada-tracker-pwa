@@ -544,7 +544,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 									} else if (!busyRef.current) {
 										navigator.vibrate?.([50, 50, 150]);
 										setSujoodCount(0);
-										handleAutoIncrement();
+										handleRakatComplete();
 									}
 								}}
 								className="w-full mb-6 py-5 rounded-2xl text-center font-semibold tracking-[1px]"
@@ -568,6 +568,18 @@ export function Session({ onClose }: { onClose: () => void }) {
 							>
 								{sujoodCount === 0 ? t('session.manualSujood1') : t('session.manualSujood2')}
 							</motion.button>
+						)}
+
+						{cfg.rakat > 1 && (
+							<motion.div
+								className="w-full mb-4 text-center text-xs font-medium tracking-[2px]"
+								style={{ color: '#4A4A4C' }}
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								transition={{ delay: 0.12 }}
+							>
+								{t('session.rakatProgress', { current: currentRakat + 1, total: cfg.rakat })}
+							</motion.div>
 						)}
 
 						<AnimatePresence mode="wait">
