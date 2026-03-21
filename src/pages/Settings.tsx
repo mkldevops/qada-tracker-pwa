@@ -26,6 +26,16 @@ import { PRAYER_NAMES } from '@/types';
 type Tab = 'debt' | 'session' | 'app';
 type DebtMode = 'years' | 'manual';
 
+const SETTINGS_TAB_ORDER: Tab[] = ['debt', 'session', 'app'];
+
+const settingsSlideVariants = {
+	initial: (dir: number) => ({ x: dir * 100 + '%', opacity: 0 }),
+	animate: { x: 0, opacity: 1 },
+	exit: (dir: number) => ({ x: dir * -100 + '%', opacity: 0 }),
+};
+
+const settingsSlideTransition = { duration: 0.22, ease: [0.32, 0.72, 0, 1] as const };
+
 function CollapsibleSection({
 	label,
 	defaultOpen,
@@ -100,6 +110,14 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	const debts = useDebts();
 
 	const [activeTab, setActiveTab] = useState<Tab>('debt');
+	const settingsDirRef = useRef(0);
+
+	function handleSettingsTabChange(tab: Tab) {
+		if (tab === activeTab) return;
+		settingsDirRef.current =
+			SETTINGS_TAB_ORDER.indexOf(tab) > SETTINGS_TAB_ORDER.indexOf(activeTab) ? 1 : -1;
+		setActiveTab(tab);
+	}
 	const [debtMode, setDebtMode] = useState<DebtMode>('years');
 	const [showChangelog, setShowChangelog] = useState(false);
 
@@ -236,7 +254,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 						<button
 							key={value}
 							type="button"
-							onClick={() => setActiveTab(value)}
+							onClick={() => handleSettingsTabChange(value)}
 							className="flex-1 rounded-[16px] py-2.5 text-[11px] font-semibold tracking-[1.5px] transition-colors"
 							style={
 								activeTab === value
@@ -250,14 +268,16 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 				</div>
 
 				{/* Tab content */}
-				<AnimatePresence mode="wait" initial={false}>
+				<AnimatePresence mode="wait" initial={false} custom={settingsDirRef.current}>
 					<motion.div
 						key={activeTab}
-						initial={{ opacity: 0, y: 6 }}
-						animate={{ opacity: 1, y: 0 }}
-						exit={{ opacity: 0, y: -6 }}
-						transition={{ duration: 0.15 }}
-						className="flex flex-col gap-5"
+						custom={settingsDirRef.current}
+						variants={settingsSlideVariants}
+						initial="initial"
+						animate="animate"
+						exit="exit"
+						transition={settingsSlideTransition}
+						className="flex flex-col gap-5 overflow-hidden"
 					>
 						{/* ── DETTE tab ── */}
 						{activeTab === 'debt' && (
