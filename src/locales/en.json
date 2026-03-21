@@ -84,6 +84,8 @@
 		"manualSujood1": "1st sujood",
 		"manualSujood2": "2nd sujood",
 		"done": "DONE ✓",
+		"donePartialConfirm": "{{current}}/{{total}} rak'ats done. Log anyway?",
+		"logAnyway": "Log anyway",
 		"quitConfirm": "Quit session?",
 		"quit": "Quit",
 		"continue": "Continue",

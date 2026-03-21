@@ -84,6 +84,8 @@
 		"manualSujood1": "1er sujoud",
 		"manualSujood2": "2ème sujoud",
 		"done": "TERMINÉ ✓",
+		"donePartialConfirm": "{{current}}/{{total}} rak'ats effectuées. Logger quand même ?",
+		"logAnyway": "Logger",
 		"quitConfirm": "Quitter la session ?",
 		"quit": "Quitter",
 		"continue": "Continuer",
