@@ -38,9 +38,20 @@ function NumberPicker({
 		valueRef.current = value;
 	}, [value]);
 
+	const ghostVariants = {
+		enter: (d: number) => ({ y: d > 0 ? 40 : -40, opacity: 0 }),
+		center: { y: 0, opacity: 0.25 },
+		exit: (d: number) => ({ y: d > 0 ? -40 : 40, opacity: 0 }),
+	};
+	const ghostStyle = {
+		color: '#F5F5F0',
+		fontSize: 52,
+		fontFamily: "ui-monospace, 'SF Mono', monospace",
+	} as const;
+
 	return (
 		<motion.div
-			className="flex flex-col items-center gap-3 py-8 cursor-ns-resize select-none touch-none"
+			className="flex flex-col items-center gap-1 py-4 cursor-ns-resize select-none touch-none"
 			onPan={(_, info) => {
 				accumulated.current -= info.delta.y;
 				const step = 10;
@@ -54,6 +65,29 @@ function NumberPicker({
 				accumulated.current = 0;
 			}}
 		>
+			<div className="overflow-hidden flex items-center justify-center" style={{ height: 60 }}>
+				<AnimatePresence mode="popLayout" custom={dir}>
+					{value > 1 && (
+						<motion.button
+							key={value - 1}
+							type="button"
+							custom={dir}
+							variants={ghostVariants}
+							initial="enter"
+							animate="center"
+							exit="exit"
+							transition={springBouncy}
+							onClick={() => onChange(value - 1)}
+							className="tabular-nums leading-none"
+							style={ghostStyle}
+							whileTap={{ scale: 0.9 }}
+						>
+							{value - 1}
+						</motion.button>
+					)}
+				</AnimatePresence>
+			</div>
+
 			<div className="overflow-hidden flex items-center" style={{ height: 110 }}>
 				<AnimatePresence mode="popLayout" custom={dir}>
 					<motion.span
@@ -79,6 +113,28 @@ function NumberPicker({
 					</motion.span>
 				</AnimatePresence>
 			</div>
+
+			<div className="overflow-hidden flex items-center justify-center" style={{ height: 60 }}>
+				<AnimatePresence mode="popLayout" custom={dir}>
+					<motion.button
+						key={value + 1}
+						type="button"
+						custom={dir}
+						variants={ghostVariants}
+						initial="enter"
+						animate="center"
+						exit="exit"
+						transition={springBouncy}
+						onClick={() => onChange(value + 1)}
+						className="tabular-nums leading-none"
+						style={ghostStyle}
+						whileTap={{ scale: 0.9 }}
+					>
+						{value + 1}
+					</motion.button>
+				</AnimatePresence>
+			</div>
+
 			<motion.p
 				className="text-xs tracking-widest"
 				style={{ color: '#3A3A3C' }}
