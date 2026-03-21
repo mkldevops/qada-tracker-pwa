@@ -42,7 +42,22 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "type=$BUMP_TYPE" >> $GITHUB_OUTPUT
           else
-            echo "type=patch" >> $GITHUB_OUTPUT
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            if [ -z "$LAST_TAG" ]; then
+              COMMITS=$(git log --format="%s%n%b" HEAD)
+            else
+              COMMITS=$(git log --format="%s%n%b" "${LAST_TAG}..HEAD")
+            fi
+
+            BUMP="patch"
+
+            if echo "$COMMITS" | grep -qE "BREAKING CHANGE |^(feat|fix|refactor|perf|chore)!(\(.+\))?:"; then
+              BUMP="major"
+            elif echo "$COMMITS" | grep -qE "^feat(\(.+\))?:"; then
+              BUMP="minor"
+            fi
+
+            echo "type=$BUMP" >> $GITHUB_OUTPUT
           fi
 
       - uses: pnpm/action-setup@v4
