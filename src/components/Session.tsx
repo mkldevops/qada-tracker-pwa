@@ -35,6 +35,41 @@ const ghostStyle = {
 } as const;
 const MAX_PICKER_VALUE = 999;
 
+function RakatDots({ total, current, color }: { total: number; current: number; color: string }) {
+	return (
+		<div className="flex items-center justify-center gap-3 py-2 mb-2">
+			{Array.from({ length: total }).map((_, i) => {
+				const isPast = i < current;
+				const isActive = i === current;
+				return (
+					<motion.div
+						key={i}
+						animate={
+							isActive
+								? { scale: [1, 1.18, 1], opacity: 1 }
+								: { scale: 1, opacity: isPast ? 0.5 : 0.3 }
+						}
+						transition={
+							isActive
+								? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }
+								: spring
+						}
+						style={{
+							width: isActive ? 20 : 14,
+							height: isActive ? 20 : 14,
+							borderRadius: '50%',
+							background: isActive || isPast ? color : 'transparent',
+							border: isActive || isPast ? 'none' : `2px solid ${color}`,
+							boxShadow: isActive ? `0 0 10px ${color}80` : 'none',
+							flexShrink: 0,
+						}}
+					/>
+				);
+			})}
+		</div>
+	);
+}
+
 function GhostButton({
 	show,
 	targetValue,
@@ -624,15 +659,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 						)}
 
 						{cfg.rakat > 1 && (
-							<motion.div
-								className="w-full mb-4 text-center text-xs font-medium tracking-[2px]"
-								style={{ color: '#4A4A4C' }}
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.12 }}
-							>
-								{t('session.rakatProgress', { current: currentRakat + 1, total: cfg.rakat })}
-							</motion.div>
+							<RakatDots total={cfg.rakat} current={currentRakat} color={cfg.hex} />
 						)}
 
 						<AnimatePresence mode="wait">
