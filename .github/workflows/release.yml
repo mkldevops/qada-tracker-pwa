@@ -43,21 +43,17 @@ jobs:
             echo "type=$BUMP_TYPE" >> $GITHUB_OUTPUT
           else
             LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-            if [ -z "$LAST_TAG" ]; then
-              COMMITS=$(git log --format="%s%n%b" HEAD)
-            else
-              COMMITS=$(git log --format="%s%n%b" "${LAST_TAG}..HEAD")
-            fi
-
+            RANGE="${LAST_TAG:+${LAST_TAG}..}HEAD"
             BUMP="patch"
 
-            if echo "$COMMITS" | grep -qE "BREAKING CHANGE |^(feat|fix|refactor|perf|chore)!(\(.+\))?:"; then
+            if git log --format="%s" "$RANGE" | grep -qE "^[a-z]+(\(.+\))?!:" || \
+               git log --format="%b" "$RANGE" | grep -qE "^BREAKING[ -]CHANGE[: ]"; then
               BUMP="major"
-            elif echo "$COMMITS" | grep -qE "^feat(\(.+\))?:"; then
+            elif git log --format="%s" "$RANGE" | grep -qE "^feat(\(.+\))?:"; then
               BUMP="minor"
             fi
 
-            echo "type=$BUMP" >> $GITHUB_OUTPUT
+            echo "type=$BUMP" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: pnpm/action-setup@v4
