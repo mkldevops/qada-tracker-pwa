@@ -78,6 +78,7 @@
 		"start": "DÉMARRER",
 		"cancel": "Annuler",
 		"progress": "PROGRESSION",
+		"rakatProgress": "Rak'a {{current}} / {{total}}",
 		"sujood1": "✋ Attente du 1er sujood",
 		"sujood2": "✋ Attente du 2ème sujood",
 		"manualSujood1": "1er sujoud",
