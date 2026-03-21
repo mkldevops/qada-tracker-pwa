@@ -259,8 +259,21 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const [confirmQuit, setConfirmQuit] = useState(false);
 	const [pressing, setPressing] = useState(false);
 	const [sujoodCount, setSujoodCount] = useState<0 | 1>(0);
+	const [currentRakat, setCurrentRakat] = useState(0);
 	const busyRef = useRef(false);
 	const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+	function handleRakatComplete() {
+		const entry = getNextPrayer(usePrayerStore.getState().debts, prayerOrder, currentPrayerIndex);
+		if (!entry) return;
+		const totalRakat = PRAYER_CONFIG[entry.prayer].rakat;
+		const next = currentRakat + 1;
+		if (next >= totalRakat) {
+			handleAutoIncrement();
+		} else {
+			setCurrentRakat(next);
+		}
+	}
 
 	const sensorState = useProximitySensor(
 		phase === 'active',
@@ -271,7 +284,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 		() => {
 			navigator.vibrate?.([50, 50, 150]);
 			setSujoodCount(0);
-			handleAutoIncrement();
+			handleRakatComplete();
 		},
 	);
 
@@ -349,6 +362,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 
 			if (showPressing) setPressing(true);
 			await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
+			setCurrentRakat(0);
 
 			setCompleted((prev) => {
 				const newCompleted = prev + 1;
