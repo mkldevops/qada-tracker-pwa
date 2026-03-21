@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.0.19',
+		date: '2026-03-21',
+		changes: {
+			fr: [
+				'Détecteur de sujoud basé sur la luminosité de la caméra frontale (style appel téléphonique)',
+				'Basculement automatique vers gyroscope ou bouton manuel si caméra indisponible',
+			],
+			en: [
+				'Sujood detector using front camera brightness (phone-call style)',
+				'Automatic fallback to gyroscope or manual button when camera unavailable',
+			],
+		},
+	},
+	{
 		version: '1.0.18',
 		date: '2026-03-20',
 		changes: {

@@ -14,6 +14,11 @@ const MIN_SUJOOD_DURATION_MS = 300;
 const MAX_SUJOOD_DURATION_MS = 5000;
 const DEBOUNCE_MS = 800;
 const ORIENTATION_STARTUP_TIMEOUT_MS = 3000;
+const CAMERA_WIDTH = 80;
+const CAMERA_HEIGHT = 60;
+const CAMERA_INTERVAL_MS = 200;
+const CAMERA_DARK_THRESHOLD = 25;
+const CAMERA_LIGHT_THRESHOLD = 50;
 
 export function useProximitySensor(
 	active: boolean,
@@ -37,7 +42,9 @@ export function useProximitySensor(
 		const hasProximitySensor = typeof (window as any).ProximitySensor !== 'undefined';
 		const hasDeviceProximity = typeof (window as any).ondeviceproximity !== 'undefined';
 		const hasDeviceOrientation = typeof window.DeviceOrientationEvent !== 'undefined';
-		const hasSupport = hasProximitySensor || hasDeviceProximity || hasDeviceOrientation;
+		const hasCamera = typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia;
+		const hasSupport =
+			hasProximitySensor || hasDeviceProximity || hasCamera || hasDeviceOrientation;
 
 		setIsSupported(hasSupport);
 
@@ -186,6 +193,93 @@ export function useProximitySensor(
 		if (typeof (window as any).ondeviceproximity !== 'undefined') {
 			setupDeviceProximityFallback();
 			return setupCleanup();
+		}
+
+		if (hasCamera) {
+			let orientationTimerCleanup: (() => void) | undefined;
+
+			const setupCameraFallback = async () => {
+				try {
+					const stream = await navigator.mediaDevices.getUserMedia({
+						video: { facingMode: 'user', width: CAMERA_WIDTH, height: CAMERA_HEIGHT },
+					});
+					if (cancelled) {
+						for (const t of stream.getTracks()) t.stop();
+						return;
+					}
+					const video = document.createElement('video');
+					video.muted = true;
+					video.srcObject = stream;
+					void video.play().catch(() => {});
+					const canvas = document.createElement('canvas');
+					canvas.width = CAMERA_WIDTH;
+					canvas.height = CAMERA_HEIGHT;
+					const ctx = canvas.getContext('2d');
+					if (!ctx) {
+						for (const t of stream.getTracks()) t.stop();
+						if (!cancelled) {
+							orientationTimerCleanup = setupDeviceOrientationFallback();
+						}
+						return;
+					}
+					let coveredSinceMs = 0;
+					const intervalId = setInterval(() => {
+						if (cancelled) {
+							clearInterval(intervalId);
+							return;
+						}
+						try {
+							ctx.drawImage(video, 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+							const { data } = ctx.getImageData(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+							let sum = 0;
+							for (let i = 0; i < data.length; i += 4) {
+								sum += (data[i] + data[i + 1] + data[i + 2]) / 3;
+							}
+							const avg = sum / (CAMERA_WIDTH * CAMERA_HEIGHT);
+							if (coveredSinceMs === 0 && avg < CAMERA_DARK_THRESHOLD) {
+								coveredSinceMs = Date.now();
+							} else if (coveredSinceMs > 0 && avg > CAMERA_LIGHT_THRESHOLD) {
+								const elapsed = Date.now() - coveredSinceMs;
+								coveredSinceMs = 0;
+								if (elapsed >= MIN_SUJOOD_DURATION_MS && elapsed <= MAX_SUJOOD_DURATION_MS) {
+									handleProximityDetection(true);
+								}
+							}
+						} catch {}
+					}, CAMERA_INTERVAL_MS);
+					sensorRef.current = {
+						stop: () => {
+							clearInterval(intervalId);
+							for (const t of stream.getTracks()) t.stop();
+							video.srcObject = null;
+						},
+					};
+				} catch {
+					if (!cancelled) {
+						orientationTimerCleanup = setupDeviceOrientationFallback();
+					}
+				}
+			};
+
+			setupCameraFallback();
+
+			return () => {
+				cancelled = true;
+				orientationTimerCleanup?.();
+				if (sensorRef.current) {
+					try {
+						if (typeof sensorRef.current.stop === 'function') {
+							sensorRef.current.stop();
+						} else if (typeof sensorRef.current === 'function') {
+							window.removeEventListener('deviceorientation', sensorRef.current);
+						}
+					} catch {}
+					sensorRef.current = null;
+				}
+				betaBaselineRef.current = null;
+				sujoodDownTimeRef.current = 0;
+				setCurrentState('idle');
+			};
 		}
 
 		const timerCleanup = setupDeviceOrientationFallback();
