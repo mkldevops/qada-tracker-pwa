@@ -347,6 +347,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const [currentPrayerIndex, setCurrentPrayerIndex] = useState(0);
 	const [sessionId] = useState(`session-${Date.now()}`);
 	const [confirmQuit, setConfirmQuit] = useState(false);
+	const [confirmDone, setConfirmDone] = useState(false);
 	const [pressing, setPressing] = useState(false);
 	const [sujoodCount, setSujoodCount] = useState<0 | 1>(0);
 	const [currentRakat, setCurrentRakat] = useState(0);
@@ -453,6 +454,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 			if (showPressing) setPressing(true);
 			await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
 			setCurrentRakat(0);
+			setConfirmDone(false);
 
 			setCompleted((prev) => {
 				const newCompleted = prev + 1;
@@ -479,7 +481,13 @@ export function Session({ onClose }: { onClose: () => void }) {
 		}
 	}
 
-	const handleDone = () => handleIncrement(true);
+	const handleDone = () => {
+		if (currentRakat > 0) {
+			setConfirmDone(true);
+		} else {
+			handleIncrement(true);
+		}
+	};
 	const handleAutoIncrement = () => handleIncrement(false);
 
 	const currentEntry =
@@ -668,35 +676,74 @@ export function Session({ onClose }: { onClose: () => void }) {
 							<PrayerCard key={currentEntry.prayer} prayer={currentEntry.prayer} cfg={cfg} />
 						</AnimatePresence>
 
-						<motion.button
-							onClick={handleDone}
-							disabled={pressing}
-							className="w-full rounded-[28px] py-5 text-base font-semibold tracking-[1.5px] mt-8 relative overflow-hidden"
-							style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
-							whileTap={{ scale: 0.94 }}
-							whileHover={{ scale: 1.02 }}
-							animate={pressing ? { scale: 0.96 } : { scale: 1 }}
-							transition={spring}
-						>
-							{pressing ? (
-								<motion.span
-									key="loading"
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									className="flex items-center justify-center gap-2"
+						<AnimatePresence mode="wait">
+							{confirmDone ? (
+								<motion.div
+									key="confirm-done"
+									className="mt-8 flex flex-col items-center gap-3"
+									initial={{ opacity: 0, y: 8 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: 8 }}
+									transition={spring}
 								>
-									<motion.span
-										animate={{ rotate: 360 }}
-										transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
-										className="inline-block w-4 h-4 rounded-full border-2 border-current border-t-transparent"
-									/>
-								</motion.span>
+									<p className="text-sm text-center" style={{ color: '#6E6E70' }}>
+										{t('session.donePartialConfirm', { current: currentRakat, total: cfg.rakat })}
+									</p>
+									<div className="flex gap-4">
+										<motion.button
+											onClick={() => handleIncrement(true)}
+											className="px-5 py-2 rounded-2xl text-sm font-medium"
+											style={{ background: '#C9A962', color: '#1A1A1C' }}
+											whileTap={{ scale: 0.93 }}
+										>
+											{t('session.logAnyway')}
+										</motion.button>
+										<motion.button
+											onClick={() => setConfirmDone(false)}
+											className="px-5 py-2 rounded-2xl text-sm font-medium"
+											style={{ background: '#242426', color: '#6E6E70' }}
+											whileTap={{ scale: 0.93 }}
+										>
+											{t('session.continue')}
+										</motion.button>
+									</div>
+								</motion.div>
 							) : (
-								<motion.span key="label" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-									{t('session.done')}
-								</motion.span>
+								<motion.button
+									key="done-btn"
+									onClick={handleDone}
+									disabled={pressing}
+									className="w-full rounded-[28px] py-5 text-base font-semibold tracking-[1.5px] mt-8 relative overflow-hidden"
+									style={{
+										background: 'linear-gradient(135deg, #C9A962, #8B7845)',
+										color: '#1A1A1C',
+									}}
+									whileTap={{ scale: 0.94 }}
+									whileHover={{ scale: 1.02 }}
+									animate={pressing ? { scale: 0.96 } : { scale: 1 }}
+									transition={spring}
+								>
+									{pressing ? (
+										<motion.span
+											key="loading"
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+											className="flex items-center justify-center gap-2"
+										>
+											<motion.span
+												animate={{ rotate: 360 }}
+												transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
+												className="inline-block w-4 h-4 rounded-full border-2 border-current border-t-transparent"
+											/>
+										</motion.span>
+									) : (
+										<motion.span key="label" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+											{t('session.done')}
+										</motion.span>
+									)}
+								</motion.button>
 							)}
-						</motion.button>
+						</AnimatePresence>
 
 						<div className="mt-6">
 							<AnimatePresence mode="wait">
