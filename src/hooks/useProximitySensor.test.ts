@@ -275,4 +275,197 @@ describe('useProximitySensor', () => {
 			expect(onFirst).toHaveBeenCalledOnce();
 		});
 	});
+
+	describe('supported via camera brightness', () => {
+		const PIXEL_COUNT = 80 * 60;
+		let pixelData: Uint8ClampedArray;
+		let mockGetUserMedia: ReturnType<typeof vi.fn>;
+		let mockStop: ReturnType<typeof vi.fn>;
+		let mockCtx: { drawImage: ReturnType<typeof vi.fn>; getImageData: ReturnType<typeof vi.fn> };
+		let mockVideo: { muted: boolean; srcObject: unknown; play: ReturnType<typeof vi.fn> };
+
+		beforeEach(() => {
+			pixelData = new Uint8ClampedArray(PIXEL_COUNT * 4).fill(200);
+			mockStop = vi.fn();
+			mockCtx = {
+				drawImage: vi.fn(),
+				getImageData: vi.fn().mockImplementation(() => ({ data: pixelData })),
+			};
+			mockVideo = { muted: false, srcObject: null, play: vi.fn().mockResolvedValue(undefined) };
+			mockGetUserMedia = vi.fn().mockResolvedValue({ getTracks: () => [{ stop: mockStop }] });
+
+			Object.defineProperty(navigator, 'mediaDevices', {
+				value: { getUserMedia: mockGetUserMedia },
+				configurable: true,
+				writable: true,
+			});
+
+			const originalCreateElement = document.createElement.bind(document);
+			vi.spyOn(document, 'createElement').mockImplementation((tag: string, options?: unknown) => {
+				if (tag === 'canvas') return { getContext: () => mockCtx, width: 0, height: 0 } as any;
+				if (tag === 'video') return mockVideo as any;
+				return originalCreateElement(tag, options as ElementCreationOptions | undefined);
+			});
+
+			delete (window as any).DeviceOrientationEvent;
+			vi.useFakeTimers({
+				toFake: ['Date', 'setInterval', 'clearInterval', 'setTimeout', 'clearTimeout'],
+				now: PINNED_NOW,
+			});
+		});
+
+		afterEach(() => {
+			vi.useRealTimers();
+			vi.restoreAllMocks();
+			Object.defineProperty(navigator, 'mediaDevices', {
+				value: undefined,
+				configurable: true,
+				writable: true,
+			});
+			delete (window as any).DeviceOrientationEvent;
+		});
+
+		it('returns isSupported: true when getUserMedia available', () => {
+			const { result } = renderHook(() => useProximitySensor(true, vi.fn(), vi.fn()));
+			expect(result.current.isSupported).toBe(true);
+		});
+
+		it('starts in waiting_first when active', () => {
+			const { result } = renderHook(() => useProximitySensor(true, vi.fn(), vi.fn()));
+			expect(result.current.currentState).toBe('waiting_first');
+		});
+
+		it('detects sujood: covered ≥ 300ms then uncovered fires onFirstSujood', async () => {
+			const onFirst = vi.fn();
+			const { result } = renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
+
+			await act(async () => {
+				await Promise.resolve();
+			});
+
+			pixelData.fill(0);
+			act(() => vi.advanceTimersByTime(200)); // tick 1 at +200ms: dark → coveredSinceMs = PINNED_NOW+200
+			act(() => vi.advanceTimersByTime(200)); // tick 2 at +400ms: dark
+			pixelData.fill(200);
+			act(() => vi.advanceTimersByTime(200)); // tick 3 at +600ms: bright, elapsed=400ms → fires
+
+			expect(onFirst).toHaveBeenCalledOnce();
+			expect(result.current.currentState).toBe('waiting_second');
+		});
+
+		it('does not fire if uncovered too fast (< 300ms)', async () => {
+			const onFirst = vi.fn();
+			renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
+
+			await act(async () => {
+				await Promise.resolve();
+			});
+
+			pixelData.fill(0);
+			act(() => vi.advanceTimersByTime(200)); // tick 1: dark → coveredSinceMs set
+			pixelData.fill(200);
+			act(() => vi.advanceTimersByTime(200)); // tick 2: bright, elapsed=200ms < 300ms → no callback
+
+			expect(onFirst).not.toHaveBeenCalled();
+		});
+
+		it('does not fire if covered too long (> 5000ms)', async () => {
+			const onFirst = vi.fn();
+			renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
+
+			await act(async () => {
+				await Promise.resolve();
+			});
+
+			pixelData.fill(0);
+			act(() => vi.advanceTimersByTime(200)); // dark → coveredSinceMs set at PINNED_NOW+200
+			act(() => vi.advanceTimersByTime(5200)); // advance 5200ms (elapsed > 5000ms max)
+			pixelData.fill(200);
+			act(() => vi.advanceTimersByTime(200)); // bright, but elapsed > 5000ms → no callback
+
+			expect(onFirst).not.toHaveBeenCalled();
+		});
+
+		it("detects two sujoods in sequence completing a rak'a", async () => {
+			const onFirst = vi.fn();
+			const onSecond = vi.fn();
+			const { result } = renderHook(() => useProximitySensor(true, onFirst, onSecond));
+
+			await act(async () => {
+				await Promise.resolve();
+			});
+
+			pixelData.fill(0);
+			act(() => vi.advanceTimersByTime(200)); // dark
+			act(() => vi.advanceTimersByTime(200)); // dark
+			pixelData.fill(200);
+			act(() => vi.advanceTimersByTime(200)); // bright, elapsed=400ms → onFirst
+
+			expect(onFirst).toHaveBeenCalledOnce();
+
+			act(() => vi.advanceTimersByTime(800)); // advance past 800ms debounce
+
+			pixelData.fill(0);
+			act(() => vi.advanceTimersByTime(200)); // dark
+			act(() => vi.advanceTimersByTime(200)); // dark
+			pixelData.fill(200);
+			act(() => vi.advanceTimersByTime(200)); // bright, elapsed=400ms → onSecond
+
+			expect(onSecond).toHaveBeenCalledOnce();
+			expect(result.current.currentState).toBe('waiting_first');
+		});
+
+		it('calls stream track stop on unmount', async () => {
+			const { unmount } = renderHook(() => useProximitySensor(true, vi.fn(), vi.fn()));
+
+			await act(async () => {
+				await Promise.resolve();
+			});
+
+			unmount();
+
+			expect(mockStop).toHaveBeenCalled();
+		});
+
+		it('falls back to DeviceOrientationEvent when permission denied', async () => {
+			mockGetUserMedia.mockRejectedValue(new DOMException('Permission denied', 'NotAllowedError'));
+			(window as any).DeviceOrientationEvent = class {};
+			const addSpy = vi.spyOn(window, 'addEventListener');
+
+			renderHook(() => useProximitySensor(true, vi.fn(), vi.fn()));
+
+			await act(async () => {
+				await Promise.resolve();
+			});
+
+			expect(addSpy).toHaveBeenCalledWith('deviceorientation', expect.any(Function));
+		});
+
+		it('falls back to unsupported when camera denied and no orientation', async () => {
+			mockGetUserMedia.mockRejectedValue(new DOMException('Permission denied', 'NotAllowedError'));
+
+			const { result } = renderHook(() => useProximitySensor(true, vi.fn(), vi.fn()));
+
+			await act(async () => {
+				await Promise.resolve();
+			});
+
+			act(() => vi.advanceTimersByTime(3000));
+
+			expect(result.current.isSupported).toBe(false);
+			expect(result.current.currentState).toBe('unsupported');
+		});
+
+		it('stops stream if resolved after component unmounts', async () => {
+			const { unmount } = renderHook(() => useProximitySensor(true, vi.fn(), vi.fn()));
+
+			unmount();
+
+			await act(async () => {
+				await Promise.resolve();
+			});
+
+			expect(mockStop).toHaveBeenCalled();
+		});
+	});
 });
