@@ -23,6 +23,54 @@ function computeTarget(obj: Objective | null): number {
 const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 const springBouncy = { type: 'spring' as const, stiffness: 600, damping: 20 };
 
+const ghostVariants = {
+	enter: (d: number) => ({ y: d > 0 ? 40 : -40, opacity: 0 }),
+	center: { y: 0, opacity: 0.25 },
+	exit: (d: number) => ({ y: d > 0 ? -40 : 40, opacity: 0 }),
+};
+const ghostStyle = {
+	color: '#F5F5F0',
+	fontSize: 52,
+	fontFamily: "ui-monospace, 'SF Mono', monospace",
+} as const;
+const MAX_PICKER_VALUE = 999;
+
+function GhostButton({
+	show,
+	targetValue,
+	dir,
+	onChange,
+}: {
+	show: boolean;
+	targetValue: number;
+	dir: 1 | -1;
+	onChange: (v: number) => void;
+}) {
+	if (!show) return null;
+	return (
+		<div className="overflow-hidden flex items-center justify-center" style={{ height: 60 }}>
+			<AnimatePresence mode="popLayout" custom={dir}>
+				<motion.button
+					key={targetValue}
+					type="button"
+					custom={dir}
+					variants={ghostVariants}
+					initial="enter"
+					animate="center"
+					exit="exit"
+					transition={springBouncy}
+					onClick={() => onChange(targetValue)}
+					className="tabular-nums leading-none"
+					style={ghostStyle}
+					whileTap={{ scale: 0.9 }}
+				>
+					{targetValue}
+				</motion.button>
+			</AnimatePresence>
+		</div>
+	);
+}
+
 function NumberPicker({
 	value,
 	dir,
@@ -40,13 +88,13 @@ function NumberPicker({
 
 	return (
 		<motion.div
-			className="flex flex-col items-center gap-3 py-8 cursor-ns-resize select-none touch-none"
+			className="flex flex-col items-center gap-1 py-4 cursor-ns-resize select-none touch-none"
 			onPan={(_, info) => {
 				accumulated.current -= info.delta.y;
 				const step = 10;
 				if (Math.abs(accumulated.current) >= step) {
 					const delta = Math.sign(accumulated.current) as 1 | -1;
-					onChange(Math.max(1, valueRef.current + delta));
+					onChange(Math.max(1, Math.min(MAX_PICKER_VALUE, valueRef.current + delta)));
 					accumulated.current -= delta * step;
 				}
 			}}
@@ -54,6 +102,8 @@ function NumberPicker({
 				accumulated.current = 0;
 			}}
 		>
+			<GhostButton show={value > 1} targetValue={value - 1} dir={dir} onChange={onChange} />
+
 			<div className="overflow-hidden flex items-center" style={{ height: 110 }}>
 				<AnimatePresence mode="popLayout" custom={dir}>
 					<motion.span
@@ -79,6 +129,9 @@ function NumberPicker({
 					</motion.span>
 				</AnimatePresence>
 			</div>
+
+			<GhostButton show={value < MAX_PICKER_VALUE} targetValue={value + 1} dir={dir} onChange={onChange} />
+
 			<motion.p
 				className="text-xs tracking-widest"
 				style={{ color: '#3A3A3C' }}
