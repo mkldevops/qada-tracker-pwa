@@ -74,10 +74,12 @@ jobs:
         run: echo "value=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
       - name: Commit and tag
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
         run: |
           git add package.json pnpm-lock.yaml
-          git commit -m "chore(release): bump to v${{ steps.version.outputs.value }} [skip ci]"
-          git tag "v${{ steps.version.outputs.value }}"
+          git commit -m "chore(release): bump to v${VERSION} [skip ci]"
+          git tag "v${VERSION}"
           git push origin main --tags
 
       - name: Deploy to Coolify
