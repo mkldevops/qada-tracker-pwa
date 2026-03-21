@@ -38,22 +38,19 @@ const MAX_PICKER_VALUE = 999;
 function RakatDots({ total, current, color }: { total: number; current: number; color: string }) {
 	return (
 		<div className="flex items-center justify-center gap-3 py-2 mb-2">
-			{Array.from({ length: total }).map((_, i) => {
+			{[1, 2, 3, 4].slice(0, total).map((rakatNum) => {
+				const i = rakatNum - 1;
 				const isPast = i < current;
 				const isActive = i === current;
 				return (
 					<motion.div
-						key={i}
+						key={rakatNum}
 						animate={
 							isActive
 								? { scale: [1, 1.18, 1], opacity: 1 }
 								: { scale: 1, opacity: isPast ? 0.5 : 0.3 }
 						}
-						transition={
-							isActive
-								? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }
-								: spring
-						}
+						transition={isActive ? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } : spring}
 						style={{
 							width: isActive ? 20 : 14,
 							height: isActive ? 20 : 14,
@@ -165,7 +162,12 @@ function NumberPicker({
 				</AnimatePresence>
 			</div>
 
-			<GhostButton show={value < MAX_PICKER_VALUE} targetValue={value + 1} dir={dir} onChange={onChange} />
+			<GhostButton
+				show={value < MAX_PICKER_VALUE}
+				targetValue={value + 1}
+				dir={dir}
+				onChange={onChange}
+			/>
 
 			<motion.p
 				className="text-xs tracking-widest"
