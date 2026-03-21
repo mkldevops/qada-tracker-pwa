@@ -38,8 +38,9 @@ jobs:
         id: bump
         env:
           BUMP_TYPE: ${{ github.event.inputs.bump || 'patch' }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             BUMP="$BUMP_TYPE"
           else
             LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
