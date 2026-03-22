@@ -67,6 +67,19 @@ export function DebtEvolutionChart() {
 			})
 		: [];
 
+	const currentValue = hasData ? data[data.length - 1].remaining : null;
+	const startValue = hasData ? data[0].remaining : null;
+	const delta = currentValue !== null && startValue !== null ? currentValue - startValue : null;
+	const deltaPercent =
+		delta !== null && startValue !== null && startValue > 0
+			? Math.round((delta / startValue) * 100)
+			: null;
+
+	const yMax = hasData
+		? SVG_HEIGHT - PADDING - ((maxRemaining - minRemaining) / range) * CHART_HEIGHT * 0.8
+		: 0;
+	const yMin = SVG_HEIGHT - PADDING;
+
 	const pathData = points
 		.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`)
 		.join(' ');
@@ -101,6 +114,64 @@ export function DebtEvolutionChart() {
 					);
 				})}
 			</div>
+
+			{hasData && currentValue !== null && (
+				<div className="flex gap-2">
+					<div
+						className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5"
+						style={{ background: '#1A1A1C', border: '1px solid #2A2A2C' }}
+					>
+						<span className="text-base font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
+							{currentValue.toLocaleString()}
+						</span>
+						<span className="text-[9px] font-medium" style={{ color: '#4A4A4C' }}>
+							{t('stats.current')}
+						</span>
+					</div>
+					{delta !== null && (
+						<div
+							className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5"
+							style={{ background: '#1A1A1C', border: '1px solid #2A2A2C' }}
+						>
+							<span
+								className="text-base font-semibold tabular-nums"
+								style={{ color: delta < 0 ? '#6E9E6E' : delta > 0 ? '#D45F5F' : '#6E6E70' }}
+							>
+								{delta > 0 ? '+' : ''}
+								{delta.toLocaleString()}
+							</span>
+							<span className="text-[9px] font-medium" style={{ color: '#4A4A4C' }}>
+								{t('stats.delta')}
+							</span>
+						</div>
+					)}
+					{delta !== null && (
+						<div
+							className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5"
+							style={{ background: '#1A1A1C', border: '1px solid #2A2A2C' }}
+						>
+							<span
+								className="text-base font-semibold tabular-nums"
+								style={{
+									color:
+										deltaPercent === null
+											? '#6E6E70'
+											: deltaPercent < 0
+												? '#6E9E6E'
+												: deltaPercent > 0
+													? '#D45F5F'
+													: '#6E6E70',
+								}}
+							>
+								{deltaPercent === null ? '—' : `${deltaPercent > 0 ? '+' : ''}${deltaPercent}%`}
+							</span>
+							<span className="text-[9px] font-medium" style={{ color: '#4A4A4C' }}>
+								{t('stats.deltaPercent')}
+							</span>
+						</div>
+					)}
+				</div>
+			)}
 
 			<div ref={chartRef} className="relative">
 				<AnimatePresence>
@@ -172,6 +243,21 @@ export function DebtEvolutionChart() {
 								/>
 							))}
 						</g>
+
+						{minRemaining === maxRemaining ? (
+							<text x="1" y={(yMax + yMin) / 2} fontSize="5" fill="#3A3A3C" textAnchor="start">
+								{minRemaining.toLocaleString()}
+							</text>
+						) : (
+							<>
+								<text x="1" y={yMax + 4} fontSize="5" fill="#3A3A3C" textAnchor="start">
+									{maxRemaining.toLocaleString()}
+								</text>
+								<text x="1" y={yMin - 2} fontSize="5" fill="#3A3A3C" textAnchor="start">
+									{minRemaining.toLocaleString()}
+								</text>
+							</>
+						)}
 					</svg>
 				) : (
 					<div className="flex h-48 items-center justify-center" style={{ color: '#4A4A4C' }}>
@@ -179,6 +265,22 @@ export function DebtEvolutionChart() {
 					</div>
 				)}
 			</div>
+			{hasData && (
+				<div
+					className="flex justify-between"
+					style={{
+						paddingLeft: `${(PADDING / SVG_WIDTH) * 100}%`,
+						paddingRight: `${(PADDING / SVG_WIDTH) * 100}%`,
+					}}
+				>
+					<span className="text-[9px] tabular-nums" style={{ color: '#4A4A4C' }}>
+						{data[0].date}
+					</span>
+					<span className="text-[9px] tabular-nums" style={{ color: '#4A4A4C' }}>
+						{data[data.length - 1].date}
+					</span>
+				</div>
+			)}
 		</div>
 	);
 }
