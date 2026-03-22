@@ -10,6 +10,24 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.3.0',
+		date: '2026-03-22',
+		changes: {
+			fr: [
+				"Animation de retour visuel lors du log rapide d'une prière (flash coloré)",
+				'Compteur de prières restantes animé à chaque log',
+				"Burst d'animation sur le bouton + quand une prière atteint zéro",
+				'Respect du paramètre "Réduire les animations" du système',
+			],
+			en: [
+				'Visual flash feedback when quick-logging a prayer',
+				'Animated remaining counter on each log',
+				'Burst animation on + button when a prayer reaches zero',
+				'Respects system "Reduce Motion" accessibility setting',
+			],
+		},
+	},
+	{
 		version: '1.0.19',
 		date: '2026-03-21',
 		changes: {
