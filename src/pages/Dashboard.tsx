@@ -1,6 +1,6 @@
 import { Plus } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Session } from '@/components/Session';
 import { PRAYER_CONFIG } from '@/constants/prayers';
@@ -63,15 +63,50 @@ function PrayerRow({
 	const cfg = PRAYER_CONFIG[prayer];
 	const progress = totalOwed > 0 ? Math.min(100, (totalCompleted / totalOwed) * 100) : 0;
 	const done = remaining === 0;
+	const shouldReduce = useReducedMotion();
+	const [justLogged, setJustLogged] = useState(false);
+	const [justCompleted, setJustCompleted] = useState(false);
+	const prevDoneRef = useRef(done);
+
+	useEffect(() => {
+		const prevDone = prevDoneRef.current;
+		prevDoneRef.current = done;
+		if (!prevDone && done) {
+			setJustCompleted(true);
+			const timer = setTimeout(() => setJustCompleted(false), 600);
+			return () => clearTimeout(timer);
+		}
+	}, [done]);
+
+	function handleLog() {
+		onLog(prayer);
+		if (!shouldReduce) {
+			setJustLogged(true);
+			setTimeout(() => setJustLogged(false), 500);
+		}
+	}
 
 	return (
 		<motion.div
-			className="flex items-center gap-4 rounded-2xl px-5"
+			className="relative flex items-center gap-4 overflow-hidden rounded-2xl px-5"
 			style={{ background: '#242426', border: '1px solid #3A3A3C', height: 72 }}
 			initial={{ opacity: 0, x: -16 }}
 			animate={{ opacity: 1, x: 0 }}
 			transition={{ delay: 0.22 + index * 0.05, ...spring }}
 		>
+			<AnimatePresence>
+				{justLogged && (
+					<motion.div
+						key="flash"
+						className="pointer-events-none absolute inset-0 rounded-2xl"
+						style={{ background: cfg.hex }}
+						initial={{ opacity: 0.35 }}
+						animate={{ opacity: 0 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.5, ease: 'easeOut' }}
+					/>
+				)}
+			</AnimatePresence>
 			<div className="flex flex-1 flex-col gap-1.5">
 				<div className="flex items-center gap-2">
 					<span className="font-display text-lg font-medium" style={{ color: cfg.hex }}>
@@ -80,9 +115,19 @@ function PrayerRow({
 					<span className="text-xs" style={{ color: '#4A4A4C' }}>
 						{cfg.labelAr}
 					</span>
-					<span className="text-[11px]" style={{ color: '#6E6E70' }}>
-						{t('dashboard.remaining', { count: remaining })}
-					</span>
+					<AnimatePresence mode="popLayout">
+						<motion.span
+							key={remaining}
+							className="text-[11px]"
+							style={{ color: '#6E6E70' }}
+							initial={shouldReduce ? false : { opacity: 0, y: -6 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={shouldReduce ? {} : { opacity: 0, y: 6 }}
+							transition={{ duration: 0.18, ease: 'easeOut' }}
+						>
+							{t('dashboard.remaining', { count: remaining })}
+						</motion.span>
+					</AnimatePresence>
 				</div>
 				<div className="flex items-center gap-2">
 					<div
@@ -108,11 +153,13 @@ function PrayerRow({
 			</div>
 			<motion.button
 				type="button"
-				onClick={() => onLog(prayer)}
+				onClick={handleLog}
 				disabled={done}
 				className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full disabled:opacity-30"
 				style={done ? { background: '#2A2A2C' } : { background: '#C9A962' }}
-				whileTap={done ? {} : { scale: 0.88 }}
+				animate={justCompleted && !shouldReduce ? { scale: [1, 1.35, 1] } : { scale: 1 }}
+				transition={justCompleted ? { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] } : spring}
+				whileTap={done || shouldReduce ? {} : { scale: 0.82 }}
 			>
 				<Plus size={18} style={{ color: done ? '#6E6E70' : '#1A1A1C' }} />
 			</motion.button>
