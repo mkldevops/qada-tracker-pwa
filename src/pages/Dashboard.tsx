@@ -78,11 +78,21 @@ function PrayerRow({
 		}
 	}, [done]);
 
-	function handleLog() {
-		onLog(prayer);
-		if (!shouldReduce) {
-			setJustLogged(true);
-			setTimeout(() => setJustLogged(false), 500);
+	useEffect(() => {
+		if (justLogged) {
+			const timer = setTimeout(() => setJustLogged(false), 500);
+			return () => clearTimeout(timer);
+		}
+	}, [justLogged]);
+
+	async function handleLog() {
+		try {
+			await onLog(prayer);
+			if (!shouldReduce) {
+				setJustLogged(true);
+			}
+		} catch {
+			console.error('Failed to log prayer');
 		}
 	}
 
