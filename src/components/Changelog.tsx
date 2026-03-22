@@ -14,9 +14,9 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-03-22',
 		changes: {
 			fr: [
-				'Animation de retour visuel lors du log rapide d\'une prière (flash coloré)',
+				"Animation de retour visuel lors du log rapide d'une prière (flash coloré)",
 				'Compteur de prières restantes animé à chaque log',
-				'Burst d\'animation sur le bouton + quand une prière atteint zéro',
+				"Burst d'animation sur le bouton + quand une prière atteint zéro",
 				'Respect du paramètre "Réduire les animations" du système',
 			],
 			en: [
