@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.5.0',
+		date: '2026-03-25',
+		changes: {
+			fr: [
+				"Décompte des prières restantes et rak'ats affiché dans l'écran de démarrage de session",
+			],
+			en: [
+				"Remaining prayers and rak'ats count shown in the session setup screen",
+			],
+		},
+	},
+	{
 		version: '1.4.1',
 		date: '2026-03-25',
 		changes: {
