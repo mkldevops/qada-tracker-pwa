@@ -233,7 +233,7 @@ function DebtStep({
 	return (
 		<motion.div
 			key="debt"
-			className="flex flex-1 flex-col px-7 pt-10 pb-8 gap-5 overflow-y-auto"
+			className="flex flex-1 flex-col min-h-0 px-7 pt-10 pb-8 gap-5 overflow-y-auto"
 			initial={{ opacity: 0, x: 60 }}
 			animate={{ opacity: 1, x: 0 }}
 			exit={{ opacity: 0, x: -60 }}
@@ -609,7 +609,7 @@ function ObjectiveStep({
 	return (
 		<motion.div
 			key="objective"
-			className="flex flex-1 flex-col px-7 pt-10 pb-8 gap-6"
+			className="flex flex-1 flex-col min-h-0 px-7 pt-10 pb-8 gap-6 overflow-y-auto"
 			initial={{ opacity: 0, x: 60 }}
 			animate={{ opacity: 1, x: 0 }}
 			exit={{ opacity: 0, x: -60 }}
