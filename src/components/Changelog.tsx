@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.8.0',
+		date: '2026-03-25',
+		changes: {
+			fr: [
+				"Onglet DETTE simplifié : l'objectif est maintenant en premier, le calcul de dette remplacé par \"Reconfigurer l'onboarding\"",
+				"\"Reconfigurer l'onboarding\" retiré de l'onglet APP",
+			],
+			en: [
+				'DEBT tab simplified: objective is now first, debt calculator replaced by "Restart onboarding"',
+				'"Restart onboarding" removed from APP tab',
+			],
+		},
+	},
+	{
 		version: '1.7.2',
 		date: '2026-03-25',
 		changes: {

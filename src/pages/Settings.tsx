@@ -14,18 +14,14 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { PRAYER_CONFIG } from '@/constants/prayers';
 import { db } from '@/db/database';
 import { exportBackup, importBackup } from '@/db/queries';
 import { useNotifications } from '@/hooks/useNotifications';
 import { markOnboardingUndone } from '@/lib/onboarding';
-import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
-import type { Period, PrayerName } from '@/types';
-import { PRAYER_NAMES } from '@/types';
+import { type SessionOrder, usePrayerStore } from '@/stores/prayerStore';
+import type { Period } from '@/types';
 
 type Tab = 'debt' | 'session' | 'app';
-type DebtMode = 'years' | 'manual';
-
 const SETTINGS_TAB_ORDER: Tab[] = ['debt', 'session', 'app'];
 
 const settingsSlideVariants = {
@@ -97,17 +93,8 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 		{ value: 'highest-debt', label: t('settings.highestDebt') },
 	];
 
-	const {
-		setDebtManual,
-		setDebtFromYears,
-		setObjective,
-		setSessionOrder,
-		resetAll,
-		loadAll,
-		activeObjective,
-		sessionOrder,
-	} = usePrayerStore();
-	const debts = useDebts();
+	const { setObjective, setSessionOrder, resetAll, loadAll, activeObjective, sessionOrder } =
+		usePrayerStore();
 
 	const [activeTab, setActiveTab] = useState<Tab>('debt');
 	const settingsDirRef = useRef(0);
@@ -118,16 +105,8 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 			SETTINGS_TAB_ORDER.indexOf(tab) > SETTINGS_TAB_ORDER.indexOf(activeTab) ? 1 : -1;
 		setActiveTab(tab);
 	}
-	const [debtMode, setDebtMode] = useState<DebtMode>('years');
 	const [showChangelog, setShowChangelog] = useState(false);
 
-	const [missedYears, setMissedYears] = useState(0);
-	const [missedMonths, setMissedMonths] = useState(0);
-	const totalYears = missedYears + missedMonths / 12;
-	const [excludedDays, setExcludedDays] = useState('0');
-	const [isFemme, setIsFemme] = useState(false);
-	const [avgHaydDays, setAvgHaydDays] = useState(6);
-	const [manualAmounts, setManualAmounts] = useState<Partial<Record<PrayerName, string>>>({});
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
 	const [objTarget, setObjTarget] = useState('');
 	const [pendingFile, setPendingFile] = useState<File | null>(null);
@@ -143,39 +122,6 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 		const timeout = setTimeout(() => setDataFeedback(null), 5000);
 		return () => clearTimeout(timeout);
 	}, [dataFeedback]);
-
-	const hasManualChanges = Object.values(manualAmounts).some((v) => v !== undefined && v !== '');
-
-	const haydExclusion = isFemme
-		? Math.round(totalYears * (Math.min(15, Math.max(1, avgHaydDays)) * 12))
-		: 0;
-	const totalExcluded = Math.max(0, parseInt(excludedDays, 10) || 0) + haydExclusion;
-
-	const handleSetDebtFromYears = async () => {
-		try {
-			if (totalYears > 0) {
-				await setDebtFromYears(totalYears, totalExcluded);
-				setMissedYears(0);
-				setMissedMonths(0);
-			}
-		} catch {
-			setDataFeedback({ type: 'error', message: t('settings.importError') });
-		}
-	};
-
-	const handleApplyAllManual = async () => {
-		try {
-			for (const [prayer, val] of Object.entries(manualAmounts)) {
-				const n = parseInt(val ?? '', 10);
-				if (!Number.isNaN(n) && n >= 0 && n <= 999999) {
-					await setDebtManual(prayer as PrayerName, n);
-				}
-			}
-			setManualAmounts({});
-		} catch {
-			setDataFeedback({ type: 'error', message: t('settings.importError') });
-		}
-	};
 
 	const handleSetObjective = async () => {
 		try {
@@ -284,299 +230,6 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 						{/* ── DETTE tab ── */}
 						{activeTab === 'debt' && (
 							<>
-								{/* Merged debt section */}
-								<CollapsibleSection label={t('settings.calculateDebt')} defaultOpen={true}>
-									<div
-										className="flex flex-col gap-4 rounded-[20px] p-5"
-										style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-									>
-										{/* Mode switcher */}
-										<div className="flex gap-2">
-											{(['years', 'manual'] as DebtMode[]).map((mode) => (
-												<button
-													key={mode}
-													type="button"
-													onClick={() => setDebtMode(mode)}
-													className="flex-1 rounded-[20px] py-2.5 text-[13px] font-medium transition-colors"
-													style={
-														debtMode === mode
-															? { background: '#C9A962', color: '#1A1A1C', fontWeight: 600 }
-															: {
-																	background: '#1A1A1C',
-																	border: '1px solid #3A3A3C',
-																	color: '#4A4A4C',
-																}
-													}
-												>
-													{mode === 'years' ? t('settings.debtByYears') : t('settings.debtManual')}
-												</button>
-											))}
-										</div>
-
-										<div style={{ height: 1, background: '#2A2A2C' }} />
-
-										{/* By years content */}
-										{debtMode === 'years' && (
-											<>
-												<div className="flex flex-col gap-4">
-													<div className="flex flex-col gap-3">
-														<span className="text-xs font-medium" style={{ color: '#6E6E70' }}>
-															{t('settings.missedYears')}
-														</span>
-														<div className="grid grid-cols-2 gap-3">
-															<div
-																className="flex flex-col items-center gap-3 rounded-2xl py-5"
-																style={{ background: '#1A1A1C' }}
-															>
-																<span
-																	className="text-[10px] font-semibold tracking-[1.5px] uppercase"
-																	style={{ color: '#6E6E70' }}
-																>
-																	{t('common.years')}
-																</span>
-																<span
-																	className="text-3xl font-semibold tabular-nums"
-																	style={{ color: '#F5F5F0' }}
-																>
-																	{missedYears}
-																</span>
-																<div className="flex items-center gap-3">
-																	<motion.button
-																		type="button"
-																		whileTap={{ scale: 0.88 }}
-																		onClick={() => setMissedYears((v) => Math.max(0, v - 1))}
-																		disabled={missedYears <= 0}
-																		aria-label={`− ${t('common.years')}`}
-																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
-																	>
-																		−
-																	</motion.button>
-																	<motion.button
-																		type="button"
-																		whileTap={{ scale: 0.88 }}
-																		onClick={() => setMissedYears((v) => Math.min(80, v + 1))}
-																		disabled={missedYears >= 80}
-																		aria-label={`+ ${t('common.years')}`}
-																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
-																	>
-																		+
-																	</motion.button>
-																</div>
-															</div>
-															<div
-																className="flex flex-col items-center gap-3 rounded-2xl py-5"
-																style={{ background: '#1A1A1C' }}
-															>
-																<span
-																	className="text-[10px] font-semibold tracking-[1.5px] uppercase"
-																	style={{ color: '#6E6E70' }}
-																>
-																	{t('common.months')}
-																</span>
-																<span
-																	className="text-3xl font-semibold tabular-nums"
-																	style={{ color: '#F5F5F0' }}
-																>
-																	{missedMonths}
-																</span>
-																<div className="flex items-center gap-3">
-																	<motion.button
-																		type="button"
-																		whileTap={{ scale: 0.88 }}
-																		onClick={() => setMissedMonths((v) => Math.max(0, v - 1))}
-																		disabled={missedMonths <= 0}
-																		aria-label={`− ${t('common.months')}`}
-																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
-																	>
-																		−
-																	</motion.button>
-																	<motion.button
-																		type="button"
-																		whileTap={{ scale: 0.88 }}
-																		onClick={() => setMissedMonths((v) => Math.min(11, v + 1))}
-																		disabled={missedMonths >= 11}
-																		aria-label={`+ ${t('common.months')}`}
-																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
-																	>
-																		+
-																	</motion.button>
-																</div>
-															</div>
-														</div>
-													</div>
-													<div className="flex flex-col gap-1.5">
-														<label
-															htmlFor="input-excluded"
-															className="text-xs font-medium"
-															style={{ color: '#6E6E70' }}
-														>
-															{t('settings.excludedDays')}
-														</label>
-														<input
-															id="input-excluded"
-															type="number"
-															value={excludedDays}
-															onChange={(e) => setExcludedDays(e.target.value)}
-															placeholder="0"
-															min="0"
-															style={inputStyle}
-														/>
-													</div>
-												</div>
-
-												<div style={{ height: 1, background: '#2A2A2C' }} />
-												<div className="flex items-center justify-between">
-													<div className="flex flex-col gap-0.5">
-														<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
-															{t('settings.female')}
-														</span>
-														<span className="text-[11px]" style={{ color: '#6E6E70' }}>
-															{t('settings.femaleDesc')}
-														</span>
-													</div>
-													<button
-														type="button"
-														role="switch"
-														aria-checked={isFemme}
-														aria-label={t('settings.female')}
-														onClick={() => setIsFemme((v) => !v)}
-														className="relative h-7 w-12 rounded-full transition-colors"
-														style={{ background: isFemme ? '#C9A962' : '#3A3A3C' }}
-													>
-														<span
-															className="absolute top-1 h-5 w-5 rounded-full transition-all"
-															style={{
-																background: '#F5F5F0',
-																left: isFemme ? '50%' : '4px',
-															}}
-														/>
-													</button>
-												</div>
-
-												{isFemme && (
-													<div className="flex flex-col gap-1.5">
-														<div className="flex items-center justify-between">
-															<span className="text-xs font-medium" style={{ color: '#6E6E70' }}>
-																{t('settings.haydAvg')}
-															</span>
-															<div className="flex items-center gap-3">
-																<motion.button
-																	type="button"
-																	whileTap={{ scale: 0.88 }}
-																	onClick={() => setAvgHaydDays(Math.max(1, avgHaydDays - 1))}
-																	disabled={avgHaydDays <= 1}
-																	className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
-																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
-																>
-																	−
-																</motion.button>
-																<span
-																	className="w-6 text-center text-lg font-semibold tabular-nums"
-																	style={{ color: '#F5F5F0' }}
-																>
-																	{avgHaydDays}
-																</span>
-																<motion.button
-																	type="button"
-																	whileTap={{ scale: 0.88 }}
-																	onClick={() => setAvgHaydDays(Math.min(15, avgHaydDays + 1))}
-																	disabled={avgHaydDays >= 15}
-																	className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
-																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
-																>
-																	+
-																</motion.button>
-															</div>
-														</div>
-														{totalYears > 0 && (
-															<p className="text-[11px]" style={{ color: '#6E9E6E' }}>
-																{t('settings.haydDeducted', {
-																	deducted: haydExclusion,
-																	total: totalExcluded,
-																})}
-															</p>
-														)}
-													</div>
-												)}
-
-												<button
-													type="button"
-													onClick={handleSetDebtFromYears}
-													disabled={totalYears <= 0}
-													className="flex w-full items-center justify-center rounded-3xl py-3 text-[13px] font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30"
-													style={{
-														background: 'linear-gradient(135deg, #C9A962, #8B7845)',
-														color: '#1A1A1C',
-													}}
-												>
-													{t('settings.apply')}
-												</button>
-											</>
-										)}
-
-										{/* Manual content */}
-										{debtMode === 'manual' && (
-											<>
-												<div className="flex flex-col">
-													{PRAYER_NAMES.map((prayer, i) => {
-														const cfg = PRAYER_CONFIG[prayer];
-														return (
-															<div key={prayer}>
-																{i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
-																<div className="flex items-center gap-3 py-3">
-																	<span
-																		className="w-20 font-display text-base font-medium"
-																		style={{ color: cfg.hex }}
-																	>
-																		{cfg.labelFr}
-																	</span>
-																	<span
-																		className="w-12 text-right text-sm"
-																		style={{ color: '#6E6E70' }}
-																	>
-																		{debts[prayer]?.remaining ?? 0}
-																	</span>
-																	<input
-																		type="number"
-																		className="flex-1"
-																		value={manualAmounts[prayer] ?? ''}
-																		onChange={(e) =>
-																			setManualAmounts((prev) => ({
-																				...prev,
-																				[prayer]: e.target.value,
-																			}))
-																		}
-																		placeholder={t('settings.newTotal')}
-																		min="0"
-																		style={{ ...inputStyle, height: 36, fontSize: 13 }}
-																	/>
-																</div>
-															</div>
-														);
-													})}
-												</div>
-
-												<button
-													type="button"
-													onClick={handleApplyAllManual}
-													disabled={!hasManualChanges}
-													className="flex w-full items-center justify-center rounded-3xl py-3 text-[13px] font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30"
-													style={{
-														background: 'linear-gradient(135deg, #C9A962, #8B7845)',
-														color: '#1A1A1C',
-													}}
-												>
-													{t('settings.apply')}
-												</button>
-											</>
-										)}
-									</div>
-								</CollapsibleSection>
-
 								{/* Objective */}
 								<CollapsibleSection label={t('settings.objective')} defaultOpen={true}>
 									<div
@@ -638,6 +291,23 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 										</div>
 									</div>
 								</CollapsibleSection>
+
+								{onRestartOnboarding && (
+									<button
+										type="button"
+										onClick={onRestartOnboarding}
+										className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
+										style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+									>
+										<RotateCcw size={16} style={{ color: '#C9A962' }} />
+										<span
+											className="text-xs font-semibold tracking-[1px]"
+											style={{ color: '#C9A962' }}
+										>
+											{t('settings.restartOnboarding')}
+										</span>
+									</button>
+								)}
 							</>
 						)}
 
@@ -862,23 +532,6 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 												</button>
 											))}
 										</div>
-
-										{onRestartOnboarding && (
-											<button
-												type="button"
-												onClick={onRestartOnboarding}
-												className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
-												style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-											>
-												<RotateCcw size={16} style={{ color: '#C9A962' }} />
-												<span
-													className="text-xs font-semibold tracking-[1px]"
-													style={{ color: '#C9A962' }}
-												>
-													{t('settings.restartOnboarding')}
-												</span>
-											</button>
-										)}
 									</div>
 								</CollapsibleSection>
 
