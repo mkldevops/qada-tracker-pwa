@@ -96,7 +96,9 @@
 		"completed": "Session terminée !",
 		"completedCount_one": "{{count}} prière accomplie",
 		"completedCount_other": "{{count}} prières accomplies",
-		"close": "FERMER"
+		"close": "FERMER",
+		"prayersRemaining": "prières restantes",
+		"rakatsRemaining": "rak'ats restants"
 	},
 	"settings": {
 		"title": "Réglages",

@@ -322,6 +322,12 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
 	const sessionOrder = usePrayerStore((s) => s.sessionOrder);
 
+	const totalRemaining = PRAYER_NAMES.reduce((sum, p) => sum + (debts[p]?.remaining ?? 0), 0);
+	const totalRakat = PRAYER_NAMES.reduce(
+		(sum, p) => sum + (debts[p]?.remaining ?? 0) * PRAYER_CONFIG[p].rakat,
+		0,
+	);
+
 	const defaultTarget = computeTarget(activeObjective);
 
 	const [phase, setPhase] = useState<Phase>('setup');
@@ -526,6 +532,22 @@ export function Session({ onClose }: { onClose: () => void }) {
 							<p className="text-sm" style={{ color: '#6E6E70' }}>
 								{t('session.setupSubtitle')}
 							</p>
+							{totalRemaining > 0 && (
+								<div className="flex items-baseline gap-1.5 mt-2">
+									<span
+										className="text-2xl font-semibold tabular-nums"
+										style={{ color: '#C9A962' }}
+									>
+										{totalRemaining.toLocaleString()}
+									</span>
+									<span className="text-sm" style={{ color: '#6E6E70' }}>
+										{t('session.prayersRemaining')}
+									</span>
+									<span className="text-xs tabular-nums" style={{ color: '#4A4A4C' }}>
+										· {totalRakat.toLocaleString()} {t('session.rakatsRemaining')}
+									</span>
+								</div>
+							)}
 						</motion.div>
 
 						<motion.div
