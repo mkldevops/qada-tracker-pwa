@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.6.1',
+		date: '2026-03-25',
+		changes: {
+			fr: ["Remplacement du terme « hayd » par « menstrues » pour plus de clarté"],
+			en: ["Replaced 'hayd' with 'menses' for clearer terminology"],
+		},
+	},
+	{
 		version: '1.6.0',
 		date: '2026-03-25',
 		changes: {
