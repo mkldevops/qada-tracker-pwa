@@ -4,7 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
-import { type SessionOrder, useDebts, usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
+import {
+	type SessionOrder,
+	useDebts,
+	usePrayerStore,
+	useTotalRemaining,
+} from '@/stores/prayerStore';
 import type { Objective, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
@@ -637,8 +642,10 @@ export function Session({ onClose }: { onClose: () => void }) {
 							>
 								<span style={{ color: '#C9A962' }}>{totalRemaining.toLocaleString()}</span>
 								<span style={{ color: '#4A4A4C' }}>{t('session.prayersRemaining')}</span>
-								<span style={{ color: "#3A3A3C" }}>·</span>
-								<span style={{ color: '#4A4A4C' }}>{totalRakatsRemaining.toLocaleString()} {t('session.rakatsRemaining')}</span>
+								<span style={{ color: '#3A3A3C' }}>·</span>
+								<span style={{ color: '#4A4A4C' }}>
+									{totalRakatsRemaining.toLocaleString()} {t('session.rakatsRemaining')}
+								</span>
 							</motion.div>
 						)}
 

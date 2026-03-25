@@ -388,10 +388,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 												{isFemme && (
 													<div className="flex flex-col gap-1.5">
 														<div className="flex items-center justify-between">
-															<span
-																className="text-xs font-medium"
-																style={{ color: '#6E6E70' }}
-															>
+															<span className="text-xs font-medium" style={{ color: '#6E6E70' }}>
 																{t('settings.haydAvg')}
 															</span>
 															<div className="flex items-center gap-3">
@@ -399,7 +396,9 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 																	type="button"
 																	whileTap={{ scale: 0.88 }}
 																	onClick={() =>
-																		setAvgHaydDays(String(Math.max(1, parseInt(avgHaydDays, 10) - 1)))
+																		setAvgHaydDays(
+																			String(Math.max(1, parseInt(avgHaydDays, 10) - 1)),
+																		)
 																	}
 																	disabled={parseInt(avgHaydDays, 10) <= 1}
 																	className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
@@ -417,7 +416,9 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 																	type="button"
 																	whileTap={{ scale: 0.88 }}
 																	onClick={() =>
-																		setAvgHaydDays(String(Math.min(15, parseInt(avgHaydDays, 10) + 1)))
+																		setAvgHaydDays(
+																			String(Math.min(15, parseInt(avgHaydDays, 10) + 1)),
+																		)
 																	}
 																	disabled={parseInt(avgHaydDays, 10) >= 15}
 																	className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"

@@ -364,10 +364,7 @@ function DebtStep({
 									transition={spring}
 								>
 									<div className="flex items-center justify-between">
-										<span
-											className="text-xs font-medium"
-											style={{ color: '#9A9A9C' }}
-										>
+										<span className="text-xs font-medium" style={{ color: '#9A9A9C' }}>
 											{t('onboarding.haydAvg')}
 										</span>
 										<div className="flex items-center gap-3">
