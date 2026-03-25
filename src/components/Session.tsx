@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
-import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
+import { type SessionOrder, useDebts, usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
 import type { Objective, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
@@ -322,6 +322,12 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
 	const sessionOrder = usePrayerStore((s) => s.sessionOrder);
 
+	const totalRemaining = useTotalRemaining();
+	const totalRakatsRemaining = PRAYER_NAMES.reduce(
+		(sum, p) => sum + (debts[p]?.remaining ?? 0) * PRAYER_CONFIG[p].rakat,
+		0,
+	);
+
 	const defaultTarget = computeTarget(activeObjective);
 
 	const [phase, setPhase] = useState<Phase>('setup');
@@ -526,6 +532,27 @@ export function Session({ onClose }: { onClose: () => void }) {
 							<p className="text-sm" style={{ color: '#6E6E70' }}>
 								{t('session.setupSubtitle')}
 							</p>
+							{totalRemaining > 0 && (
+								<motion.div
+									className="flex items-baseline gap-1.5 mt-2"
+									initial={{ opacity: 0, y: 8 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={{ delay: 0.07, ...spring }}
+								>
+									<span
+										className="text-2xl font-semibold tabular-nums"
+										style={{ color: '#C9A962' }}
+									>
+										{totalRemaining.toLocaleString()}
+									</span>
+									<span className="text-sm" style={{ color: '#6E6E70' }}>
+										{t('session.prayersRemaining')}
+									</span>
+									<span className="text-xs tabular-nums" style={{ color: '#4A4A4C' }}>
+										· {totalRakatsRemaining.toLocaleString()} {t('session.rakatsRemaining')}
+									</span>
+								</motion.div>
+							)}
 						</motion.div>
 
 						<motion.div

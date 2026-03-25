@@ -96,7 +96,9 @@
 		"completed": "Session complete!",
 		"completedCount_one": "{{count}} prayer completed",
 		"completedCount_other": "{{count}} prayers completed",
-		"close": "CLOSE"
+		"close": "CLOSE",
+		"prayersRemaining": "prayers remaining",
+		"rakatsRemaining": "rak'ats remaining"
 	},
 	"settings": {
 		"title": "Settings",
