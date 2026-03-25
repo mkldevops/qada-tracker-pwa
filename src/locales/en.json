@@ -12,7 +12,9 @@
 		"monthCount_other": "{{count}} months",
 		"dayCount": "{{count}} d",
 		"dayShort": "d",
-		"lessThanOneDay": "< 1 day"
+		"lessThanOneDay": "< 1 day",
+		"years": "Years",
+		"months": "Months"
 	},
 	"nav": {
 		"home": "HOME",

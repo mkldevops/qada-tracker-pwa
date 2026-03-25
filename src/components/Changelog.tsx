@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.6.0',
+		date: '2026-03-25',
+		changes: {
+			fr: [
+				"Saisie des années manquées remplacée par deux sélecteurs séparés : Années et Mois",
+			],
+			en: [
+				"Missed years input replaced with two separate steppers: Years and Months",
+			],
+		},
+	},
+	{
 		version: '1.5.0',
 		date: '2026-03-25',
 		changes: {
