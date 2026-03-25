@@ -363,27 +363,46 @@ function DebtStep({
 									exit={{ opacity: 0, height: 0 }}
 									transition={spring}
 								>
-									<label
-										htmlFor="ob-hayd"
-										className="text-xs font-medium"
-										style={{ color: '#9A9A9C' }}
-									>
-										{t('onboarding.haydAvg')}
-									</label>
-									<input
-										id="ob-hayd"
-										type="number"
-										value={avgHaydDays}
-										onChange={(e) =>
-											setAvgHaydDays(
-												String(Math.min(15, Math.max(1, parseInt(e.target.value, 10) || 6))),
-											)
-										}
-										placeholder="6"
-										min="1"
-										max="15"
-										style={inputStyle}
-									/>
+									<div className="flex items-center justify-between">
+										<span
+											className="text-xs font-medium"
+											style={{ color: '#9A9A9C' }}
+										>
+											{t('onboarding.haydAvg')}
+										</span>
+										<div className="flex items-center gap-3">
+											<motion.button
+												type="button"
+												whileTap={{ scale: 0.88 }}
+												onClick={() =>
+													setAvgHaydDays(String(Math.max(1, parseInt(avgHaydDays, 10) - 1)))
+												}
+												disabled={parseInt(avgHaydDays, 10) <= 1}
+												className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
+												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+											>
+												−
+											</motion.button>
+											<span
+												className="w-6 text-center text-lg font-semibold tabular-nums"
+												style={{ color: '#F5F5F0' }}
+											>
+												{avgHaydDays}
+											</span>
+											<motion.button
+												type="button"
+												whileTap={{ scale: 0.88 }}
+												onClick={() =>
+													setAvgHaydDays(String(Math.min(15, parseInt(avgHaydDays, 10) + 1)))
+												}
+												disabled={parseInt(avgHaydDays, 10) >= 15}
+												className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
+												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+											>
+												+
+											</motion.button>
+										</div>
+									</div>
 									{clampedYears > 0 && (
 										<motion.p
 											className="text-[11px]"
@@ -584,11 +603,11 @@ function ObjectiveStep({
 		if (totalRemaining === 0) return null;
 		const raw =
 			objPeriod === 'daily'
-				? totalRemaining / 365
+				? totalRemaining / (365 * 5)
 				: objPeriod === 'weekly'
-					? totalRemaining / 52
-					: totalRemaining / 12;
-		return Math.max(5, Math.round(raw / 5) * 5);
+					? totalRemaining / (52 * 5)
+					: totalRemaining / (12 * 5);
+		return Math.max(1, Math.round(raw));
 	})();
 
 	const parsedTarget = parseInt(objTarget, 10);

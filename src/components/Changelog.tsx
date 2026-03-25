@@ -14,10 +14,14 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-03-25',
 		changes: {
 			fr: [
-				"Décompte des prières restantes et rak'ats affiché dans l'écran de démarrage de session",
+				"Décompte des prières restantes et rak'ats affiché pendant la session en cours",
+				'Sélecteur hayd (jours/mois) remplacé par un bouton +/− plus facile à utiliser sur mobile',
+				'Suggestion de goal revue à la baisse pour rester réaliste (horizon 5 ans)',
 			],
 			en: [
-				"Remaining prayers and rak'ats count shown in the session setup screen",
+				"Remaining prayers and rak'ats count shown during the active session",
+				'Hayd days input replaced with a +/− stepper, easier to use on mobile',
+				'Goal suggestion lowered for a more realistic target (5-year horizon)',
 			],
 		},
 	},

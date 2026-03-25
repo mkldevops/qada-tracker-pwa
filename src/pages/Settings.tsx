@@ -387,23 +387,46 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 
 												{isFemme && (
 													<div className="flex flex-col gap-1.5">
-														<label
-															htmlFor="input-hayd"
-															className="text-xs font-medium"
-															style={{ color: '#6E6E70' }}
-														>
-															{t('settings.haydAvg')}
-														</label>
-														<input
-															id="input-hayd"
-															type="number"
-															value={avgHaydDays}
-															onChange={(e) => setAvgHaydDays(e.target.value)}
-															placeholder="6"
-															min="1"
-															max="15"
-															style={inputStyle}
-														/>
+														<div className="flex items-center justify-between">
+															<span
+																className="text-xs font-medium"
+																style={{ color: '#6E6E70' }}
+															>
+																{t('settings.haydAvg')}
+															</span>
+															<div className="flex items-center gap-3">
+																<motion.button
+																	type="button"
+																	whileTap={{ scale: 0.88 }}
+																	onClick={() =>
+																		setAvgHaydDays(String(Math.max(1, parseInt(avgHaydDays, 10) - 1)))
+																	}
+																	disabled={parseInt(avgHaydDays, 10) <= 1}
+																	className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
+																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																>
+																	−
+																</motion.button>
+																<span
+																	className="w-6 text-center text-lg font-semibold tabular-nums"
+																	style={{ color: '#F5F5F0' }}
+																>
+																	{avgHaydDays}
+																</span>
+																<motion.button
+																	type="button"
+																	whileTap={{ scale: 0.88 }}
+																	onClick={() =>
+																		setAvgHaydDays(String(Math.min(15, parseInt(avgHaydDays, 10) + 1)))
+																	}
+																	disabled={parseInt(avgHaydDays, 10) >= 15}
+																	className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
+																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																>
+																	+
+																</motion.button>
+															</div>
+														</div>
 														{parseFloat(years) > 0 && (
 															<p className="text-[11px]" style={{ color: '#6E9E6E' }}>
 																{t('settings.haydDeducted', {

@@ -532,27 +532,6 @@ export function Session({ onClose }: { onClose: () => void }) {
 							<p className="text-sm" style={{ color: '#6E6E70' }}>
 								{t('session.setupSubtitle')}
 							</p>
-							{totalRemaining > 0 && (
-								<motion.div
-									className="flex items-baseline gap-1.5 mt-2"
-									initial={{ opacity: 0, y: 8 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ delay: 0.07, ...spring }}
-								>
-									<span
-										className="text-2xl font-semibold tabular-nums"
-										style={{ color: '#C9A962' }}
-									>
-										{totalRemaining.toLocaleString()}
-									</span>
-									<span className="text-sm" style={{ color: '#6E6E70' }}>
-										{t('session.prayersRemaining')}
-									</span>
-									<span className="text-xs tabular-nums" style={{ color: '#4A4A4C' }}>
-										· {totalRakatsRemaining.toLocaleString()} {t('session.rakatsRemaining')}
-									</span>
-								</motion.div>
-							)}
 						</motion.div>
 
 						<motion.div
@@ -648,6 +627,20 @@ export function Session({ onClose }: { onClose: () => void }) {
 						>
 							<AnimatedCounter value={completed} target={target} />
 						</motion.div>
+
+						{totalRemaining > 0 && (
+							<motion.div
+								className="flex items-center justify-center gap-1.5 mb-4 text-xs tabular-nums"
+								initial={{ opacity: 0, y: 4 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 0.15, ...spring }}
+							>
+								<span style={{ color: '#C9A962' }}>{totalRemaining.toLocaleString()}</span>
+								<span style={{ color: '#4A4A4C' }}>{t('session.prayersRemaining')}</span>
+								<span style={{ color: "#3A3A3C" }}>·</span>
+								<span style={{ color: '#4A4A4C' }}>{totalRakatsRemaining.toLocaleString()} {t('session.rakatsRemaining')}</span>
+							</motion.div>
+						)}
 
 						{sensorState.isSupported && sensorState.isActive && (
 							<motion.div
