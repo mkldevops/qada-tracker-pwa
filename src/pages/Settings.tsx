@@ -322,78 +322,84 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 															{t('settings.missedYears')}
 														</span>
 														<div className="grid grid-cols-2 gap-3">
-														<div
-															className="flex flex-col items-center gap-3 rounded-2xl py-5"
-															style={{ background: '#1A1A1C' }}
-														>
-															<span
-																className="text-[10px] font-semibold tracking-[1.5px] uppercase"
-																style={{ color: '#6E6E70' }}
+															<div
+																className="flex flex-col items-center gap-3 rounded-2xl py-5"
+																style={{ background: '#1A1A1C' }}
 															>
-																{t('common.years')}
-															</span>
-															<span className="text-3xl font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
-																{missedYears}
-															</span>
-															<div className="flex items-center gap-3">
-																<motion.button
-																	type="button"
-																	whileTap={{ scale: 0.88 }}
-																	onClick={() => setMissedYears((v) => Math.max(0, v - 1))}
-																	disabled={missedYears <= 0}
-																	className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																<span
+																	className="text-[10px] font-semibold tracking-[1.5px] uppercase"
+																	style={{ color: '#6E6E70' }}
 																>
-																	−
-																</motion.button>
-																<motion.button
-																	type="button"
-																	whileTap={{ scale: 0.88 }}
-																	onClick={() => setMissedYears((v) => Math.min(80, v + 1))}
-																	disabled={missedYears >= 80}
-																	className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	{t('common.years')}
+																</span>
+																<span
+																	className="text-3xl font-semibold tabular-nums"
+																	style={{ color: '#F5F5F0' }}
 																>
-																	+
-																</motion.button>
+																	{missedYears}
+																</span>
+																<div className="flex items-center gap-3">
+																	<motion.button
+																		type="button"
+																		whileTap={{ scale: 0.88 }}
+																		onClick={() => setMissedYears((v) => Math.max(0, v - 1))}
+																		disabled={missedYears <= 0}
+																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	>
+																		−
+																	</motion.button>
+																	<motion.button
+																		type="button"
+																		whileTap={{ scale: 0.88 }}
+																		onClick={() => setMissedYears((v) => Math.min(80, v + 1))}
+																		disabled={missedYears >= 80}
+																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	>
+																		+
+																	</motion.button>
+																</div>
 															</div>
-														</div>
-														<div
-															className="flex flex-col items-center gap-3 rounded-2xl py-5"
-															style={{ background: '#1A1A1C' }}
-														>
-															<span
-																className="text-[10px] font-semibold tracking-[1.5px] uppercase"
-																style={{ color: '#6E6E70' }}
+															<div
+																className="flex flex-col items-center gap-3 rounded-2xl py-5"
+																style={{ background: '#1A1A1C' }}
 															>
-																{t('common.months')}
-															</span>
-															<span className="text-3xl font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
-																{missedMonths}
-															</span>
-															<div className="flex items-center gap-3">
-																<motion.button
-																	type="button"
-																	whileTap={{ scale: 0.88 }}
-																	onClick={() => setMissedMonths((v) => Math.max(0, v - 1))}
-																	disabled={missedMonths <= 0}
-																	className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																<span
+																	className="text-[10px] font-semibold tracking-[1.5px] uppercase"
+																	style={{ color: '#6E6E70' }}
 																>
-																	−
-																</motion.button>
-																<motion.button
-																	type="button"
-																	whileTap={{ scale: 0.88 }}
-																	onClick={() => setMissedMonths((v) => Math.min(11, v + 1))}
-																	disabled={missedMonths >= 11}
-																	className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	{t('common.months')}
+																</span>
+																<span
+																	className="text-3xl font-semibold tabular-nums"
+																	style={{ color: '#F5F5F0' }}
 																>
-																	+
-																</motion.button>
+																	{missedMonths}
+																</span>
+																<div className="flex items-center gap-3">
+																	<motion.button
+																		type="button"
+																		whileTap={{ scale: 0.88 }}
+																		onClick={() => setMissedMonths((v) => Math.max(0, v - 1))}
+																		disabled={missedMonths <= 0}
+																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	>
+																		−
+																	</motion.button>
+																	<motion.button
+																		type="button"
+																		whileTap={{ scale: 0.88 }}
+																		onClick={() => setMissedMonths((v) => Math.min(11, v + 1))}
+																		disabled={missedMonths >= 11}
+																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	>
+																		+
+																	</motion.button>
+																</div>
 															</div>
-														</div>
 														</div>
 													</div>
 													<div className="flex flex-col gap-1.5">

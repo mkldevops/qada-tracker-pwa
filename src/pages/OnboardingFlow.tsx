@@ -219,8 +219,7 @@ function DebtStep({
 	) as Record<PrayerName, number>;
 	const manualTotal = Object.values(manualTotals).reduce((s, v) => s + v, 0);
 
-	const canProceed =
-		debtMode === 'years' ? missedYears > 0 || missedMonths > 0 : manualTotal > 0;
+	const canProceed = debtMode === 'years' ? missedYears > 0 || missedMonths > 0 : manualTotal > 0;
 
 	function handleSubmit() {
 		if (debtMode === 'years') {
@@ -299,7 +298,10 @@ function DebtStep({
 										>
 											{t('common.years')}
 										</span>
-										<span className="text-3xl font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
+										<span
+											className="text-3xl font-semibold tabular-nums"
+											style={{ color: '#F5F5F0' }}
+										>
 											{missedYears}
 										</span>
 										<div className="flex items-center gap-3">
@@ -335,7 +337,10 @@ function DebtStep({
 										>
 											{t('common.months')}
 										</span>
-										<span className="text-3xl font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
+										<span
+											className="text-3xl font-semibold tabular-nums"
+											style={{ color: '#F5F5F0' }}
+										>
 											{missedMonths}
 										</span>
 										<div className="flex items-center gap-3">
