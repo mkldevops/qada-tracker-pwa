@@ -70,7 +70,7 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 	return (
 		<motion.div
 			key="welcome"
-			className="flex flex-1 flex-col items-center justify-center px-7 gap-8 text-center"
+			className="flex flex-1 flex-col min-h-0 items-center justify-center px-7 gap-8 text-center overflow-y-auto"
 			initial={{ opacity: 0, y: 30 }}
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, x: -60 }}
@@ -775,7 +775,7 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 	return (
 		<motion.div
 			key="summary"
-			className="flex flex-1 flex-col items-center justify-center px-7 gap-7 text-center"
+			className="flex flex-1 flex-col min-h-0 items-center justify-center px-7 gap-7 text-center overflow-y-auto"
 			initial={{ opacity: 0, scale: 0.95 }}
 			animate={{ opacity: 1, scale: 1 }}
 			exit={{ opacity: 0 }}
@@ -922,7 +922,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.25 }}
 		>
-			<div className="mx-auto flex w-full max-w-lg flex-1 flex-col pt-14">
+			<div className="mx-auto flex w-full max-w-lg flex-1 flex-col min-h-0 pt-14">
 				<AnimatePresence mode="wait">
 					{step === 'welcome' && <WelcomeStep onNext={() => setStep('debt')} onSkip={onComplete} />}
 					{step === 'debt' && (
