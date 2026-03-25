@@ -146,8 +146,10 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 
 	const hasManualChanges = Object.values(manualAmounts).some((v) => v !== undefined && v !== '');
 
-	const haydExclusion = isFemme ? Math.round(totalYears * avgHaydDays * 12) : 0;
-	const totalExcluded = (parseInt(excludedDays, 10) || 0) + haydExclusion;
+	const haydExclusion = isFemme
+		? Math.round(totalYears * (Math.min(15, Math.max(1, avgHaydDays)) * 12))
+		: 0;
+	const totalExcluded = Math.max(0, parseInt(excludedDays, 10) || 0) + haydExclusion;
 
 	const handleSetDebtFromYears = async () => {
 		try {
@@ -344,6 +346,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 																		whileTap={{ scale: 0.88 }}
 																		onClick={() => setMissedYears((v) => Math.max(0, v - 1))}
 																		disabled={missedYears <= 0}
+																		aria-label={`− ${t('common.years')}`}
 																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
 																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 																	>
@@ -354,6 +357,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 																		whileTap={{ scale: 0.88 }}
 																		onClick={() => setMissedYears((v) => Math.min(80, v + 1))}
 																		disabled={missedYears >= 80}
+																		aria-label={`+ ${t('common.years')}`}
 																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
 																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 																	>
@@ -383,6 +387,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 																		whileTap={{ scale: 0.88 }}
 																		onClick={() => setMissedMonths((v) => Math.max(0, v - 1))}
 																		disabled={missedMonths <= 0}
+																		aria-label={`− ${t('common.months')}`}
 																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
 																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 																	>
@@ -393,6 +398,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 																		whileTap={{ scale: 0.88 }}
 																		onClick={() => setMissedMonths((v) => Math.min(11, v + 1))}
 																		disabled={missedMonths >= 11}
+																		aria-label={`+ ${t('common.months')}`}
 																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
 																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 																	>

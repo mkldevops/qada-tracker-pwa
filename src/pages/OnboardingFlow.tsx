@@ -310,6 +310,7 @@ function DebtStep({
 												whileTap={{ scale: 0.88 }}
 												onClick={() => setMissedYears((v) => Math.max(0, v - 1))}
 												disabled={missedYears <= 0}
+												aria-label={`− ${t('common.years')}`}
 												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
 												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 											>
@@ -320,6 +321,7 @@ function DebtStep({
 												whileTap={{ scale: 0.88 }}
 												onClick={() => setMissedYears((v) => Math.min(80, v + 1))}
 												disabled={missedYears >= 80}
+												aria-label={`+ ${t('common.years')}`}
 												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
 												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 											>
@@ -349,6 +351,7 @@ function DebtStep({
 												whileTap={{ scale: 0.88 }}
 												onClick={() => setMissedMonths((v) => Math.max(0, v - 1))}
 												disabled={missedMonths <= 0}
+												aria-label={`− ${t('common.months')}`}
 												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
 												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 											>
@@ -359,6 +362,7 @@ function DebtStep({
 												whileTap={{ scale: 0.88 }}
 												onClick={() => setMissedMonths((v) => Math.min(11, v + 1))}
 												disabled={missedMonths >= 11}
+												aria-label={`+ ${t('common.months')}`}
 												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
 												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 											>
