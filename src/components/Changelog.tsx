@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.4.1',
+		date: '2026-03-25',
+		changes: {
+			fr: [
+				"Correction du scroll bloqué sur l'onboarding mobile (bouton SUIVANT/TERMINER inaccessible)",
+				'Activation du toggle Femme ne bloque plus le défilement vers la validation',
+			],
+			en: [
+				'Fix scroll blocked on mobile onboarding (NEXT/FINISH button unreachable)',
+				'Enabling the Female toggle no longer prevents scrolling to validation',
+			],
+		},
+	},
+	{
 		version: '1.3.0',
 		date: '2026-03-22',
 		changes: {
