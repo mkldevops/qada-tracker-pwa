@@ -121,7 +121,9 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	const [debtMode, setDebtMode] = useState<DebtMode>('years');
 	const [showChangelog, setShowChangelog] = useState(false);
 
-	const [years, setYears] = useState('');
+	const [missedYears, setMissedYears] = useState(0);
+	const [missedMonths, setMissedMonths] = useState(0);
+	const totalYears = missedYears + missedMonths / 12;
 	const [excludedDays, setExcludedDays] = useState('0');
 	const [isFemme, setIsFemme] = useState(false);
 	const [avgHaydDays, setAvgHaydDays] = useState(6);
@@ -144,15 +146,17 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 
 	const hasManualChanges = Object.values(manualAmounts).some((v) => v !== undefined && v !== '');
 
-	const haydExclusion = isFemme ? Math.round((parseFloat(years) || 0) * avgHaydDays * 12) : 0;
-	const totalExcluded = (parseInt(excludedDays, 10) || 0) + haydExclusion;
+	const haydExclusion = isFemme
+		? Math.round(totalYears * (Math.min(15, Math.max(1, avgHaydDays)) * 12))
+		: 0;
+	const totalExcluded = Math.max(0, parseInt(excludedDays, 10) || 0) + haydExclusion;
 
 	const handleSetDebtFromYears = async () => {
 		try {
-			const y = parseFloat(years);
-			if (!Number.isNaN(y) && y > 0) {
-				await setDebtFromYears(y, totalExcluded);
-				setYears('');
+			if (totalYears > 0) {
+				await setDebtFromYears(totalYears, totalExcluded);
+				setMissedYears(0);
+				setMissedMonths(0);
 			}
 		} catch {
 			setDataFeedback({ type: 'error', message: t('settings.importError') });
@@ -314,25 +318,95 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 										{/* By years content */}
 										{debtMode === 'years' && (
 											<>
-												<div className="grid grid-cols-2 gap-3">
-													<div className="flex flex-col gap-1.5">
-														<label
-															htmlFor="input-years"
-															className="text-xs font-medium"
-															style={{ color: '#6E6E70' }}
-														>
+												<div className="flex flex-col gap-4">
+													<div className="flex flex-col gap-3">
+														<span className="text-xs font-medium" style={{ color: '#6E6E70' }}>
 															{t('settings.missedYears')}
-														</label>
-														<input
-															id="input-years"
-															type="number"
-															value={years}
-															onChange={(e) => setYears(e.target.value)}
-															placeholder={t('settings.yearsPlaceholder')}
-															min="0"
-															step="0.5"
-															style={inputStyle}
-														/>
+														</span>
+														<div className="grid grid-cols-2 gap-3">
+															<div
+																className="flex flex-col items-center gap-3 rounded-2xl py-5"
+																style={{ background: '#1A1A1C' }}
+															>
+																<span
+																	className="text-[10px] font-semibold tracking-[1.5px] uppercase"
+																	style={{ color: '#6E6E70' }}
+																>
+																	{t('common.years')}
+																</span>
+																<span
+																	className="text-3xl font-semibold tabular-nums"
+																	style={{ color: '#F5F5F0' }}
+																>
+																	{missedYears}
+																</span>
+																<div className="flex items-center gap-3">
+																	<motion.button
+																		type="button"
+																		whileTap={{ scale: 0.88 }}
+																		onClick={() => setMissedYears((v) => Math.max(0, v - 1))}
+																		disabled={missedYears <= 0}
+																		aria-label={`− ${t('common.years')}`}
+																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	>
+																		−
+																	</motion.button>
+																	<motion.button
+																		type="button"
+																		whileTap={{ scale: 0.88 }}
+																		onClick={() => setMissedYears((v) => Math.min(80, v + 1))}
+																		disabled={missedYears >= 80}
+																		aria-label={`+ ${t('common.years')}`}
+																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	>
+																		+
+																	</motion.button>
+																</div>
+															</div>
+															<div
+																className="flex flex-col items-center gap-3 rounded-2xl py-5"
+																style={{ background: '#1A1A1C' }}
+															>
+																<span
+																	className="text-[10px] font-semibold tracking-[1.5px] uppercase"
+																	style={{ color: '#6E6E70' }}
+																>
+																	{t('common.months')}
+																</span>
+																<span
+																	className="text-3xl font-semibold tabular-nums"
+																	style={{ color: '#F5F5F0' }}
+																>
+																	{missedMonths}
+																</span>
+																<div className="flex items-center gap-3">
+																	<motion.button
+																		type="button"
+																		whileTap={{ scale: 0.88 }}
+																		onClick={() => setMissedMonths((v) => Math.max(0, v - 1))}
+																		disabled={missedMonths <= 0}
+																		aria-label={`− ${t('common.months')}`}
+																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	>
+																		−
+																	</motion.button>
+																	<motion.button
+																		type="button"
+																		whileTap={{ scale: 0.88 }}
+																		onClick={() => setMissedMonths((v) => Math.min(11, v + 1))}
+																		disabled={missedMonths >= 11}
+																		aria-label={`+ ${t('common.months')}`}
+																		className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+																		style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+																	>
+																		+
+																	</motion.button>
+																</div>
+															</div>
+														</div>
 													</div>
 													<div className="flex flex-col gap-1.5">
 														<label
@@ -418,7 +492,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 																</motion.button>
 															</div>
 														</div>
-														{parseFloat(years) > 0 && (
+														{totalYears > 0 && (
 															<p className="text-[11px]" style={{ color: '#6E9E6E' }}>
 																{t('settings.haydDeducted', {
 																	deducted: haydExclusion,
@@ -432,7 +506,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 												<button
 													type="button"
 													onClick={handleSetDebtFromYears}
-													disabled={!years || parseFloat(years) <= 0}
+													disabled={totalYears <= 0}
 													className="flex w-full items-center justify-center rounded-3xl py-3 text-[13px] font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30"
 													style={{
 														background: 'linear-gradient(135deg, #C9A962, #8B7845)',

@@ -12,7 +12,9 @@
 		"monthCount_other": "{{count}} mois",
 		"dayCount": "{{count}} j",
 		"dayShort": "j",
-		"lessThanOneDay": "< 1 jour"
+		"lessThanOneDay": "< 1 jour",
+		"years": "Années",
+		"months": "Mois"
 	},
 	"nav": {
 		"home": "ACCUEIL",

@@ -195,7 +195,8 @@ function DebtStep({
 	const [debtMode, setDebtMode] = useState<DebtMode>('years');
 
 	// Years mode
-	const [years, setYears] = useState('');
+	const [missedYears, setMissedYears] = useState(0);
+	const [missedMonths, setMissedMonths] = useState(0);
 	const [isFemme, setIsFemme] = useState(false);
 	const [avgHaydDays, setAvgHaydDays] = useState(6);
 	const [excludedDays, setExcludedDays] = useState('0');
@@ -204,13 +205,12 @@ function DebtStep({
 	const [manualAmounts, setManualAmounts] = useState<Partial<Record<PrayerName, string>>>({});
 
 	// Years computations
-	const parsedYears = parseFloat(years) || 0;
-	const clampedYears = Math.min(100, Math.max(0, parsedYears));
+	const totalYears = missedYears + missedMonths / 12;
 	const haydExclusion = isFemme
-		? Math.round(clampedYears * (Math.min(15, Math.max(1, avgHaydDays)) * 12))
+		? Math.round(totalYears * (Math.min(15, Math.max(1, avgHaydDays)) * 12))
 		: 0;
 	const totalExcluded = Math.max(0, parseInt(excludedDays, 10) || 0) + haydExclusion;
-	const effectiveDays = Math.max(0, Math.round(clampedYears * 365.25) - totalExcluded);
+	const effectiveDays = Math.max(0, Math.round(totalYears * 365.25) - totalExcluded);
 	const totalPreview = effectiveDays * PRAYER_NAMES.length;
 
 	// Manual computations
@@ -219,12 +219,11 @@ function DebtStep({
 	) as Record<PrayerName, number>;
 	const manualTotal = Object.values(manualTotals).reduce((s, v) => s + v, 0);
 
-	const canProceed =
-		debtMode === 'years' ? clampedYears >= 0.5 && clampedYears <= 100 : manualTotal > 0;
+	const canProceed = debtMode === 'years' ? missedYears > 0 || missedMonths > 0 : manualTotal > 0;
 
 	function handleSubmit() {
 		if (debtMode === 'years') {
-			onNext({ mode: 'years', years: clampedYears, excluded: totalExcluded });
+			onNext({ mode: 'years', years: totalYears, excluded: totalExcluded });
 		} else {
 			onNext({ mode: 'manual', amounts: manualTotals });
 		}
@@ -284,25 +283,94 @@ function DebtStep({
 						transition={spring}
 					>
 						<div className="flex flex-col gap-4">
-							<div className="flex flex-col gap-1.5">
-								<label
-									htmlFor="ob-years"
-									className="text-sm font-medium"
-									style={{ color: '#F5F5F0' }}
-								>
+							<div className="flex flex-col gap-3">
+								<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
 									{t('onboarding.missedYears')}
-								</label>
-								<input
-									id="ob-years"
-									type="number"
-									value={years}
-									onChange={(e) => setYears(e.target.value)}
-									placeholder={t('onboarding.yearsPlaceholder')}
-									min="0.5"
-									max="100"
-									step="0.5"
-									style={inputStyle}
-								/>
+								</span>
+								<div className="grid grid-cols-2 gap-3">
+									<div
+										className="flex flex-col items-center gap-3 rounded-2xl py-5"
+										style={{ background: '#1A1A1C' }}
+									>
+										<span
+											className="text-[10px] font-semibold tracking-[1.5px] uppercase"
+											style={{ color: '#6E6E70' }}
+										>
+											{t('common.years')}
+										</span>
+										<span
+											className="text-3xl font-semibold tabular-nums"
+											style={{ color: '#F5F5F0' }}
+										>
+											{missedYears}
+										</span>
+										<div className="flex items-center gap-3">
+											<motion.button
+												type="button"
+												whileTap={{ scale: 0.88 }}
+												onClick={() => setMissedYears((v) => Math.max(0, v - 1))}
+												disabled={missedYears <= 0}
+												aria-label={`− ${t('common.years')}`}
+												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+											>
+												−
+											</motion.button>
+											<motion.button
+												type="button"
+												whileTap={{ scale: 0.88 }}
+												onClick={() => setMissedYears((v) => Math.min(80, v + 1))}
+												disabled={missedYears >= 80}
+												aria-label={`+ ${t('common.years')}`}
+												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+											>
+												+
+											</motion.button>
+										</div>
+									</div>
+									<div
+										className="flex flex-col items-center gap-3 rounded-2xl py-5"
+										style={{ background: '#1A1A1C' }}
+									>
+										<span
+											className="text-[10px] font-semibold tracking-[1.5px] uppercase"
+											style={{ color: '#6E6E70' }}
+										>
+											{t('common.months')}
+										</span>
+										<span
+											className="text-3xl font-semibold tabular-nums"
+											style={{ color: '#F5F5F0' }}
+										>
+											{missedMonths}
+										</span>
+										<div className="flex items-center gap-3">
+											<motion.button
+												type="button"
+												whileTap={{ scale: 0.88 }}
+												onClick={() => setMissedMonths((v) => Math.max(0, v - 1))}
+												disabled={missedMonths <= 0}
+												aria-label={`− ${t('common.months')}`}
+												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+											>
+												−
+											</motion.button>
+											<motion.button
+												type="button"
+												whileTap={{ scale: 0.88 }}
+												onClick={() => setMissedMonths((v) => Math.min(11, v + 1))}
+												disabled={missedMonths >= 11}
+												aria-label={`+ ${t('common.months')}`}
+												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
+												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+											>
+												+
+											</motion.button>
+										</div>
+									</div>
+								</div>
 							</div>
 							<div style={{ height: 1, background: '#2A2A2C' }} />
 							<div className="flex flex-col gap-1.5">
@@ -396,7 +464,7 @@ function DebtStep({
 											</motion.button>
 										</div>
 									</div>
-									{clampedYears > 0 && (
+									{totalYears > 0 && (
 										<motion.p
 											className="text-[11px]"
 											style={{ color: '#6E9E6E' }}
