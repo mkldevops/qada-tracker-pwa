@@ -4,12 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
-import {
-	type SessionOrder,
-	useDebts,
-	usePrayerStore,
-	useTotalRemaining,
-} from '@/stores/prayerStore';
+import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Objective, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
@@ -327,12 +322,6 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
 	const sessionOrder = usePrayerStore((s) => s.sessionOrder);
 
-	const totalRemaining = useTotalRemaining();
-	const totalRakatsRemaining = PRAYER_NAMES.reduce(
-		(sum, p) => sum + (debts[p]?.remaining ?? 0) * PRAYER_CONFIG[p].rakat,
-		0,
-	);
-
 	const defaultTarget = computeTarget(activeObjective);
 
 	const [phase, setPhase] = useState<Phase>('setup');
@@ -502,6 +491,22 @@ export function Session({ onClose }: { onClose: () => void }) {
 	};
 	const handleAutoIncrement = () => handleIncrement(false);
 
+	const sessionPrayersRemaining = target - completed;
+	let sessionRakatsRemaining = 0;
+	if (phase === 'active' && sessionPrayersRemaining > 0) {
+		let count = 0;
+		let i = 0;
+		const maxIter = prayerOrder.length * sessionPrayersRemaining + prayerOrder.length;
+		while (count < sessionPrayersRemaining && i < maxIter) {
+			const prayer = prayerOrder[(currentPrayerIndex + i) % prayerOrder.length];
+			if ((debts[prayer]?.remaining ?? 0) > 0) {
+				sessionRakatsRemaining += PRAYER_CONFIG[prayer].rakat;
+				count++;
+			}
+			i++;
+		}
+	}
+
 	const currentEntry =
 		phase === 'active' ? getNextPrayer(debts, prayerOrder, currentPrayerIndex) : null;
 	const cfg = currentEntry ? PRAYER_CONFIG[currentEntry.prayer] : null;
@@ -633,18 +638,18 @@ export function Session({ onClose }: { onClose: () => void }) {
 							<AnimatedCounter value={completed} target={target} />
 						</motion.div>
 
-						{totalRemaining > 0 && (
+						{sessionPrayersRemaining > 0 && (
 							<motion.div
 								className="flex items-center justify-center gap-1.5 mb-4 text-xs tabular-nums"
 								initial={{ opacity: 0, y: 4 }}
 								animate={{ opacity: 1, y: 0 }}
 								transition={{ delay: 0.15, ...spring }}
 							>
-								<span style={{ color: '#C9A962' }}>{totalRemaining.toLocaleString()}</span>
+								<span style={{ color: '#C9A962' }}>{sessionPrayersRemaining.toLocaleString()}</span>
 								<span style={{ color: '#4A4A4C' }}>{t('session.prayersRemaining')}</span>
 								<span style={{ color: '#3A3A3C' }}>·</span>
 								<span style={{ color: '#4A4A4C' }}>
-									{totalRakatsRemaining.toLocaleString()} {t('session.rakatsRemaining')}
+									{sessionRakatsRemaining.toLocaleString()} {t('session.rakatsRemaining')}
 								</span>
 							</motion.div>
 						)}

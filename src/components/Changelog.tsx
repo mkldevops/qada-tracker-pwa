@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.7.2',
+		date: '2026-03-25',
+		changes: {
+			fr: ["Décompte de la session en cours : prières et rak'ats restants sur la session (pas la dette globale)"],
+			en: ["Session progress counter now shows remaining prayers and rak'ats for the current session (not global debt)"],
+		},
+	},
+	{
 		version: '1.6.1',
 		date: '2026-03-25',
 		changes: {
