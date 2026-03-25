@@ -197,7 +197,7 @@ function DebtStep({
 	// Years mode
 	const [years, setYears] = useState('');
 	const [isFemme, setIsFemme] = useState(false);
-	const [avgHaydDays, setAvgHaydDays] = useState('6');
+	const [avgHaydDays, setAvgHaydDays] = useState(6);
 	const [excludedDays, setExcludedDays] = useState('0');
 
 	// Manual mode
@@ -207,7 +207,7 @@ function DebtStep({
 	const parsedYears = parseFloat(years) || 0;
 	const clampedYears = Math.min(100, Math.max(0, parsedYears));
 	const haydExclusion = isFemme
-		? Math.round(clampedYears * (Math.min(15, Math.max(1, parseFloat(avgHaydDays) || 6)) * 12))
+		? Math.round(clampedYears * (Math.min(15, Math.max(1, avgHaydDays)) * 12))
 		: 0;
 	const totalExcluded = Math.max(0, parseInt(excludedDays, 10) || 0) + haydExclusion;
 	const effectiveDays = Math.max(0, Math.round(clampedYears * 365.25) - totalExcluded);
@@ -371,10 +371,8 @@ function DebtStep({
 											<motion.button
 												type="button"
 												whileTap={{ scale: 0.88 }}
-												onClick={() =>
-													setAvgHaydDays(String(Math.max(1, parseInt(avgHaydDays, 10) - 1)))
-												}
-												disabled={parseInt(avgHaydDays, 10) <= 1}
+												onClick={() => setAvgHaydDays(Math.max(1, avgHaydDays - 1))}
+												disabled={avgHaydDays <= 1}
 												className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
 												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 											>
@@ -389,10 +387,8 @@ function DebtStep({
 											<motion.button
 												type="button"
 												whileTap={{ scale: 0.88 }}
-												onClick={() =>
-													setAvgHaydDays(String(Math.min(15, parseInt(avgHaydDays, 10) + 1)))
-												}
-												disabled={parseInt(avgHaydDays, 10) >= 15}
+												onClick={() => setAvgHaydDays(Math.min(15, avgHaydDays + 1))}
+												disabled={avgHaydDays >= 15}
 												className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
 												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 											>

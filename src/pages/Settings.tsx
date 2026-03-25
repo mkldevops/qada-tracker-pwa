@@ -124,7 +124,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 	const [years, setYears] = useState('');
 	const [excludedDays, setExcludedDays] = useState('0');
 	const [isFemme, setIsFemme] = useState(false);
-	const [avgHaydDays, setAvgHaydDays] = useState('6');
+	const [avgHaydDays, setAvgHaydDays] = useState(6);
 	const [manualAmounts, setManualAmounts] = useState<Partial<Record<PrayerName, string>>>({});
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
 	const [objTarget, setObjTarget] = useState('');
@@ -144,9 +144,7 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 
 	const hasManualChanges = Object.values(manualAmounts).some((v) => v !== undefined && v !== '');
 
-	const haydExclusion = isFemme
-		? Math.round((parseFloat(years) || 0) * (parseFloat(avgHaydDays) || 6) * 12)
-		: 0;
+	const haydExclusion = isFemme ? Math.round((parseFloat(years) || 0) * avgHaydDays * 12) : 0;
 	const totalExcluded = (parseInt(excludedDays, 10) || 0) + haydExclusion;
 
 	const handleSetDebtFromYears = async () => {
@@ -395,12 +393,8 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 																<motion.button
 																	type="button"
 																	whileTap={{ scale: 0.88 }}
-																	onClick={() =>
-																		setAvgHaydDays(
-																			String(Math.max(1, parseInt(avgHaydDays, 10) - 1)),
-																		)
-																	}
-																	disabled={parseInt(avgHaydDays, 10) <= 1}
+																	onClick={() => setAvgHaydDays(Math.max(1, avgHaydDays - 1))}
+																	disabled={avgHaydDays <= 1}
 																	className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
 																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 																>
@@ -415,12 +409,8 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 																<motion.button
 																	type="button"
 																	whileTap={{ scale: 0.88 }}
-																	onClick={() =>
-																		setAvgHaydDays(
-																			String(Math.min(15, parseInt(avgHaydDays, 10) + 1)),
-																		)
-																	}
-																	disabled={parseInt(avgHaydDays, 10) >= 15}
+																	onClick={() => setAvgHaydDays(Math.min(15, avgHaydDays + 1))}
+																	disabled={avgHaydDays >= 15}
 																	className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
 																	style={{ background: '#2A2A2C', color: '#F5F5F0' }}
 																>
