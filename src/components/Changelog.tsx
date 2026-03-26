@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.14.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				'Stats : DebtEvolutionChart et StatsChart utilisent désormais les hooks et composants partagés (PeriodSelector, usePersistedPeriod, useOutsideClick)',
+			],
+			en: [
+				'Stats: DebtEvolutionChart and StatsChart now use shared hooks and component (PeriodSelector, usePersistedPeriod, useOutsideClick)',
+			],
+		},
+	},
+	{
 		version: '1.13.0',
 		date: '2026-03-26',
 		changes: {
