@@ -192,5 +192,6 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 
 export const useDebts = () => usePrayerStore((s) => s.debts);
 export const useStats = () => usePrayerStore((s) => s.stats);
+export const useActiveObjective = () => usePrayerStore((s) => s.activeObjective);
 export const useTotalRemaining = () =>
 	usePrayerStore((s) => PRAYER_NAMES.reduce((sum, p) => sum + (s.debts[p]?.remaining ?? 0), 0));

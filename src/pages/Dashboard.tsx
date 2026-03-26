@@ -7,7 +7,13 @@ import { Session } from '@/components/Session';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { spring } from '@/lib/animations';
 import { formatCatchUpLabel } from '@/lib/formatDays';
-import { useDebts, usePrayerStore, useStats, useTotalRemaining } from '@/stores/prayerStore';
+import {
+	useActiveObjective,
+	useDebts,
+	usePrayerStore,
+	useStats,
+	useTotalRemaining,
+} from '@/stores/prayerStore';
 import type { PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
@@ -182,6 +188,7 @@ export function Dashboard() {
 	const { logPrayer } = usePrayerStore();
 	const debts = useDebts();
 	const stats = useStats();
+	const activeObjective = useActiveObjective();
 	const totalRemaining = useTotalRemaining();
 	const [showSession, setShowSession] = useState(false);
 
@@ -254,20 +261,22 @@ export function Dashboard() {
 				</motion.button>
 
 				<div className="flex gap-3">
-					<StatPill label={t('dashboard.today')} value={stats.today} color="#C9A962" index={0} />
 					<StatPill
-						label={t('dashboard.streak')}
-						value={`${stats.streak}${t('common.dayShort')}`}
-						color="#6E9E6E"
-						index={1}
+						label={t('dashboard.today')}
+						value={activeObjective ? `${stats.today} / ${activeObjective.target}` : stats.today}
+						color="#C9A962"
+						index={0}
 					/>
+					<AnimatePresence>
+						{stats.estimatedDays !== null && (
+							<EstimationCard
+								key="estimation"
+								estimatedDays={stats.estimatedDays}
+								avgPerDay={stats.avgPerDay}
+							/>
+						)}
+					</AnimatePresence>
 				</div>
-
-				<AnimatePresence>
-					{stats.estimatedDays !== null && (
-						<EstimationCard key="estimation" estimatedDays={stats.estimatedDays} />
-					)}
-				</AnimatePresence>
 
 				<div className="flex flex-col gap-2.5">
 					<motion.p

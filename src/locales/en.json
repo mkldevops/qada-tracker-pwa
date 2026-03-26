@@ -30,6 +30,7 @@
 		"today": "today",
 		"streak": "streak",
 		"estimation": "estimation",
+		"estimationRate": "Estimated at {{rate}} prayers/day to finish",
 		"prayers": "PRAYERS",
 		"remaining": "{{count}} remaining"
 	},

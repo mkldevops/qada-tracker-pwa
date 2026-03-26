@@ -84,7 +84,11 @@ export function Stats() {
 
 			<AnimatePresence>
 				{stats.estimatedDays !== null && (
-					<EstimationCard key="estimation" estimatedDays={stats.estimatedDays} />
+					<EstimationCard
+						key="estimation"
+						estimatedDays={stats.estimatedDays}
+						avgPerDay={stats.avgPerDay}
+					/>
 				)}
 			</AnimatePresence>
 
