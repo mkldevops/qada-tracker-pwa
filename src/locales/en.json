@@ -212,13 +212,6 @@
 		"install": "Install",
 		"later": "Later"
 	},
-	"updateBanner": {
-		"title": "Update available",
-		"subtitle": "A new version is ready",
-		"update": "Update",
-		"later": "Later",
-		"error": "Update failed. Please reload the page."
-	},
 	"milestone": {
 		"title": "Keep it up!",
 		"subtitle": "{{count}} prayers made up",

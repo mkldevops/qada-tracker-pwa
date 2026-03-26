@@ -18,6 +18,7 @@ function buildFetch(...versions: string[]) {
 beforeEach(() => {
 	vi.useFakeTimers();
 	Object.defineProperty(document, 'hidden', { value: false, configurable: true, writable: true });
+	vi.stubGlobal('location', { reload: vi.fn() });
 });
 
 afterEach(() => {
@@ -28,90 +29,47 @@ afterEach(() => {
 async function mountAndSeedVersion(fetch: ReturnType<typeof vi.fn>) {
 	vi.stubGlobal('fetch', fetch);
 	const hook = renderHook(() => useVersionCheck());
-	// Flush the initial checkVersion() promise
 	await act(async () => {});
 	return hook;
 }
 
 describe('useVersionCheck', () => {
-	it('initializes with updateAvailable = false', async () => {
-		const { result } = await mountAndSeedVersion(buildFetch('1.0.0'));
-		expect(result.current.updateAvailable).toBe(false);
-	});
-
-	it('stays false when version has not changed across polls', async () => {
-		const { result } = await mountAndSeedVersion(buildFetch('1.0.0', '1.0.0'));
+	it('does not reload when version is unchanged', async () => {
+		await mountAndSeedVersion(buildFetch('1.0.0', '1.0.0'));
 		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
 		await act(async () => {});
-		expect(result.current.updateAvailable).toBe(false);
+		expect(location.reload).not.toHaveBeenCalled();
 	});
 
-	it('sets updateAvailable = true when version changes', async () => {
-		const { result } = await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1'));
+	it('reloads immediately when version changes and tab is hidden', async () => {
+		Object.defineProperty(document, 'hidden', { value: true });
+		await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1'));
 		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
 		await act(async () => {});
-		expect(result.current.updateAvailable).toBe(true);
+		expect(location.reload).toHaveBeenCalledOnce();
 	});
 
-	it('dismiss sets updateAvailable back to false', async () => {
-		const { result } = await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1'));
+	it('does not reload immediately when version changes and tab is visible', async () => {
+		await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1'));
 		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
 		await act(async () => {});
-		expect(result.current.updateAvailable).toBe(true);
-
-		act(() => result.current.dismiss());
-		expect(result.current.updateAvailable).toBe(false);
+		expect(location.reload).not.toHaveBeenCalled();
 	});
 
-	it('dismiss prevents re-triggering for the same new version (regression guard)', async () => {
-		// Bug fixed in #46: dismiss() must advance currentVersionRef so polling does not re-show the dialog
-		const { result } = await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1', '1.0.1'));
+	it('reloads when tab goes hidden after pending update', async () => {
+		await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1'));
 		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
 		await act(async () => {});
-		expect(result.current.updateAvailable).toBe(true);
+		expect(location.reload).not.toHaveBeenCalled();
 
-		act(() => result.current.dismiss());
-		expect(result.current.updateAvailable).toBe(false);
-
-		// Next poll returns same new version — must NOT re-open
-		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
-		await act(async () => {});
-		expect(result.current.updateAvailable).toBe(false);
-	});
-
-	it('ignores non-ok fetch responses', async () => {
-		vi.stubGlobal(
-			'fetch',
-			vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({}) }),
-		);
-		const { result } = renderHook(() => useVersionCheck());
-		await act(async () => {});
-		expect(result.current.updateAvailable).toBe(false);
-	});
-
-	it('ignores fetch errors silently', async () => {
-		vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network error')));
-		const { result } = renderHook(() => useVersionCheck());
-		await act(async () => {});
-		expect(result.current.updateAvailable).toBe(false);
-	});
-
-	it('ignores response missing version field', async () => {
-		vi.stubGlobal(
-			'fetch',
-			vi.fn().mockResolvedValue({
-				ok: true,
-				json: () => Promise.resolve({ builtAt: '2025-01-01' }),
-			}),
-		);
-		const { result } = renderHook(() => useVersionCheck());
-		await act(async () => {});
-		expect(result.current.updateAvailable).toBe(false);
+		Object.defineProperty(document, 'hidden', { value: true });
+		act(() => document.dispatchEvent(new Event('visibilitychange')));
+		expect(location.reload).toHaveBeenCalledOnce();
 	});
 
 	it('stops polling when tab becomes hidden', async () => {
 		const fetch = buildFetch('1.0.0');
-		const { result: _ } = await mountAndSeedVersion(fetch);
+		await mountAndSeedVersion(fetch);
 		const callsAtMount = fetch.mock.calls.length;
 
 		Object.defineProperty(document, 'hidden', { value: true });
@@ -125,20 +83,48 @@ describe('useVersionCheck', () => {
 
 	it('resumes polling when tab becomes visible again', async () => {
 		const fetch = buildFetch('1.0.0');
-		const { result: _ } = await mountAndSeedVersion(fetch);
+		await mountAndSeedVersion(fetch);
 
-		// Hide tab and wait
 		Object.defineProperty(document, 'hidden', { value: true });
 		act(() => document.dispatchEvent(new Event('visibilitychange')));
 		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS * 2));
 		const callsWhileHidden = fetch.mock.calls.length;
 
-		// Show tab — should trigger immediate check
 		Object.defineProperty(document, 'hidden', { value: false });
 		act(() => document.dispatchEvent(new Event('visibilitychange')));
 		await act(async () => {});
 
 		expect(fetch.mock.calls.length).toBeGreaterThan(callsWhileHidden);
+	});
+
+	it('ignores non-ok fetch responses', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({}) }),
+		);
+		renderHook(() => useVersionCheck());
+		await act(async () => {});
+		expect(location.reload).not.toHaveBeenCalled();
+	});
+
+	it('ignores fetch errors silently', async () => {
+		vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network error')));
+		renderHook(() => useVersionCheck());
+		await act(async () => {});
+		expect(location.reload).not.toHaveBeenCalled();
+	});
+
+	it('ignores response missing version field', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: () => Promise.resolve({ builtAt: '2025-01-01' }),
+			}),
+		);
+		renderHook(() => useVersionCheck());
+		await act(async () => {});
+		expect(location.reload).not.toHaveBeenCalled();
 	});
 
 	it('cleans up interval and listener on unmount', async () => {

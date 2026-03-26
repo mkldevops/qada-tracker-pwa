@@ -212,13 +212,6 @@
 		"install": "Installer",
 		"later": "Plus tard"
 	},
-	"updateBanner": {
-		"title": "Mise à jour disponible",
-		"subtitle": "Une nouvelle version est prête",
-		"update": "Mettre à jour",
-		"later": "Plus tard",
-		"error": "Mise à jour échouée. Veuillez recharger la page."
-	},
 	"milestone": {
 		"title": "Bravo, continue ainsi !",
 		"subtitle": "{{count}} prières rattrapées",
