@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.12.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				"Navigation : montage différé des onglets — monté au premier accès, gardé en mémoire ensuite (plus d'animations répétitives, plus d'écouteurs fantômes)",
+			],
+			en: [
+				'Navigation: lazy-mount tabs — mounted on first visit, kept alive after (no more repeated animations, no stale background listeners)',
+			],
+		},
+	},
+	{
 		version: '1.11.0',
 		date: '2026-03-26',
 		changes: {

@@ -1,6 +1,6 @@
 import { useRegisterSW } from 'virtual:pwa-register/react';
-import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence } from 'motion/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BottomNav } from '@/components/BottomNav';
 import { InstallBanner } from '@/components/InstallBanner';
@@ -18,16 +18,6 @@ import { usePrayerStore } from '@/stores/prayerStore';
 
 type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 
-const TAB_ORDER: Tab[] = ['dashboard', 'log', 'stats', 'settings'];
-
-const slideVariants = {
-	initial: (dir: number) => ({ x: dir * 100 + '%', opacity: 0 }),
-	animate: { x: 0, opacity: 1 },
-	exit: (dir: number) => ({ x: dir * -100 + '%', opacity: 0 }),
-};
-
-const slideTransition = { duration: 0.22, ease: [0.32, 0.72, 0, 1] as const };
-
 export function App() {
 	const { t, i18n } = useTranslation();
 	useNotifications(t('settings.notificationsBody'));
@@ -36,11 +26,10 @@ export function App() {
 		if (param === 'log' || param === 'stats' || param === 'settings') return param as Tab;
 		return 'dashboard';
 	});
-	const directionRef = useRef(0);
-
+	const [mountedTabs, setMountedTabs] = useState<Set<Tab>>(() => new Set([activeTab]));
 	function handleTabChange(tab: Tab) {
 		if (tab === activeTab) return;
-		directionRef.current = TAB_ORDER.indexOf(tab) > TAB_ORDER.indexOf(activeTab) ? 1 : -1;
+		setMountedTabs((prev) => new Set([...prev, tab]));
 		setActiveTab(tab);
 	}
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
@@ -132,19 +121,14 @@ export function App() {
 	return (
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
 			<main className="mx-auto max-w-lg pt-4 pb-28 overflow-hidden">
-				<AnimatePresence mode="wait" custom={directionRef.current}>
-					<motion.div
-						key={activeTab}
-						custom={directionRef.current}
-						variants={slideVariants}
-						initial="initial"
-						animate="animate"
-						exit="exit"
-						transition={slideTransition}
-					>
-						{pages[activeTab]}
-					</motion.div>
-				</AnimatePresence>
+				{(Object.keys(pages) as Tab[]).map(
+					(tab) =>
+						mountedTabs.has(tab) && (
+							<div key={tab} hidden={tab !== activeTab}>
+								{pages[tab]}
+							</div>
+						),
+				)}
 			</main>
 			<AnimatePresence>
 				{!showOnboarding && installPrompt && shouldShowInstallBanner() && (
