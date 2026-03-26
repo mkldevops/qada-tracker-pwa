@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.15.0',
+		date: '2026-03-26',
+		changes: {
+			fr: ['Extraction du sélecteur de jours de menstrues en composant partagé HaydStepper'],
+			en: ['Extracted menses days stepper into a shared HaydStepper component'],
+		},
+	},
+	{
 		version: '1.14.0',
 		date: '2026-03-26',
 		changes: {
