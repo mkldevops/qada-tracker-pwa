@@ -14,10 +14,10 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-03-26',
 		changes: {
 			fr: [
-				"Navigation : les onglets restent montés en mémoire — plus d'animations répétitives en revenant sur le Dashboard",
+				"Navigation : montage différé des onglets — monté au premier accès, gardé en mémoire ensuite (plus d'animations répétitives, plus d'écouteurs fantômes)",
 			],
 			en: [
-				'Navigation: tabs stay mounted — no more repeated entrance animations when returning to Dashboard',
+				'Navigation: lazy-mount tabs — mounted on first visit, kept alive after (no more repeated animations, no stale background listeners)',
 			],
 		},
 	},

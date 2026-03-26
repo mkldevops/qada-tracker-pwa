@@ -26,8 +26,10 @@ export function App() {
 		if (param === 'log' || param === 'stats' || param === 'settings') return param as Tab;
 		return 'dashboard';
 	});
+	const [mountedTabs, setMountedTabs] = useState<Set<Tab>>(() => new Set([activeTab]));
 	function handleTabChange(tab: Tab) {
 		if (tab === activeTab) return;
+		setMountedTabs((prev) => new Set([...prev, tab]));
 		setActiveTab(tab);
 	}
 	const [showOnboarding, setShowOnboarding] = useState(!isOnboardingDone());
@@ -119,11 +121,14 @@ export function App() {
 	return (
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
 			<main className="mx-auto max-w-lg pt-4 pb-28 overflow-hidden">
-				{(Object.keys(pages) as Tab[]).map((tab) => (
-					<div key={tab} hidden={tab !== activeTab}>
-						{pages[tab]}
-					</div>
-				))}
+				{(Object.keys(pages) as Tab[]).map(
+					(tab) =>
+						mountedTabs.has(tab) && (
+							<div key={tab} hidden={tab !== activeTab}>
+								{pages[tab]}
+							</div>
+						),
+				)}
 			</main>
 			<AnimatePresence>
 				{!showOnboarding && installPrompt && shouldShowInstallBanner() && (
