@@ -30,8 +30,7 @@ function StatPill({
 }) {
 	return (
 		<motion.div
-			className="flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-4"
-			style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+			className="flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl bg-surface border border-border py-4"
 			initial={{ opacity: 0, scale: 0.85, y: 12 }}
 			animate={{ opacity: 1, scale: 1, y: 0 }}
 			transition={{ delay: 0.14 + index * 0.05, ...spring }}
@@ -39,13 +38,11 @@ function StatPill({
 		>
 			<span
 				className="text-3xl font-semibold leading-none tabular-nums"
-				style={{ color: color ?? '#F5F5F0' }}
+				style={{ color: color ?? 'var(--foreground)' }}
 			>
 				{value}
 			</span>
-			<span className="text-[10px] font-medium" style={{ color: '#6E6E70' }}>
-				{label}
-			</span>
+			<span className="text-[10px] font-medium text-muted">{label}</span>
 		</motion.div>
 	);
 }
@@ -104,8 +101,8 @@ function PrayerRow({
 
 	return (
 		<motion.div
-			className="relative flex items-center gap-4 overflow-hidden rounded-2xl px-5"
-			style={{ background: '#242426', border: '1px solid #3A3A3C', height: 72 }}
+			className="relative flex items-center gap-4 overflow-hidden rounded-2xl bg-surface border border-border px-5"
+			style={{ height: 72 }}
 			initial={{ opacity: 0, x: -16 }}
 			animate={{ opacity: 1, x: 0 }}
 			transition={{ delay: 0.22 + index * 0.05, ...spring }}
@@ -128,14 +125,11 @@ function PrayerRow({
 					<span className="font-display text-lg font-medium" style={{ color: cfg.hex }}>
 						{cfg.labelFr}
 					</span>
-					<span className="text-xs" style={{ color: '#4A4A4C' }}>
-						{cfg.labelAr}
-					</span>
+					<span className="text-xs text-tertiary">{cfg.labelAr}</span>
 					<AnimatePresence mode="popLayout">
 						<motion.span
 							key={remaining}
-							className="text-[11px]"
-							style={{ color: '#6E6E70' }}
+							className="text-[11px] text-muted"
 							initial={shouldReduce ? false : { opacity: 0, y: -6 }}
 							animate={{ opacity: 1, y: 0 }}
 							exit={shouldReduce ? {} : { opacity: 0, y: 6 }}
@@ -146,10 +140,7 @@ function PrayerRow({
 					</AnimatePresence>
 				</div>
 				<div className="flex items-center gap-2">
-					<div
-						className="h-[3px] flex-1 overflow-hidden rounded-full"
-						style={{ background: '#3A3A3C' }}
-					>
+					<div className="h-[3px] flex-1 overflow-hidden rounded-full bg-border">
 						<motion.div
 							className="h-full rounded-full"
 							style={{ background: cfg.hex }}
@@ -162,7 +153,7 @@ function PrayerRow({
 							}}
 						/>
 					</div>
-					<span className="w-8 text-right text-[10px] tabular-nums" style={{ color: '#6E6E70' }}>
+					<span className="w-8 text-right text-[10px] tabular-nums text-muted">
 						{totalOwed === 0 ? '—' : `${Math.round(progress)}%`}
 					</span>
 				</div>
@@ -171,13 +162,12 @@ function PrayerRow({
 				type="button"
 				onClick={handleLog}
 				disabled={done}
-				className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full disabled:opacity-30"
-				style={done ? { background: '#2A2A2C' } : { background: '#C9A962' }}
+				className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full disabled:opacity-30 ${done ? 'bg-surface-raised' : 'bg-gold'}`}
 				animate={justCompleted && !shouldReduce ? { scale: [1, 1.35, 1] } : { scale: 1 }}
 				transition={justCompleted ? { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] } : spring}
 				whileTap={done || shouldReduce ? {} : { scale: 0.82 }}
 			>
-				<Plus size={18} style={{ color: done ? '#6E6E70' : '#1A1A1C' }} />
+				<Plus size={18} className={done ? 'text-muted' : 'text-background'} />
 			</motion.button>
 		</motion.div>
 	);
@@ -204,18 +194,15 @@ export function Dashboard() {
 					transition={{ delay: 0, ...spring }}
 				>
 					<div className="flex flex-col gap-0.5">
-						<h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
-							قضاء
-						</h1>
-						<p className="text-xs font-medium tracking-[1px]" style={{ color: '#6E6E70' }}>
+						<h1 className="font-display text-3xl font-normal text-foreground">قضاء</h1>
+						<p className="text-xs font-medium tracking-[1px] text-muted">
 							{t('dashboard.subtitle')}
 						</p>
 					</div>
 				</motion.div>
 
 				<motion.div
-					className="relative flex w-full flex-col justify-center gap-2 overflow-hidden rounded-[20px] px-6 py-7"
-					style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
+					className="gradient-gold relative flex w-full flex-col justify-center gap-2 overflow-hidden rounded-[20px] px-6 py-7"
 					initial={{ opacity: 0, y: 16, scale: 0.97 }}
 					animate={{ opacity: 1, y: 0, scale: 1 }}
 					transition={{ delay: 0.06, ...spring }}
@@ -229,28 +216,20 @@ export function Dashboard() {
 						animate={{ x: ['-100%', '100%'] }}
 						transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', repeatDelay: 3 }}
 					/>
-					<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#1A1A1C99' }}>
+					<p className="text-[11px] font-medium tracking-[3px] text-background/60">
 						{t('dashboard.totalRemaining')}
 					</p>
-					<p
-						className="text-[80px] font-semibold leading-[0.85] tabular-nums"
-						style={{ color: '#1A1A1C' }}
-					>
+					<p className="text-[80px] font-semibold leading-[0.85] tabular-nums text-background">
 						{totalRemaining.toLocaleString()}
 					</p>
-					{catchUpLabel && (
-						<p className="text-sm" style={{ color: '#1A1A1C88' }}>
-							{catchUpLabel}
-						</p>
-					)}
+					{catchUpLabel && <p className="text-sm text-background/50">{catchUpLabel}</p>}
 				</motion.div>
 
 				<motion.button
 					type="button"
 					onClick={() => setShowSession(true)}
 					disabled={totalRemaining === 0}
-					className="w-full rounded-[28px] py-4 font-semibold tracking-[1.5px] disabled:opacity-30"
-					style={{ background: '#242426', border: '1px solid #C9A962', color: '#C9A962' }}
+					className="w-full rounded-[28px] py-4 font-semibold tracking-[1.5px] bg-surface border border-gold text-gold disabled:opacity-30"
 					initial={{ opacity: 0, y: 10 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.1, ...spring }}
@@ -264,7 +243,7 @@ export function Dashboard() {
 					<StatPill
 						label={t('dashboard.today')}
 						value={activeObjective ? `${stats.today} / ${activeObjective.target}` : stats.today}
-						color="#C9A962"
+						color="var(--gold)"
 						index={0}
 					/>
 					<AnimatePresence>
@@ -280,8 +259,7 @@ export function Dashboard() {
 
 				<div className="flex flex-col gap-2.5">
 					<motion.p
-						className="text-[11px] font-medium tracking-[3px]"
-						style={{ color: '#4A4A4C' }}
+						className="text-[11px] font-medium tracking-[3px] text-tertiary"
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: 0.24 }}
