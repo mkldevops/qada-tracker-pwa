@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.22.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				"Accueil : carte « Série » supprimée, EstimationCard redessinée (valeur + rythme), disposition today 1/3 + estimation 2/3",
+				"Objectif : affiche {aujourd'hui} / {cible} dans la carte du jour si un objectif est défini",
+			],
+			en: [
+				'Home: streak card removed, EstimationCard redesigned (value + rate), today 1/3 + estimation 2/3 layout',
+				'Objective: shows {today} / {target} in the today card when an objective is set',
+			],
+		},
+	},
+	{
 		version: '1.21.0',
 		date: '2026-03-26',
 		changes: {
