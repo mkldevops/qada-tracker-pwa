@@ -2,6 +2,7 @@ import { CheckCircle2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { HaydStepper } from '@/components/HaydStepper';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { formatDays } from '@/lib/formatDays';
 import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
@@ -435,34 +436,7 @@ function DebtStep({
 										<span className="text-xs font-medium" style={{ color: '#9A9A9C' }}>
 											{t('onboarding.haydAvg')}
 										</span>
-										<div className="flex items-center gap-3">
-											<motion.button
-												type="button"
-												whileTap={{ scale: 0.88 }}
-												onClick={() => setAvgHaydDays(Math.max(1, avgHaydDays - 1))}
-												disabled={avgHaydDays <= 1}
-												className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
-												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
-											>
-												−
-											</motion.button>
-											<span
-												className="w-6 text-center text-lg font-semibold tabular-nums"
-												style={{ color: '#F5F5F0' }}
-											>
-												{avgHaydDays}
-											</span>
-											<motion.button
-												type="button"
-												whileTap={{ scale: 0.88 }}
-												onClick={() => setAvgHaydDays(Math.min(15, avgHaydDays + 1))}
-												disabled={avgHaydDays >= 15}
-												className="flex h-8 w-8 items-center justify-center rounded-full text-base font-semibold disabled:opacity-30"
-												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
-											>
-												+
-											</motion.button>
-										</div>
+										<HaydStepper value={avgHaydDays} onChange={setAvgHaydDays} min={1} max={15} />
 									</div>
 									{totalYears > 0 && (
 										<motion.p
