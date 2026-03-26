@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.9.1',
+		date: '2026-03-26',
+		changes: {
+			fr: ['Correction : le compteur de sujouds se réinitialise correctement lors du passage à la prière suivante'],
+			en: ['Fix: sujood counter now resets correctly when transitioning to the next prayer'],
+		},
+	},
+	{
 		version: '1.9.0',
 		date: '2026-03-26',
 		changes: {
