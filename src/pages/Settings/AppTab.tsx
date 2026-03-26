@@ -94,10 +94,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 						style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
 					>
 						<Download size={16} style={{ color: '#C9A962' }} />
-						<span
-							className="text-xs font-semibold tracking-[1px]"
-							style={{ color: '#C9A962' }}
-						>
+						<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
 							{t('settings.exportBackup')}
 						</span>
 					</button>
@@ -124,17 +121,12 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 								style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
 							>
 								<Upload size={16} style={{ color: '#C9A962' }} />
-								<span
-									className="text-xs font-semibold tracking-[1px]"
-									style={{ color: '#C9A962' }}
-								>
+								<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
 									{t('settings.importBackup')}
 								</span>
 							</button>
 						</AlertDialogTrigger>
-						<AlertDialogContent
-							style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-						>
+						<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
 							<AlertDialogHeader>
 								<AlertDialogTitle style={{ color: '#F5F5F0' }}>
 									{t('settings.importDialogTitle')}
@@ -216,17 +208,12 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 							style={{ background: '#2A1515', border: '1px solid #D45F5F33' }}
 						>
 							<Trash2 size={18} style={{ color: '#D45F5F' }} />
-							<span
-								className="text-xs font-semibold tracking-[1px]"
-								style={{ color: '#D45F5F' }}
-							>
+							<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#D45F5F' }}>
 								{t('settings.resetAll')}
 							</span>
 						</button>
 					</AlertDialogTrigger>
-					<AlertDialogContent
-						style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-					>
+					<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
 						<AlertDialogHeader>
 							<AlertDialogTitle style={{ color: '#F5F5F0' }}>
 								{t('settings.resetDialogTitle')}
