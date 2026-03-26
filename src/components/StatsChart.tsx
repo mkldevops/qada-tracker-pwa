@@ -47,10 +47,7 @@ export function StatsChart() {
 	const hasData = bars.some((b) => b.count > 0);
 
 	return (
-		<div
-			className="flex flex-col gap-3 rounded-[20px] px-4 py-4"
-			style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-		>
+		<div className="flex flex-col gap-3 rounded-[20px] px-4 py-4 bg-surface border border-border">
 			<PeriodSelector periods={PERIODS} activeDays={days} onSelect={setDays} />
 
 			<div ref={chartRef} className="relative">
@@ -68,15 +65,15 @@ export function StatsChart() {
 							exit={{ opacity: 0, y: 4, scale: 0.9 }}
 							transition={spring}
 						>
-							<div className="rounded-xl px-3 py-1.5 text-center" style={{ background: '#3A3A3C' }}>
-								<p className="text-[10px] font-medium" style={{ color: '#F5F5F0' }}>
+							<div className="rounded-xl px-3 py-1.5 text-center bg-border">
+								<p className="text-[10px] font-medium text-foreground">
 									{t('stats.prayerCount', { count: bars[selectedIndex].count })}
 								</p>
-								<p className="text-[9px]" style={{ color: '#6E6E70' }}>
+								<p className="text-[9px] text-muted">
 									{formatTooltipDate(bars[selectedIndex].label, weekly, i18n.language)}
 								</p>
 							</div>
-							<div className="h-1.5 w-[1px]" style={{ background: '#3A3A3C' }} />
+							<div className="h-1.5 w-[1px] bg-border" />
 						</motion.div>
 					)}
 				</AnimatePresence>
@@ -93,16 +90,15 @@ export function StatsChart() {
 										key={`${days}-${bar.label}`}
 										type="button"
 										aria-label={`${t('stats.prayerCount', { count: bar.count })}, ${formatTooltipDate(bar.label, weekly, i18n.language)}`}
-										className="flex-1 cursor-pointer rounded-t-[2px] border-0 p-0"
+										className="flex-1 cursor-pointer rounded-t-[2px] border-0 p-0 transition-colors"
 										style={{
-											background: isHighlighted ? '#C9A962' : '#3A3A3C',
+											background: isHighlighted ? 'var(--gold)' : 'var(--border)',
 											minHeight: 2,
 										}}
 										initial={{ height: '0%', opacity: 0.4 }}
 										animate={{
 											height: `${heightPct}%`,
 											opacity: 1,
-											background: isHighlighted ? '#C9A962' : '#3A3A3C',
 										}}
 										exit={{ height: '0%', opacity: 0 }}
 										transition={{ ...spring, delay: i * 0.005 }}
@@ -116,7 +112,7 @@ export function StatsChart() {
 						</AnimatePresence>
 					</div>
 				) : (
-					<div className="flex h-24 items-center justify-center pt-10" style={{ color: '#4A4A4C' }}>
+					<div className="flex h-24 items-center justify-center pt-10 text-tertiary">
 						<p className="text-xs">{t('stats.noPrayersInPeriod')}</p>
 					</div>
 				)}

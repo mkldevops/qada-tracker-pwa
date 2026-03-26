@@ -86,55 +86,31 @@ export function DebtEvolutionChart() {
 
 			{hasData && currentValue !== null && (
 				<div className="flex gap-2">
-					<div
-						className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5"
-						style={{ background: '#1A1A1C', border: '1px solid #2A2A2C' }}
-					>
-						<span className="text-base font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
+					<div className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5 bg-background border border-surface-raised">
+						<span className="text-base font-semibold tabular-nums text-foreground">
 							{currentValue.toLocaleString()}
 						</span>
-						<span className="text-[9px] font-medium" style={{ color: '#4A4A4C' }}>
-							{t('stats.current')}
-						</span>
+						<span className="text-[9px] font-medium text-tertiary">{t('stats.current')}</span>
 					</div>
 					{delta !== null && (
-						<div
-							className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5"
-							style={{ background: '#1A1A1C', border: '1px solid #2A2A2C' }}
-						>
+						<div className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5 bg-background border border-surface-raised">
 							<span
-								className="text-base font-semibold tabular-nums"
-								style={{ color: delta < 0 ? '#6E9E6E' : delta > 0 ? '#D45F5F' : '#6E6E70' }}
+								className={`text-base font-semibold tabular-nums ${delta < 0 ? 'text-sage' : delta > 0 ? 'text-danger' : 'text-muted'}`}
 							>
 								{delta > 0 ? '+' : ''}
 								{delta.toLocaleString()}
 							</span>
-							<span className="text-[9px] font-medium" style={{ color: '#4A4A4C' }}>
-								{t('stats.delta')}
-							</span>
+							<span className="text-[9px] font-medium text-tertiary">{t('stats.delta')}</span>
 						</div>
 					)}
 					{delta !== null && (
-						<div
-							className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5"
-							style={{ background: '#1A1A1C', border: '1px solid #2A2A2C' }}
-						>
+						<div className="flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl py-2.5 bg-background border border-surface-raised">
 							<span
-								className="text-base font-semibold tabular-nums"
-								style={{
-									color:
-										deltaPercent === null
-											? '#6E6E70'
-											: deltaPercent < 0
-												? '#6E9E6E'
-												: deltaPercent > 0
-													? '#D45F5F'
-													: '#6E6E70',
-								}}
+								className={`text-base font-semibold tabular-nums ${deltaPercent === null ? 'text-muted' : deltaPercent < 0 ? 'text-sage' : deltaPercent > 0 ? 'text-danger' : 'text-muted'}`}
 							>
 								{deltaPercent === null ? '—' : `${deltaPercent > 0 ? '+' : ''}${deltaPercent}%`}
 							</span>
-							<span className="text-[9px] font-medium" style={{ color: '#4A4A4C' }}>
+							<span className="text-[9px] font-medium text-tertiary">
 								{t('stats.deltaPercent')}
 							</span>
 						</div>
@@ -157,15 +133,13 @@ export function DebtEvolutionChart() {
 							exit={{ opacity: 0, y: 4, scale: 0.9 }}
 							transition={spring}
 						>
-							<div className="rounded-xl px-3 py-1.5 text-center" style={{ background: '#3A3A3C' }}>
-								<p className="text-[10px] font-medium" style={{ color: '#F5F5F0' }}>
+							<div className="rounded-xl px-3 py-1.5 text-center bg-border">
+								<p className="text-[10px] font-medium text-foreground">
 									{points[hoveredIndex].remaining}
 								</p>
-								<p className="text-[9px]" style={{ color: '#6E6E70' }}>
-									{points[hoveredIndex].date}
-								</p>
+								<p className="text-[9px] text-muted">{points[hoveredIndex].date}</p>
 							</div>
-							<div className="h-1.5 w-[1px]" style={{ background: '#3A3A3C' }} />
+							<div className="h-1.5 w-[1px] bg-border" />
 						</motion.div>
 					)}
 				</AnimatePresence>
@@ -179,8 +153,8 @@ export function DebtEvolutionChart() {
 						<title>{t('stats.debtEvolution')}</title>
 						<defs>
 							<linearGradient id="debtGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-								<stop offset="0%" style={{ stopColor: '#6E9E6E', stopOpacity: 0.3 }} />
-								<stop offset="100%" style={{ stopColor: '#6E9E6E', stopOpacity: 0 }} />
+								<stop offset="0%" style={{ stopColor: 'var(--sage)', stopOpacity: 0.3 }} />
+								<stop offset="100%" style={{ stopColor: 'var(--sage)', stopOpacity: 0 }} />
 							</linearGradient>
 						</defs>
 
@@ -189,7 +163,7 @@ export function DebtEvolutionChart() {
 						{pathData && (
 							<path
 								d={pathData}
-								stroke="#6E9E6E"
+								stroke="var(--sage)"
 								strokeWidth="1.5"
 								fill="none"
 								vectorEffect="non-scaling-stroke"
@@ -203,7 +177,7 @@ export function DebtEvolutionChart() {
 									cx={p.x}
 									cy={p.y}
 									r={hoveredIndex === i ? 3.5 : 2}
-									fill={hoveredIndex === i ? '#C9A962' : '#6E9E6E'}
+									fill={hoveredIndex === i ? 'var(--gold)' : 'var(--sage)'}
 									className="cursor-pointer transition-all"
 									onPointerDown={(e) => {
 										e.stopPropagation();
@@ -214,22 +188,28 @@ export function DebtEvolutionChart() {
 						</g>
 
 						{minRemaining === maxRemaining ? (
-							<text x="1" y={(yMax + yMin) / 2} fontSize="5" fill="#3A3A3C" textAnchor="start">
+							<text
+								x="1"
+								y={(yMax + yMin) / 2}
+								fontSize="5"
+								fill="var(--border)"
+								textAnchor="start"
+							>
 								{minRemaining.toLocaleString()}
 							</text>
 						) : (
 							<>
-								<text x="1" y={yMax + 4} fontSize="5" fill="#3A3A3C" textAnchor="start">
+								<text x="1" y={yMax + 4} fontSize="5" fill="var(--border)" textAnchor="start">
 									{maxRemaining.toLocaleString()}
 								</text>
-								<text x="1" y={yMin - 2} fontSize="5" fill="#3A3A3C" textAnchor="start">
+								<text x="1" y={yMin - 2} fontSize="5" fill="var(--border)" textAnchor="start">
 									{minRemaining.toLocaleString()}
 								</text>
 							</>
 						)}
 					</svg>
 				) : (
-					<div className="flex h-48 items-center justify-center" style={{ color: '#4A4A4C' }}>
+					<div className="flex h-48 items-center justify-center text-tertiary">
 						<p className="text-xs">{t('stats.debtEvolutionEmpty')}</p>
 					</div>
 				)}
@@ -242,10 +222,8 @@ export function DebtEvolutionChart() {
 						paddingRight: `${(PADDING / SVG_WIDTH) * 100}%`,
 					}}
 				>
-					<span className="text-[9px] tabular-nums" style={{ color: '#4A4A4C' }}>
-						{data[0].date}
-					</span>
-					<span className="text-[9px] tabular-nums" style={{ color: '#4A4A4C' }}>
+					<span className="text-[9px] tabular-nums text-tertiary">{data[0].date}</span>
+					<span className="text-[9px] tabular-nums text-tertiary">
 						{data[data.length - 1].date}
 					</span>
 				</div>
