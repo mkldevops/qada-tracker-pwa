@@ -6,6 +6,7 @@ import { db } from '@/db/database';
 import { getDebtEvolution } from '@/db/queries';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { usePersistedPeriod } from '@/hooks/usePersistedPeriod';
+import { spring } from '@/lib/animations';
 
 const PERIODS = [
 	{ label: '7j', days: 7 },
@@ -16,7 +17,6 @@ const PERIODS = [
 ];
 
 const CHART_PERIOD_KEY = 'debt_evolution_period_days';
-const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
 export function DebtEvolutionChart() {
 	const { t } = useTranslation();

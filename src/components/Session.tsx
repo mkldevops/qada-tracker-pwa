@@ -20,8 +20,7 @@ function computeTarget(obj: Objective | null): number {
 	return 10;
 }
 
-const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
-const springBouncy = { type: 'spring' as const, stiffness: 600, damping: 20 };
+import { spring, springBouncy } from '@/lib/animations';
 
 const ghostVariants = {
 	enter: (d: number) => ({ y: d > 0 ? 40 : -40, opacity: 0 }),

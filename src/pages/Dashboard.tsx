@@ -5,12 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { EstimationCard } from '@/components/EstimationCard';
 import { Session } from '@/components/Session';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { spring } from '@/lib/animations';
 import { formatCatchUpLabel } from '@/lib/formatDays';
 import { useDebts, usePrayerStore, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import type { PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
-
-const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
 function StatPill({
 	label,

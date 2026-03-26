@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.20.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				'Refactoring : constante spring partagée extraite dans src/lib/animations.ts — supprime 8 définitions dupliquées',
+			],
+			en: [
+				'Refactor: shared spring animation constant extracted to src/lib/animations.ts — removes 8 duplicate definitions',
+			],
+		},
+	},
+	{
 		version: '1.19.0',
 		date: '2026-03-26',
 		changes: {

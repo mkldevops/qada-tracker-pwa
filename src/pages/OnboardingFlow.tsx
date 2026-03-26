@@ -15,8 +15,7 @@ type DebtData =
 	| { mode: 'years'; years: number; excluded: number }
 	| { mode: 'manual'; amounts: Record<PrayerName, number> };
 
-const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
-const springSnappy = { type: 'spring' as const, stiffness: 500, damping: 28 };
+import { spring, springSnappy } from '@/lib/animations';
 
 const inputStyle = {
 	background: '#1A1A1C',

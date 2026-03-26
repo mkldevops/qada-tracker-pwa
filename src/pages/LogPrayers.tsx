@@ -14,12 +14,11 @@ import {
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { spring } from '@/lib/animations';
 import { groupBySession } from '@/lib/groupBySession';
 import { usePrayerStore } from '@/stores/prayerStore';
 import type { BatchEntry, PrayerLog, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
-
-const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
 const TABS = ['logger', 'history'] as const;
 type Tab = (typeof TABS)[number];
