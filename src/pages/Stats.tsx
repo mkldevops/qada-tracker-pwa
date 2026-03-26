@@ -83,7 +83,7 @@ export function Stats() {
 			</div>
 
 			<AnimatePresence>
-				{stats.estimatedDays && (
+				{stats.estimatedDays !== null && (
 					<EstimationCard key="estimation" estimatedDays={stats.estimatedDays} />
 				)}
 			</AnimatePresence>
