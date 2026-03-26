@@ -6,7 +6,8 @@ export function usePersistedPeriod(
 	defaultDays = 30,
 ): [number, (days: number) => void] {
 	const [days, setDays] = useState(() => {
-		const stored = Number(localStorage.getItem(key));
+		const raw = localStorage.getItem(key);
+		const stored = raw !== null ? Number(raw) : Number.NaN;
 		return periods.some((p) => p.days === stored) ? stored : defaultDays;
 	});
 

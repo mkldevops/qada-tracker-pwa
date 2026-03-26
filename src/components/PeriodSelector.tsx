@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { cn } from '@/lib/utils';
 
 const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
@@ -22,15 +23,14 @@ export function PeriodSelector({
 				const active = p.days === activeDays;
 				return (
 					<motion.button
-						key={p.days}
+						key={p.label}
 						type="button"
+						aria-pressed={active}
 						onClick={() => onSelect(p.days)}
-						className="shrink-0 rounded-xl px-3 py-1.5 text-[11px] font-semibold tracking-wide"
-						style={
-							active
-								? { background: 'var(--gold)', color: 'var(--background)' }
-								: { background: 'var(--background)', color: 'var(--text-secondary)' }
-						}
+						className={cn(
+							'shrink-0 rounded-xl px-3 py-1.5 text-[11px] font-semibold tracking-wide',
+							active ? 'bg-primary text-primary-foreground' : 'bg-background text-muted',
+						)}
 						whileTap={{ scale: 0.88 }}
 						animate={active ? { scale: 1.04 } : { scale: 1 }}
 						transition={spring}

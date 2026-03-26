@@ -16,7 +16,7 @@ const ENTRIES: ChangelogEntry[] = [
 			fr: [
 				'Nouveau composant PeriodSelector animé pour la sélection de périodes temporelles',
 				'Nouveau hook usePersistedPeriod : sélection de période persistée en localStorage',
-				'Nouveau hook useOutsideClick : détection des clics en dehors d\'un élément',
+				"Nouveau hook useOutsideClick : détection des clics en dehors d'un élément",
 			],
 			en: [
 				'New animated PeriodSelector component for time period selection',
