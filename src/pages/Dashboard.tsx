@@ -38,7 +38,7 @@ function StatPill({
 		>
 			<span
 				className="text-3xl font-semibold leading-none tabular-nums"
-				style={{ color: color ?? 'var(--foreground)' }}
+				style={{ color: color ?? 'var(--color-foreground)' }}
 			>
 				{value}
 			</span>
