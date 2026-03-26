@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.9.0',
+		date: '2026-03-26',
+		changes: {
+			fr: ["Mises à jour silencieuses : l'app se recharge automatiquement en arrière-plan, sans dialogue d'interruption"],
+			en: ['Silent updates: app reloads automatically in the background, no more update dialog'],
+		},
+	},
+	{
 		version: '1.8.0',
 		date: '2026-03-25',
 		changes: {

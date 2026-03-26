@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 const POLL_INTERVAL_MS = 5 * 60 * 1000;
 
-export function useVersionCheck(): { updateAvailable: boolean; dismiss: () => void } {
-	const [updateAvailable, setUpdateAvailable] = useState(false);
+export function useVersionCheck(): void {
 	const currentVersionRef = useRef<string | null>(null);
-	const latestVersionRef = useRef<string | null>(null);
+	const pendingReloadRef = useRef(false);
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
 	useEffect(() => {
@@ -22,8 +21,11 @@ export function useVersionCheck(): { updateAvailable: boolean; dismiss: () => vo
 				}
 
 				if (data.version !== currentVersionRef.current) {
-					latestVersionRef.current = data.version;
-					setUpdateAvailable(true);
+					if (document.hidden) {
+						window.location.reload();
+					} else {
+						pendingReloadRef.current = true;
+					}
 				}
 			} catch {
 				// Ignore network errors
@@ -45,6 +47,10 @@ export function useVersionCheck(): { updateAvailable: boolean; dismiss: () => vo
 
 		function handleVisibilityChange() {
 			if (document.hidden) {
+				if (pendingReloadRef.current) {
+					window.location.reload();
+					return;
+				}
 				stopPolling();
 			} else {
 				startPolling();
@@ -59,13 +65,4 @@ export function useVersionCheck(): { updateAvailable: boolean; dismiss: () => vo
 			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
 	}, []);
-
-	function dismiss() {
-		if (latestVersionRef.current !== null) {
-			currentVersionRef.current = latestVersionRef.current;
-		}
-		setUpdateAvailable(false);
-	}
-
-	return { updateAvailable, dismiss };
 }
