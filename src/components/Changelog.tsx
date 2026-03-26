@@ -10,6 +10,22 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.10.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				'Nouveau composant PeriodSelector animé pour la sélection de périodes temporelles',
+				'Nouveau hook usePersistedPeriod : sélection de période persistée en localStorage',
+				"Nouveau hook useOutsideClick : détection des clics en dehors d'un élément",
+			],
+			en: [
+				'New animated PeriodSelector component for time period selection',
+				'New usePersistedPeriod hook: period selection persisted in localStorage',
+				'New useOutsideClick hook: detects clicks outside a given element',
+			],
+		},
+	},
+	{
 		version: '1.9.1',
 		date: '2026-03-26',
 		changes: {
