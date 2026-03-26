@@ -64,10 +64,10 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 								type="button"
 								key={value}
 								onClick={() => setObjPeriod(value)}
-								className={`flex-1 rounded-[20px] py-2.5 text-[13px] font-medium transition-colors ${
+								className={`flex-1 rounded-[20px] py-2.5 text-[13px] transition-colors ${
 									objPeriod === value
 										? 'bg-gold text-background font-semibold'
-										: 'bg-background border border-border text-tertiary'
+										: 'bg-background border border-border text-tertiary font-medium'
 								}`}
 							>
 								{label}
