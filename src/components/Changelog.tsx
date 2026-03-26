@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.11.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				"Stats : la carte d'estimation du temps de rattrapage adopte le style premium du Dashboard (dégradé doré, bordure ambrée, animation d'entrée)",
+			],
+			en: [
+				'Stats: estimation card now matches the Dashboard premium style (golden gradient, amber border, entrance animation)',
+			],
+		},
+	},
+	{
 		version: '1.10.0',
 		date: '2026-03-26',
 		changes: {

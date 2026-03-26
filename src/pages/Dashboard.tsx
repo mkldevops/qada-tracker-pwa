@@ -2,9 +2,10 @@ import { Plus } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { EstimationCard } from '@/components/EstimationCard';
 import { Session } from '@/components/Session';
 import { PRAYER_CONFIG } from '@/constants/prayers';
-import { formatCatchUpLabel, formatDays } from '@/lib/formatDays';
+import { formatCatchUpLabel } from '@/lib/formatDays';
 import { useDebts, usePrayerStore, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import type { PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -265,29 +266,7 @@ export function Dashboard() {
 
 				<AnimatePresence>
 					{stats.estimatedDays !== null && (
-						<motion.div
-							key="estimation"
-							initial={{ opacity: 0, y: 8 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: 8 }}
-							transition={{ delay: 0.22, ...spring }}
-							className="flex items-center justify-between rounded-[20px] px-6"
-							style={{
-								background: 'linear-gradient(135deg, #1E1A12 0%, #242426 70%)',
-								border: '1px solid rgba(201, 169, 98, 0.3)',
-								minHeight: 88,
-							}}
-						>
-							<span className="text-[13px] font-medium" style={{ color: '#9A9A9C' }}>
-								{t('stats.estimation')}
-							</span>
-							<span
-								className="max-w-[60%] text-right text-2xl font-semibold tabular-nums leading-snug"
-								style={{ color: '#C9A962' }}
-							>
-								{formatDays(stats.estimatedDays, t)}
-							</span>
-						</motion.div>
+						<EstimationCard key="estimation" estimatedDays={stats.estimatedDays} />
 					)}
 				</AnimatePresence>
 
