@@ -73,16 +73,10 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 			</AnimatePresence>
 
 			<CollapsibleSection label={t('settings.data')} defaultOpen={true}>
-				<div
-					className="flex flex-col gap-3 rounded-[20px] p-5"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-				>
+				<div className="flex flex-col gap-3 rounded-[20px] bg-surface border border-border p-5">
 					{dataFeedback && (
 						<p
-							className="text-[11px] font-medium"
-							style={{
-								color: dataFeedback.type === 'success' ? '#6E9E6E' : '#D45F5F',
-							}}
+							className={`text-[11px] font-medium ${dataFeedback.type === 'success' ? 'text-sage' : 'text-danger'}`}
 						>
 							{dataFeedback.message}
 						</p>
@@ -90,11 +84,10 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 					<button
 						type="button"
 						onClick={handleExport}
-						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
-						style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
+						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-background border border-border"
 					>
-						<Download size={16} style={{ color: '#C9A962' }} />
-						<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
+						<Download size={16} className="text-gold" />
+						<span className="text-xs font-semibold tracking-[1px] text-gold">
 							{t('settings.exportBackup')}
 						</span>
 					</button>
@@ -117,33 +110,30 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 							<button
 								type="button"
 								onClick={() => fileInputRef.current?.click()}
-								className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
-								style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
+								className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-background border border-border"
 							>
-								<Upload size={16} style={{ color: '#C9A962' }} />
-								<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
+								<Upload size={16} className="text-gold" />
+								<span className="text-xs font-semibold tracking-[1px] text-gold">
 									{t('settings.importBackup')}
 								</span>
 							</button>
 						</AlertDialogTrigger>
-						<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
+						<AlertDialogContent className="bg-surface border border-border">
 							<AlertDialogHeader>
-								<AlertDialogTitle style={{ color: '#F5F5F0' }}>
+								<AlertDialogTitle className="text-foreground">
 									{t('settings.importDialogTitle')}
 								</AlertDialogTitle>
-								<AlertDialogDescription style={{ color: '#6E6E70' }}>
+								<AlertDialogDescription>
 									{t('settings.importDialogDesc', { filename: pendingFile?.name ?? '' })}
 								</AlertDialogDescription>
 							</AlertDialogHeader>
 							<AlertDialogFooter>
-								<AlertDialogCancel
-									style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
-								>
+								<AlertDialogCancel className="bg-surface-raised text-foreground border-0">
 									{t('settings.importDialogCancel')}
 								</AlertDialogCancel>
 								<AlertDialogAction
 									onClick={handleImportConfirm}
-									style={{ background: '#C9A962', color: '#1A1A1C' }}
+									className="bg-gold text-background"
 								>
 									{t('settings.importDialogConfirm')}
 								</AlertDialogAction>
@@ -155,25 +145,17 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 
 			<CollapsibleSection label={t('settings.configuration')} defaultOpen={true}>
 				<div className="flex flex-col gap-3">
-					<div
-						className="flex gap-2 rounded-[20px] p-3"
-						style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-					>
+					<div className="flex gap-2 rounded-[20px] bg-surface border border-border p-3">
 						{(['fr', 'en'] as const).map((lang) => (
 							<button
 								key={lang}
 								type="button"
 								onClick={() => i18n.changeLanguage(lang)}
-								className="flex-1 rounded-[16px] py-2.5 text-[13px] font-semibold transition-colors"
-								style={
+								className={`flex-1 rounded-[16px] py-2.5 text-[13px] font-semibold transition-colors ${
 									i18n.resolvedLanguage === lang
-										? { background: '#C9A962', color: '#1A1A1C' }
-										: {
-												background: '#1A1A1C',
-												border: '1px solid #3A3A3C',
-												color: '#4A4A4C',
-											}
-								}
+										? 'bg-gold text-background'
+										: 'bg-background border border-border text-tertiary'
+								}`}
 							>
 								{lang === 'fr' ? 'Français' : 'English'}
 							</button>
@@ -185,17 +167,12 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 			<button
 				type="button"
 				onClick={() => setShowChangelog(true)}
-				className="flex w-full items-center justify-between rounded-[20px] px-5 py-4"
-				style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				className="flex w-full items-center justify-between rounded-[20px] bg-surface border border-border px-5 py-4"
 			>
-				<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
-					{t('settings.version')}
-				</span>
+				<span className="text-sm font-medium text-foreground">{t('settings.version')}</span>
 				<div className="flex items-center gap-2">
-					<span className="text-sm" style={{ color: '#6E6E70' }}>
-						{__APP_VERSION__}
-					</span>
-					<ChevronRight size={14} style={{ color: '#4A4A4C' }} />
+					<span className="text-sm text-muted">{__APP_VERSION__}</span>
+					<ChevronRight size={14} className="text-tertiary" />
 				</div>
 			</button>
 
@@ -204,28 +181,23 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 					<AlertDialogTrigger asChild>
 						<button
 							type="button"
-							className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
-							style={{ background: '#2A1515', border: '1px solid #D45F5F33' }}
+							className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-danger/10 border border-danger/20"
 						>
-							<Trash2 size={18} style={{ color: '#D45F5F' }} />
-							<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#D45F5F' }}>
+							<Trash2 size={18} className="text-danger" />
+							<span className="text-xs font-semibold tracking-[1px] text-danger">
 								{t('settings.resetAll')}
 							</span>
 						</button>
 					</AlertDialogTrigger>
-					<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
+					<AlertDialogContent className="bg-surface border border-border">
 						<AlertDialogHeader>
-							<AlertDialogTitle style={{ color: '#F5F5F0' }}>
+							<AlertDialogTitle className="text-foreground">
 								{t('settings.resetDialogTitle')}
 							</AlertDialogTitle>
-							<AlertDialogDescription style={{ color: '#6E6E70' }}>
-								{t('settings.resetDialogDesc')}
-							</AlertDialogDescription>
+							<AlertDialogDescription>{t('settings.resetDialogDesc')}</AlertDialogDescription>
 						</AlertDialogHeader>
 						<AlertDialogFooter>
-							<AlertDialogCancel
-								style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
-							>
+							<AlertDialogCancel className="bg-surface-raised text-foreground border-0">
 								{t('settings.resetDialogCancel')}
 							</AlertDialogCancel>
 							<AlertDialogAction
@@ -241,7 +213,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 										});
 									}
 								}}
-								style={{ background: '#D45F5F', color: '#F5F5F0' }}
+								className="bg-danger text-foreground"
 							>
 								{t('settings.resetDialogConfirm')}
 							</AlertDialogAction>

@@ -4,10 +4,10 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { type SessionOrder, usePrayerStore } from '@/stores/prayerStore';
 
 const inputStyle = {
-	background: '#1A1A1C',
-	border: '1px solid #3A3A3C',
+	background: 'var(--background)',
+	border: '1px solid var(--border)',
 	borderRadius: 12,
-	color: '#F5F5F0',
+	color: 'var(--text-primary)',
 	padding: '0 14px',
 	height: 44,
 	fontSize: 15,
@@ -31,17 +31,10 @@ export function SessionTab() {
 	return (
 		<>
 			<CollapsibleSection label={t('settings.session')} defaultOpen={true}>
-				<div
-					className="flex flex-col gap-4 rounded-[20px] p-5"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-				>
+				<div className="flex flex-col gap-4 rounded-[20px] bg-surface border border-border p-5">
 					<div className="flex flex-col gap-1">
-						<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
-							{t('settings.prayerOrder')}
-						</span>
-						<span className="text-[11px]" style={{ color: '#6E6E70' }}>
-							{t('settings.prayerOrderDesc')}
-						</span>
+						<span className="text-sm font-medium text-foreground">{t('settings.prayerOrder')}</span>
+						<span className="text-[11px] text-muted">{t('settings.prayerOrderDesc')}</span>
 					</div>
 					<div className="flex gap-2">
 						{SESSION_ORDERS.map(({ value, label }) => (
@@ -49,16 +42,11 @@ export function SessionTab() {
 								type="button"
 								key={value}
 								onClick={() => setSessionOrder(value)}
-								className="flex-1 rounded-[20px] py-2.5 text-[13px] font-medium transition-colors"
-								style={
+								className={`flex-1 rounded-[20px] py-2.5 text-[13px] font-medium transition-colors ${
 									sessionOrder === value
-										? { background: '#C9A962', color: '#1A1A1C', fontWeight: 600 }
-										: {
-												background: '#1A1A1C',
-												border: '1px solid #3A3A3C',
-												color: '#4A4A4C',
-											}
-								}
+										? 'bg-gold text-background font-semibold'
+										: 'bg-background border border-border text-tertiary'
+								}`}
 							>
 								{label}
 							</button>
@@ -68,13 +56,10 @@ export function SessionTab() {
 			</CollapsibleSection>
 
 			<CollapsibleSection label={t('settings.notifications')} defaultOpen={true}>
-				<div
-					className="flex flex-col gap-4 rounded-[20px] p-5"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-				>
+				<div className="flex flex-col gap-4 rounded-[20px] bg-surface border border-border p-5">
 					<div className="flex items-center justify-between">
 						<div className="flex flex-col gap-0.5">
-							<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
+							<span className="text-sm font-medium text-foreground">
 								{t('settings.notificationsDesc')}
 							</span>
 						</div>
@@ -84,26 +69,18 @@ export function SessionTab() {
 							aria-checked={isEnabled}
 							aria-label={t('settings.notifications')}
 							onClick={() => (isEnabled ? disable() : enable(reminderTime))}
-							className="relative h-7 w-12 rounded-full transition-colors"
-							style={{ background: isEnabled ? '#C9A962' : '#3A3A3C' }}
+							className={`relative h-7 w-12 rounded-full transition-colors ${isEnabled ? 'bg-gold' : 'bg-border'}`}
 						>
 							<span
-								className="absolute top-1 h-5 w-5 rounded-full transition-all"
-								style={{
-									background: '#F5F5F0',
-									left: isEnabled ? '50%' : '4px',
-								}}
+								className="absolute top-1 h-5 w-5 rounded-full bg-foreground transition-all"
+								style={{ left: isEnabled ? '50%' : '4px' }}
 							/>
 						</button>
 					</div>
 
 					{isEnabled && permission === 'granted' && (
 						<div className="flex flex-col gap-1.5">
-							<label
-								htmlFor="input-reminder-time"
-								className="text-xs font-medium"
-								style={{ color: '#6E6E70' }}
-							>
+							<label htmlFor="input-reminder-time" className="text-xs font-medium text-muted">
 								{t('settings.notificationsTime')}
 							</label>
 							<input
@@ -117,9 +94,7 @@ export function SessionTab() {
 					)}
 
 					{permission === 'denied' && (
-						<p className="text-[11px]" style={{ color: '#D45F5F' }}>
-							{t('settings.notificationsPermissionDenied')}
-						</p>
+						<p className="text-[11px] text-danger">{t('settings.notificationsPermissionDenied')}</p>
 					)}
 				</div>
 			</CollapsibleSection>

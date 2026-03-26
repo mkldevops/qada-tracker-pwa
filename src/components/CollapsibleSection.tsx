@@ -19,14 +19,12 @@ export function CollapsibleSection({
 				onClick={() => setOpen((v) => !v)}
 				className="flex w-full items-center justify-between"
 			>
-				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
-					{label}
-				</p>
+				<p className="text-[11px] font-medium tracking-[3px] text-tertiary">{label}</p>
 				<motion.div
 					animate={{ rotate: open ? 180 : 0 }}
 					transition={{ type: 'spring', stiffness: 400, damping: 30 }}
 				>
-					<ChevronDown size={14} style={{ color: '#4A4A4C' }} />
+					<ChevronDown size={14} className="text-tertiary" />
 				</motion.div>
 			</button>
 			<AnimatePresence initial={false}>

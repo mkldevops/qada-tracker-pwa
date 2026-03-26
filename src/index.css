@@ -31,6 +31,7 @@
   --color-foreground: var(--text-primary);
   --color-muted: var(--text-secondary);
   --color-muted-foreground: var(--text-secondary);
+  --color-tertiary: var(--text-tertiary);
   --color-primary: var(--gold);
   --color-primary-foreground: var(--background);
   --color-card: var(--surface);

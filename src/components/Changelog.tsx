@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.17.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				'Réglages : couleurs codées en dur remplacées par les tokens du système de design (DebtTab, SessionTab, AppTab, CollapsibleSection)',
+			],
+			en: [
+				'Settings: replaced hardcoded hex colors with design system tokens (DebtTab, SessionTab, AppTab, CollapsibleSection)',
+			],
+		},
+	},
+	{
 		version: '1.16.0',
 		date: '2026-03-26',
 		changes: {
