@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.12.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				"Navigation : les onglets restent montés en mémoire — plus d'animations répétitives en revenant sur le Dashboard",
+			],
+			en: [
+				'Navigation: tabs stay mounted — no more repeated entrance animations when returning to Dashboard',
+			],
+		},
+	},
+	{
 		version: '1.11.0',
 		date: '2026-03-26',
 		changes: {
