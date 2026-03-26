@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
+import { spring, springBouncy } from '@/lib/animations';
 import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Objective, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -19,8 +20,6 @@ function computeTarget(obj: Objective | null): number {
 	if (obj.period === 'monthly') return Math.round(obj.target / 30);
 	return 10;
 }
-
-import { spring, springBouncy } from '@/lib/animations';
 
 const ghostVariants = {
 	enter: (d: number) => ({ y: d > 0 ? 40 : -40, opacity: 0 }),

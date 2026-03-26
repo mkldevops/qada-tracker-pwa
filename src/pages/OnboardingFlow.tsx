@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HaydStepper } from '@/components/HaydStepper';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { spring, springSnappy } from '@/lib/animations';
 import { formatDays } from '@/lib/formatDays';
 import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
@@ -14,8 +15,6 @@ type DebtMode = 'years' | 'manual';
 type DebtData =
 	| { mode: 'years'; years: number; excluded: number }
 	| { mode: 'manual'; amounts: Record<PrayerName, number> };
-
-import { spring, springSnappy } from '@/lib/animations';
 
 const inputStyle = {
 	background: '#1A1A1C',
