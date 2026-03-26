@@ -1,9 +1,11 @@
+import { AnimatePresence } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { ActivityCalendar } from '@/components/ActivityCalendar';
 import { DebtEvolutionChart } from '@/components/DebtEvolutionChart';
+import { EstimationCard } from '@/components/EstimationCard';
 import { StatsChart } from '@/components/StatsChart';
 import { PRAYER_CONFIG } from '@/constants/prayers';
-import { formatCatchUpLabel, formatDays } from '@/lib/formatDays';
+import { formatCatchUpLabel } from '@/lib/formatDays';
 import { useDebts, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import { PRAYER_NAMES } from '@/types';
 
@@ -80,19 +82,11 @@ export function Stats() {
 				/>
 			</div>
 
-			{stats.estimatedDays && (
-				<div
-					className="flex items-center justify-between rounded-[20px] px-6"
-					style={{ background: '#242426', border: '1px solid #3A3A3C80', height: 72 }}
-				>
-					<span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
-						{t('stats.estimation')}
-					</span>
-					<span className="text-3xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
-						{formatDays(stats.estimatedDays!, t)}
-					</span>
-				</div>
-			)}
+			<AnimatePresence>
+				{stats.estimatedDays !== null && (
+					<EstimationCard key="estimation" estimatedDays={stats.estimatedDays} />
+				)}
+			</AnimatePresence>
 
 			<StatsChart />
 
