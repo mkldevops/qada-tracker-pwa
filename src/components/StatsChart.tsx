@@ -1,8 +1,11 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PeriodSelector } from '@/components/PeriodSelector';
 import { db } from '@/db/database';
 import { getLogsByPeriod } from '@/db/queries';
+import { useOutsideClick } from '@/hooks/useOutsideClick';
+import { usePersistedPeriod } from '@/hooks/usePersistedPeriod';
 import { aggregateDaily, aggregateWeekly, formatTooltipDate } from '@/lib/chartUtils';
 
 const PERIODS = [
@@ -20,17 +23,13 @@ const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
 export function StatsChart() {
 	const { t, i18n } = useTranslation();
-	const [days, setDays] = useState(() => {
-		const stored = Number(localStorage.getItem(CHART_PERIOD_KEY));
-		return PERIODS.some((p) => p.days === stored) ? stored : 30;
-	});
+	const [days, setDays] = usePersistedPeriod(CHART_PERIOD_KEY, PERIODS);
 	const [data, setData] = useState<{ date: string; count: number }[]>([]);
 	const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 	const chartRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		let ignore = false;
-		localStorage.setItem(CHART_PERIOD_KEY, String(days));
 		setSelectedIndex(null);
 		getLogsByPeriod(db, days).then((result) => {
 			if (!ignore) setData(result);
@@ -40,15 +39,7 @@ export function StatsChart() {
 		};
 	}, [days]);
 
-	useEffect(() => {
-		function handleClick(e: PointerEvent) {
-			if (chartRef.current && !chartRef.current.contains(e.target as Node)) {
-				setSelectedIndex(null);
-			}
-		}
-		document.addEventListener('pointerdown', handleClick);
-		return () => document.removeEventListener('pointerdown', handleClick);
-	}, []);
+	useOutsideClick(chartRef, () => setSelectedIndex(null));
 
 	const weekly = days > 30;
 	const bars = weekly ? aggregateWeekly(data) : aggregateDaily(data);
@@ -60,34 +51,9 @@ export function StatsChart() {
 			className="flex flex-col gap-3 rounded-[20px] px-4 py-4"
 			style={{ background: '#242426', border: '1px solid #3A3A3C' }}
 		>
-			{/* Period selector */}
-			<div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-				{PERIODS.map((p) => {
-					const active = p.days === days;
-					return (
-						<motion.button
-							key={p.days}
-							type="button"
-							onClick={() => setDays(p.days)}
-							className="shrink-0 rounded-xl px-3 py-1.5 text-[11px] font-semibold tracking-wide"
-							style={
-								active
-									? { background: '#C9A962', color: '#1A1A1C' }
-									: { background: '#1A1A1C', color: '#6E6E70' }
-							}
-							whileTap={{ scale: 0.88 }}
-							animate={active ? { scale: 1.04 } : { scale: 1 }}
-							transition={spring}
-						>
-							{p.label}
-						</motion.button>
-					);
-				})}
-			</div>
+			<PeriodSelector periods={PERIODS} activeDays={days} onSelect={setDays} />
 
-			{/* Chart */}
 			<div ref={chartRef} className="relative">
-				{/* Tooltip */}
 				<AnimatePresence>
 					{selectedIndex !== null && bars[selectedIndex] && (
 						<motion.div
