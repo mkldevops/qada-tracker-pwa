@@ -6,10 +6,10 @@ import { usePrayerStore } from '@/stores/prayerStore';
 import type { Period } from '@/types';
 
 const inputStyle = {
-	background: '#1A1A1C',
-	border: '1px solid #3A3A3C',
+	background: 'var(--background)',
+	border: '1px solid var(--border)',
 	borderRadius: 12,
-	color: '#F5F5F0',
+	color: 'var(--text-primary)',
 	padding: '0 14px',
 	height: 44,
 	fontSize: 15,
@@ -46,12 +46,9 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 	return (
 		<>
 			<CollapsibleSection label={t('settings.objective')} defaultOpen={true}>
-				<div
-					className="flex flex-col gap-4 rounded-[20px] p-5"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
-				>
+				<div className="flex flex-col gap-4 rounded-[20px] bg-surface border border-border p-5">
 					{activeObjective && (
-						<p className="text-xs" style={{ color: '#6E6E70' }}>
+						<p className="text-xs text-muted">
 							{t('settings.currentObjective', {
 								target: activeObjective.target,
 								period: t(
@@ -60,27 +57,18 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 							})}
 						</p>
 					)}
-					{error && (
-						<p className="text-[11px] font-medium" style={{ color: '#D45F5F' }}>
-							{error}
-						</p>
-					)}
+					{error && <p className="text-[11px] font-medium text-danger">{error}</p>}
 					<div className="flex gap-2">
 						{PERIODS.map(({ value, label }) => (
 							<button
 								type="button"
 								key={value}
 								onClick={() => setObjPeriod(value)}
-								className="flex-1 rounded-[20px] py-2.5 text-[13px] font-medium transition-colors"
-								style={
+								className={`flex-1 rounded-[20px] py-2.5 text-[13px] transition-colors ${
 									objPeriod === value
-										? { background: '#C9A962', color: '#1A1A1C', fontWeight: 600 }
-										: {
-												background: '#1A1A1C',
-												border: '1px solid #3A3A3C',
-												color: '#4A4A4C',
-											}
-								}
+										? 'bg-gold text-background font-semibold'
+										: 'bg-background border border-border text-tertiary font-medium'
+								}`}
 							>
 								{label}
 							</button>
@@ -99,11 +87,7 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 							type="button"
 							onClick={handleSetObjective}
 							disabled={!objTarget}
-							className="rounded-[22px] px-6 text-[13px] font-bold transition-opacity disabled:opacity-30"
-							style={{
-								background: 'linear-gradient(135deg, #C9A962, #8B7845)',
-								color: '#1A1A1C',
-							}}
+							className="gradient-gold rounded-[22px] px-6 text-[13px] font-bold text-background transition-opacity disabled:opacity-30"
 						>
 							{t('settings.apply')}
 						</button>
@@ -115,11 +99,10 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 				<button
 					type="button"
 					onClick={onRestartOnboarding}
-					className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+					className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-surface border border-border"
 				>
-					<RotateCcw size={16} style={{ color: '#C9A962' }} />
-					<span className="text-xs font-semibold tracking-[1px]" style={{ color: '#C9A962' }}>
+					<RotateCcw size={16} className="text-gold" />
+					<span className="text-xs font-semibold tracking-[1px] text-gold">
 						{t('settings.restartOnboarding')}
 					</span>
 				</button>
