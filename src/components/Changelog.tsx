@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.18.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				'Stats : DebtEvolutionChart et StatsChart — couleurs codées en dur remplacées par les tokens du système de design',
+			],
+			en: [
+				'Stats: DebtEvolutionChart and StatsChart — replaced hardcoded hex colors with design system tokens',
+			],
+		},
+	},
+	{
 		version: '1.17.0',
 		date: '2026-03-26',
 		changes: {
