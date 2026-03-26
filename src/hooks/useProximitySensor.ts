@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 type SensorState = 'idle' | 'waiting_first' | 'waiting_second' | 'unsupported';
 
@@ -6,6 +6,7 @@ interface UseProximitySensorResult {
 	isSupported: boolean;
 	isActive: boolean;
 	currentState: SensorState;
+	resetSujoodCount: () => void;
 }
 
 const TILT_DOWN_THRESHOLD = 50;
@@ -286,9 +287,15 @@ export function useProximitySensor(
 		return setupCleanup(timerCleanup);
 	}, [active]);
 
+	const resetSujoodCount = useCallback(() => {
+		sujoodCountRef.current = 0;
+		setCurrentState('waiting_first');
+	}, []);
+
 	return {
 		isSupported,
 		isActive: active && isSupported && currentState !== 'idle',
 		currentState: isSupported ? currentState : 'unsupported',
+		resetSujoodCount,
 	};
 }

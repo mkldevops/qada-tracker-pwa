@@ -367,7 +367,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 		}
 	}
 
-	const sensorState = useProximitySensor(
+	const { resetSujoodCount, ...sensorState } = useProximitySensor(
 		phase === 'active',
 		() => {
 			navigator.vibrate?.(100);
@@ -456,6 +456,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 			await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
 			setCurrentRakat(0);
 			setSujoodCount(0);
+			resetSujoodCount();
 			setConfirmDone(false);
 
 			setCompleted((prev) => {
