@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.19.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				'Stats : transition de couleur des barres gérée par CSS — suppression de background dans la prop animate de Framer Motion',
+			],
+			en: [
+				'Stats: bar color transition handled by CSS — removed background from Framer Motion animate prop',
+			],
+		},
+	},
+	{
 		version: '1.18.0',
 		date: '2026-03-26',
 		changes: {
