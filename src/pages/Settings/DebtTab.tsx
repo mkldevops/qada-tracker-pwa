@@ -23,6 +23,7 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 	const { setObjective, activeObjective } = usePrayerStore();
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
 	const [objTarget, setObjTarget] = useState('');
+	const [error, setError] = useState<string | null>(null);
 
 	const PERIODS: { value: Period; label: string }[] = [
 		{ value: 'daily', label: t('common.day_cap') },
@@ -33,8 +34,12 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 	const handleSetObjective = async () => {
 		const target = parseInt(objTarget, 10);
 		if (!Number.isNaN(target) && target > 0) {
-			await setObjective(objPeriod, target);
-			setObjTarget('');
+			try {
+				await setObjective(objPeriod, target);
+				setObjTarget('');
+			} catch {
+				setError(t('settings.importError'));
+			}
 		}
 	};
 
@@ -53,6 +58,11 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 									`common.${activeObjective.period === 'daily' ? 'day' : activeObjective.period === 'weekly' ? 'week' : 'month'}`,
 								),
 							})}
+						</p>
+					)}
+					{error && (
+						<p className="text-[11px] font-medium" style={{ color: '#D45F5F' }}>
+							{error}
 						</p>
 					)}
 					<div className="flex gap-2">
