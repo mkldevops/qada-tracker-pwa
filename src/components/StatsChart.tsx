@@ -90,7 +90,7 @@ export function StatsChart() {
 										key={`${days}-${bar.label}`}
 										type="button"
 										aria-label={`${t('stats.prayerCount', { count: bar.count })}, ${formatTooltipDate(bar.label, weekly, i18n.language)}`}
-										className="flex-1 cursor-pointer rounded-t-[2px] border-0 p-0"
+										className="flex-1 cursor-pointer rounded-t-[2px] border-0 p-0 transition-colors"
 										style={{
 											background: isHighlighted ? 'var(--gold)' : 'var(--border)',
 											minHeight: 2,
@@ -99,7 +99,6 @@ export function StatsChart() {
 										animate={{
 											height: `${heightPct}%`,
 											opacity: 1,
-											background: isHighlighted ? 'var(--gold)' : 'var(--border)',
 										}}
 										exit={{ height: '0%', opacity: 0 }}
 										transition={{ ...spring, delay: i * 0.005 }}
