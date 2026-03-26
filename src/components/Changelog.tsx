@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.13.0',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				'Réglages : DebtTab, SessionTab et AppTab extraits en sous-composants séparés — meilleure maintenabilité',
+			],
+			en: [
+				'Settings: DebtTab, SessionTab and AppTab extracted as separate sub-components — improved maintainability',
+			],
+		},
+	},
+	{
 		version: '1.12.0',
 		date: '2026-03-26',
 		changes: {
