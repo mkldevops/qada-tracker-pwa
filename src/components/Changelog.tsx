@@ -10,10 +10,22 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.9.1',
+		date: '2026-03-26',
+		changes: {
+			fr: [
+				'Correction : le compteur de sujouds se réinitialise correctement lors du passage à la prière suivante',
+			],
+			en: ['Fix: sujood counter now resets correctly when transitioning to the next prayer'],
+		},
+	},
+	{
 		version: '1.9.0',
 		date: '2026-03-26',
 		changes: {
-			fr: ["Mises à jour silencieuses : l'app se recharge automatiquement en arrière-plan, sans dialogue d'interruption"],
+			fr: [
+				"Mises à jour silencieuses : l'app se recharge automatiquement en arrière-plan, sans dialogue d'interruption",
+			],
 			en: ['Silent updates: app reloads automatically in the background, no more update dialog'],
 		},
 	},
@@ -22,8 +34,8 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-03-25',
 		changes: {
 			fr: [
-				"Onglet DETTE simplifié : l'objectif est maintenant en premier, le calcul de dette remplacé par \"Reconfigurer l'onboarding\"",
-				"\"Reconfigurer l'onboarding\" retiré de l'onglet APP",
+				'Onglet DETTE simplifié : l\'objectif est maintenant en premier, le calcul de dette remplacé par "Reconfigurer l\'onboarding"',
+				'"Reconfigurer l\'onboarding" retiré de l\'onglet APP',
 			],
 			en: [
 				'DEBT tab simplified: objective is now first, debt calculator replaced by "Restart onboarding"',
@@ -35,15 +47,19 @@ const ENTRIES: ChangelogEntry[] = [
 		version: '1.7.2',
 		date: '2026-03-25',
 		changes: {
-			fr: ["Décompte de la session en cours : prières et rak'ats restants sur la session (pas la dette globale)"],
-			en: ["Session progress counter now shows remaining prayers and rak'ats for the current session (not global debt)"],
+			fr: [
+				"Décompte de la session en cours : prières et rak'ats restants sur la session (pas la dette globale)",
+			],
+			en: [
+				"Session progress counter now shows remaining prayers and rak'ats for the current session (not global debt)",
+			],
 		},
 	},
 	{
 		version: '1.6.1',
 		date: '2026-03-25',
 		changes: {
-			fr: ["Remplacement du terme « hayd » par « menstrues » pour plus de clarté"],
+			fr: ['Remplacement du terme « hayd » par « menstrues » pour plus de clarté'],
 			en: ["Replaced 'hayd' with 'menses' for clearer terminology"],
 		},
 	},
@@ -51,12 +67,8 @@ const ENTRIES: ChangelogEntry[] = [
 		version: '1.6.0',
 		date: '2026-03-25',
 		changes: {
-			fr: [
-				"Saisie des années manquées remplacée par deux sélecteurs séparés : Années et Mois",
-			],
-			en: [
-				"Missed years input replaced with two separate steppers: Years and Months",
-			],
+			fr: ['Saisie des années manquées remplacée par deux sélecteurs séparés : Années et Mois'],
+			en: ['Missed years input replaced with two separate steppers: Years and Months'],
 		},
 	},
 	{

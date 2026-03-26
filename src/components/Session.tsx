@@ -455,6 +455,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 			if (showPressing) setPressing(true);
 			await logBatch([{ prayer: current.prayer, quantity: 1 }], sessionId);
 			setCurrentRakat(0);
+			setSujoodCount(0);
 			setConfirmDone(false);
 
 			setCompleted((prev) => {
