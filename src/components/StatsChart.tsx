@@ -6,6 +6,7 @@ import { db } from '@/db/database';
 import { getLogsByPeriod } from '@/db/queries';
 import { useOutsideClick } from '@/hooks/useOutsideClick';
 import { usePersistedPeriod } from '@/hooks/usePersistedPeriod';
+import { spring } from '@/lib/animations';
 import { aggregateDaily, aggregateWeekly, formatTooltipDate } from '@/lib/chartUtils';
 
 const PERIODS = [
@@ -19,7 +20,6 @@ const PERIODS = [
 ];
 
 const CHART_PERIOD_KEY = 'chart_period_days';
-const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
 export function StatsChart() {
 	const { t, i18n } = useTranslation();

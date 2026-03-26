@@ -1,7 +1,6 @@
 import { motion } from 'motion/react';
+import { spring } from '@/lib/animations';
 import { cn } from '@/lib/utils';
-
-const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
 interface Period {
 	label: string;

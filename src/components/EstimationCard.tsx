@@ -1,8 +1,7 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
+import { spring } from '@/lib/animations';
 import { formatDays } from '@/lib/formatDays';
-
-const spring = { type: 'spring' as const, stiffness: 400, damping: 30 };
 
 export function EstimationCard({ estimatedDays }: { estimatedDays: number }) {
 	const { t } = useTranslation();
