@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.21.0',
+		date: '2026-03-26',
+		changes: {
+			fr: ["Logger : l'onglet Historique s'affiche en premier par défaut"],
+			en: ['Logger: History tab is shown by default on open'],
+		},
+	},
+	{
 		version: '1.20.0',
 		date: '2026-03-26',
 		changes: {

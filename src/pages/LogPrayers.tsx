@@ -353,9 +353,9 @@ export function LogPrayers() {
 	const { t } = useTranslation();
 	const { logBatch, undoLastLog, recentLogs } = usePrayerStore();
 	const [quantities, setQuantities] = useState<Record<PrayerName, number>>(EMPTY);
-	const [activeTab, setActiveTab] = useState<Tab>('logger');
+	const [activeTab, setActiveTab] = useState<Tab>('history');
 	const [tabDir, setTabDir] = useState<1 | -1>(1);
-	const prevTabRef = useRef<Tab>('logger');
+	const prevTabRef = useRef<Tab>('history');
 
 	const total = PRAYER_NAMES.reduce((sum, p) => sum + quantities[p], 0);
 
