@@ -10,15 +10,25 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.13.3',
+		date: '2026-03-27',
+		changes: {
+			fr: [
+				'Réglages > Session : nouveau toggle « Suivi sujoud » (désactivé par défaut) — les permissions capteur/caméra ne sont plus demandées si la fonctionnalité est désactivée',
+			],
+			en: [
+				'Settings > Session: new "Sujood tracking" toggle (off by default) — sensor/camera permissions are no longer requested if the feature is disabled',
+			],
+		},
+	},
+	{
 		version: '1.23.0',
 		date: '2026-03-26',
 		changes: {
 			fr: [
 				'Accueil : remplacement de toutes les couleurs hexadécimales codées en dur par les tokens du système de design',
 			],
-			en: [
-				'Home: replaced all hardcoded hex colors with design system tokens',
-			],
+			en: ['Home: replaced all hardcoded hex colors with design system tokens'],
 		},
 	},
 	{
@@ -26,7 +36,7 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-03-26',
 		changes: {
 			fr: [
-				"Accueil : carte « Série » supprimée, EstimationCard redessinée (valeur + rythme), disposition today 1/3 + estimation 2/3",
+				'Accueil : carte « Série » supprimée, EstimationCard redessinée (valeur + rythme), disposition today 1/3 + estimation 2/3',
 				"Objectif : affiche {aujourd'hui} / {cible} dans la carte du jour si un objectif est défini",
 			],
 			en: [

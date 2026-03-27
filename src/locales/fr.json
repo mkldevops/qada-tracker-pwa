@@ -129,6 +129,8 @@
 		"prayerOrderDesc": "Ordre dans lequel les prières sont proposées en session",
 		"chronological": "Chronologique",
 		"highestDebt": "Priorité dette",
+		"sujoodTracking": "Suivi sujoud",
+		"sujoodTrackingDesc": "Détection automatique des sujoud via les capteurs",
 		"notifications": "RAPPEL QUOTIDIEN",
 		"notificationsDesc": "Rappel pour ne pas oublier votre session",
 		"notificationsTime": "Heure du rappel",

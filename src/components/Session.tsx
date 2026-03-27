@@ -319,6 +319,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const debts = useDebts();
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
 	const sessionOrder = usePrayerStore((s) => s.sessionOrder);
+	const sujoodTrackingEnabled = usePrayerStore((s) => s.sujoodTrackingEnabled);
 
 	const defaultTarget = computeTarget(activeObjective);
 
@@ -366,7 +367,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	}
 
 	const { resetSujoodCount, ...sensorState } = useProximitySensor(
-		phase === 'active',
+		phase === 'active' && sujoodTrackingEnabled,
 		() => {
 			navigator.vibrate?.(100);
 			setSujoodCount(1);
@@ -421,6 +422,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 
 	async function handleStart() {
 		if (
+			sujoodTrackingEnabled &&
 			typeof DeviceOrientationEvent !== 'undefined' &&
 			typeof (DeviceOrientationEvent as any).requestPermission === 'function'
 		) {
@@ -666,7 +668,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</motion.div>
 						)}
 
-						{!sensorState.isSupported && phase === 'active' && (
+						{sujoodTrackingEnabled && !sensorState.isSupported && phase === 'active' && (
 							<motion.button
 								onClick={() => {
 									if (sujoodCount === 0) {
@@ -701,7 +703,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</motion.button>
 						)}
 
-						{cfg.rakat > 1 && (
+						{sujoodTrackingEnabled && cfg.rakat > 1 && (
 							<RakatDots total={cfg.rakat} current={currentRakat} color={cfg.hex} />
 						)}
 

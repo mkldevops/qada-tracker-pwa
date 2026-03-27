@@ -66,6 +66,7 @@ const initialDebts = (): Record<PrayerName, PrayerDebt> => {
 export type SessionOrder = 'chronological' | 'highest-debt';
 
 const SESSION_ORDER_KEY = 'session-order';
+const SUJOOD_TRACKING_KEY = 'sujood-tracking-enabled';
 
 interface PrayerStore {
 	debts: Record<PrayerName, PrayerDebt>;
@@ -74,6 +75,7 @@ interface PrayerStore {
 	activeObjective: Objective | null;
 	isLoading: boolean;
 	sessionOrder: SessionOrder;
+	sujoodTrackingEnabled: boolean;
 	pendingMilestone: number | null;
 
 	loadAll: () => Promise<void>;
@@ -85,6 +87,7 @@ interface PrayerStore {
 	setDebtFromYears: (years: number, excludedDays: number) => Promise<void>;
 	setObjective: (period: Period, target: number) => Promise<void>;
 	setSessionOrder: (order: SessionOrder) => void;
+	setSujoodTrackingEnabled: (enabled: boolean) => void;
 	clearMilestone: () => void;
 	resetAll: () => Promise<void>;
 }
@@ -99,6 +102,7 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 		const raw = localStorage.getItem(SESSION_ORDER_KEY);
 		return raw === 'chronological' || raw === 'highest-debt' ? raw : 'chronological';
 	})(),
+	sujoodTrackingEnabled: localStorage.getItem(SUJOOD_TRACKING_KEY) === 'true',
 	pendingMilestone: null,
 
 	loadAll: async () => {
@@ -178,6 +182,11 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 	setSessionOrder: (order) => {
 		localStorage.setItem(SESSION_ORDER_KEY, order);
 		set({ sessionOrder: order });
+	},
+
+	setSujoodTrackingEnabled: (enabled) => {
+		localStorage.setItem(SUJOOD_TRACKING_KEY, String(enabled));
+		set({ sujoodTrackingEnabled: enabled });
 	},
 
 	clearMilestone: () => {
