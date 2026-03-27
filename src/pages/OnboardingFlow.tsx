@@ -6,6 +6,7 @@ import { HaydStepper } from '@/components/HaydStepper';
 import { ObjectiveCard } from '@/components/ObjectiveCard';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { spring, springSnappy } from '@/lib/animations';
+import { calculateSuggestion } from '@/lib/calculateSuggestion';
 import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -659,16 +660,7 @@ function ObjectiveStep({
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
 	const [objTarget, setObjTarget] = useState('');
 
-	const suggestion = (() => {
-		if (totalRemaining === 0) return null;
-		const raw =
-			objPeriod === 'daily'
-				? totalRemaining / (365 * 5)
-				: objPeriod === 'weekly'
-					? totalRemaining / (52 * 5)
-					: totalRemaining / (12 * 5);
-		return Math.max(1, Math.round(raw));
-	})();
+	const suggestion = calculateSuggestion(totalRemaining, objPeriod);
 
 	const parsedTarget = parseInt(objTarget, 10);
 	const effectiveTarget = !Number.isNaN(parsedTarget) && parsedTarget > 0 ? parsedTarget : null;

@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.15.3',
+		date: '2026-03-27',
+		changes: {
+			fr: ['Refactoring interne : calcul de suggestion d\'objectif mutualisé entre l\'onboarding et les réglages'],
+			en: ['Internal refactor: shared suggestion calculation between onboarding and settings'],
+		},
+	},
+	{
 		version: '1.15.2',
 		date: '2026-03-27',
 		changes: {
