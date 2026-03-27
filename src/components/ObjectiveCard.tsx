@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { spring, springSnappy } from '@/lib/animations';
+import { calculateSuggestion } from '@/lib/calculateSuggestion';
 import { formatDays } from '@/lib/formatDays';
 import type { Period } from '@/types';
 
@@ -37,16 +38,7 @@ export function ObjectiveCard({
 }: ObjectiveCardProps) {
 	const { t } = useTranslation();
 
-	const suggestion = useMemo(() => {
-		if (totalRemaining === 0) return null;
-		const raw =
-			period === 'daily'
-				? totalRemaining / (365 * 5)
-				: period === 'weekly'
-					? totalRemaining / (52 * 5)
-					: totalRemaining / (12 * 5);
-		return Math.max(1, Math.round(raw));
-	}, [totalRemaining, period]);
+	const suggestion = useMemo(() => calculateSuggestion(totalRemaining, period), [totalRemaining, period]);
 
 	const parsedTarget = parseInt(target, 10);
 	const effectiveTarget = !Number.isNaN(parsedTarget) && parsedTarget > 0 ? parsedTarget : null;
