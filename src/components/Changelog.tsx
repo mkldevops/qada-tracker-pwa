@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.15.4',
+		date: '2026-03-27',
+		changes: {
+			fr: ['Session : estimation de la durée affichée à côté de chaque preset et du sélecteur personnalisé'],
+			en: ['Session: estimated completion time shown next to each preset and the custom picker'],
+		},
+	},
+	{
 		version: '1.15.3',
 		date: '2026-03-27',
 		changes: {
