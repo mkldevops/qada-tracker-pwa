@@ -2,34 +2,17 @@ import { RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
-import { usePrayerStore } from '@/stores/prayerStore';
+import { ObjectiveCard } from '@/components/ObjectiveCard';
+import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
 import type { Period } from '@/types';
-
-const inputStyle = {
-	background: 'var(--background)',
-	border: '1px solid var(--border)',
-	borderRadius: 12,
-	color: 'var(--text-primary)',
-	padding: '0 14px',
-	height: 44,
-	fontSize: 15,
-	fontWeight: 500,
-	width: '100%',
-	outline: 'none',
-} as const;
 
 export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
 	const { t } = useTranslation();
 	const { setObjective, activeObjective } = usePrayerStore();
+	const totalRemaining = useTotalRemaining();
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
 	const [objTarget, setObjTarget] = useState('');
 	const [error, setError] = useState<string | null>(null);
-
-	const PERIODS: { value: Period; label: string }[] = [
-		{ value: 'daily', label: t('common.day_cap') },
-		{ value: 'weekly', label: t('common.week_cap') },
-		{ value: 'monthly', label: t('common.month_cap') },
-	];
 
 	const handleSetObjective = async () => {
 		const target = parseInt(objTarget, 10);
@@ -42,6 +25,9 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 			}
 		}
 	};
+
+	const parsedTarget = parseInt(objTarget, 10);
+	const hasValidTarget = !Number.isNaN(parsedTarget) && parsedTarget > 0;
 
 	return (
 		<>
@@ -58,40 +44,24 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 						</p>
 					)}
 					{error && <p className="text-[11px] font-medium text-danger">{error}</p>}
-					<div className="flex gap-2">
-						{PERIODS.map(({ value, label }) => (
-							<button
-								type="button"
-								key={value}
-								onClick={() => setObjPeriod(value)}
-								className={`flex-1 rounded-[20px] py-2.5 text-[13px] transition-colors ${
-									objPeriod === value
-										? 'bg-gold text-background font-semibold'
-										: 'bg-background border border-border text-tertiary font-medium'
-								}`}
-							>
-								{label}
-							</button>
-						))}
-					</div>
-					<div className="flex gap-2">
-						<input
-							type="number"
-							value={objTarget}
-							onChange={(e) => setObjTarget(e.target.value)}
-							placeholder={t('settings.targetPlaceholder')}
-							min="1"
-							style={{ ...inputStyle, flex: 1 }}
-						/>
-						<button
-							type="button"
-							onClick={handleSetObjective}
-							disabled={!objTarget}
-							className="gradient-gold rounded-[22px] px-6 text-[13px] font-bold text-background transition-opacity disabled:opacity-30"
-						>
-							{t('settings.apply')}
-						</button>
-					</div>
+
+					<ObjectiveCard
+						period={objPeriod}
+						onPeriodChange={setObjPeriod}
+						target={objTarget}
+						onTargetChange={setObjTarget}
+						totalRemaining={totalRemaining}
+						inputId="settings-obj-target"
+					/>
+
+					<button
+						type="button"
+						onClick={handleSetObjective}
+						disabled={!hasValidTarget}
+						className="gradient-gold rounded-[22px] py-3 text-[13px] font-bold text-background transition-opacity disabled:opacity-30"
+					>
+						{t('settings.apply')}
+					</button>
 				</div>
 			</CollapsibleSection>
 
