@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.13.3',
+		date: '2026-03-27',
+		changes: {
+			fr: [
+				'Réglages > Session : nouveau toggle « Suivi sujoud » (désactivé par défaut) — les permissions capteur/caméra ne sont plus demandées si la fonctionnalité est désactivée',
+			],
+			en: [
+				'Settings > Session: new "Sujood tracking" toggle (off by default) — sensor/camera permissions are no longer requested if the feature is disabled',
+			],
+		},
+	},
+	{
 		version: '1.23.0',
 		date: '2026-03-26',
 		changes: {
