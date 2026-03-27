@@ -28,9 +28,7 @@ const ENTRIES: ChangelogEntry[] = [
 			fr: [
 				'Accueil : remplacement de toutes les couleurs hexadécimales codées en dur par les tokens du système de design',
 			],
-			en: [
-				'Home: replaced all hardcoded hex colors with design system tokens',
-			],
+			en: ['Home: replaced all hardcoded hex colors with design system tokens'],
 		},
 	},
 	{
@@ -38,7 +36,7 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-03-26',
 		changes: {
 			fr: [
-				"Accueil : carte « Série » supprimée, EstimationCard redessinée (valeur + rythme), disposition today 1/3 + estimation 2/3",
+				'Accueil : carte « Série » supprimée, EstimationCard redessinée (valeur + rythme), disposition today 1/3 + estimation 2/3',
 				"Objectif : affiche {aujourd'hui} / {cible} dans la carte du jour si un objectif est défini",
 			],
 			en: [
