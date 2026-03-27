@@ -66,12 +66,16 @@ export function SessionTab() {
 							aria-checked={sujoodTrackingEnabled}
 							aria-label={t('settings.sujoodTracking')}
 							onClick={() => setSujoodTrackingEnabled(!sujoodTrackingEnabled)}
-							className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${sujoodTrackingEnabled ? 'bg-gold' : 'bg-border'}`}
+							className="relative flex shrink-0 items-center p-2"
 						>
 							<span
-								className="absolute top-1 h-5 w-5 rounded-full bg-foreground transition-all"
-								style={{ left: sujoodTrackingEnabled ? '50%' : '4px' }}
-							/>
+								className={`relative h-7 w-12 rounded-full transition-colors ${sujoodTrackingEnabled ? 'bg-gold' : 'bg-border'}`}
+							>
+								<span
+									className="absolute top-1 h-5 w-5 rounded-full bg-foreground transition-all"
+									style={{ left: sujoodTrackingEnabled ? '50%' : '4px' }}
+								/>
+							</span>
 						</button>
 					</div>
 				</div>
@@ -91,12 +95,16 @@ export function SessionTab() {
 							aria-checked={isEnabled}
 							aria-label={t('settings.notifications')}
 							onClick={() => (isEnabled ? disable() : enable(reminderTime))}
-							className={`relative h-7 w-12 rounded-full transition-colors ${isEnabled ? 'bg-gold' : 'bg-border'}`}
+							className="relative flex shrink-0 items-center p-2"
 						>
 							<span
-								className="absolute top-1 h-5 w-5 rounded-full bg-foreground transition-all"
-								style={{ left: isEnabled ? '50%' : '4px' }}
-							/>
+								className={`relative h-7 w-12 rounded-full transition-colors ${isEnabled ? 'bg-gold' : 'bg-border'}`}
+							>
+								<span
+									className="absolute top-1 h-5 w-5 rounded-full bg-foreground transition-all"
+									style={{ left: isEnabled ? '50%' : '4px' }}
+								/>
+							</span>
 						</button>
 					</div>
 
