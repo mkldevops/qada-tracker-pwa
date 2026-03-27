@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.15.0',
+		date: '2026-03-27',
+		changes: {
+			fr: ['Réglages > Session : augmentation des zones tactiles des toggles à 44px minimum (accessibilité)'],
+			en: ['Settings > Session: increase toggle touch targets to 44px minimum (accessibility)'],
+		},
+	},
+	{
 		version: '1.14.1',
 		date: '2026-03-27',
 		changes: {
