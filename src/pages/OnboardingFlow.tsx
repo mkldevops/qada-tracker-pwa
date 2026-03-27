@@ -3,9 +3,9 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HaydStepper } from '@/components/HaydStepper';
+import { ObjectiveCard } from '@/components/ObjectiveCard';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { spring, springSnappy } from '@/lib/animations';
-import { formatDays } from '@/lib/formatDays';
 import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -646,18 +646,6 @@ function ObjectiveStep({
 	const parsedTarget = parseInt(objTarget, 10);
 	const effectiveTarget = !Number.isNaN(parsedTarget) && parsedTarget > 0 ? parsedTarget : null;
 
-	const estimation = (() => {
-		if (!effectiveTarget || totalRemaining === 0) return null;
-		const totalPeriods = Math.ceil(totalRemaining / effectiveTarget);
-		const totalDays =
-			objPeriod === 'daily'
-				? totalPeriods
-				: objPeriod === 'weekly'
-					? totalPeriods * 7
-					: totalPeriods * 30;
-		return formatDays(totalDays, t);
-	})();
-
 	return (
 		<motion.div
 			key="objective"
@@ -683,102 +671,14 @@ function ObjectiveStep({
 				className="flex flex-col gap-4 rounded-[20px] p-5"
 				style={{ background: '#242426', border: '1px solid #3A3A3C' }}
 			>
-				<div
-					className="flex gap-1.5 rounded-2xl p-1"
-					style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
-				>
-					{[
-						{ value: 'daily' as Period, label: t('common.day_cap') },
-						{ value: 'weekly' as Period, label: t('common.week_cap') },
-						{ value: 'monthly' as Period, label: t('common.month_cap') },
-					].map(({ value, label }) => {
-						const active = objPeriod === value;
-						return (
-							<motion.button
-								type="button"
-								key={value}
-								onClick={() => setObjPeriod(value)}
-								className="flex-1 rounded-xl py-2 text-[13px] font-semibold"
-								animate={{
-									background: active ? '#C9A962' : 'transparent',
-									color: active ? '#1A1A1C' : '#6E6E70',
-								}}
-								transition={springSnappy}
-								whileTap={{ scale: 0.96 }}
-							>
-								{label}
-							</motion.button>
-						);
-					})}
-				</div>
-
-				<div className="flex flex-col gap-1.5">
-					<div className="flex items-center justify-between">
-						<label htmlFor="ob-target" className="text-xs font-medium" style={{ color: '#6E6E70' }}>
-							{t('onboarding.targetPer', {
-								period: t(
-									`common.${objPeriod === 'daily' ? 'day' : objPeriod === 'weekly' ? 'week' : 'month'}`,
-								),
-							})}
-						</label>
-						<AnimatePresence>
-							{suggestion && (
-								<motion.button
-									type="button"
-									onClick={() => setObjTarget(String(suggestion))}
-									className="text-[11px] font-medium"
-									style={{ color: '#C9A962' }}
-									initial={{ opacity: 0, x: 8 }}
-									animate={{ opacity: 1, x: 0 }}
-									exit={{ opacity: 0, x: 8 }}
-									transition={spring}
-								>
-									{t('onboarding.suggestion', { value: suggestion })}
-								</motion.button>
-							)}
-						</AnimatePresence>
-					</div>
-					<input
-						id="ob-target"
-						type="number"
-						value={objTarget}
-						onChange={(e) => setObjTarget(e.target.value)}
-						placeholder={
-							suggestion
-								? t('onboarding.inputPlaceholder', { value: suggestion })
-								: t('onboarding.targetPlaceholder')
-						}
-						min="1"
-						style={inputStyle}
-					/>
-				</div>
-
-				<AnimatePresence>
-					{estimation && (
-						<motion.div
-							className="flex items-center justify-between rounded-xl px-4 py-3"
-							style={{ background: '#1A1A1C', border: '1px solid #C9A96230' }}
-							initial={{ opacity: 0, height: 0 }}
-							animate={{ opacity: 1, height: 'auto' }}
-							exit={{ opacity: 0, height: 0 }}
-							transition={spring}
-						>
-							<span className="text-xs" style={{ color: '#6E6E70' }}>
-								{t('onboarding.estimationLabel')}
-							</span>
-							<motion.span
-								key={estimation}
-								className="text-sm font-semibold tabular-nums"
-								style={{ color: '#C9A962' }}
-								initial={{ opacity: 0, y: -4 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={spring}
-							>
-								{t('onboarding.estimationValue', { value: estimation })}
-							</motion.span>
-						</motion.div>
-					)}
-				</AnimatePresence>
+				<ObjectiveCard
+					period={objPeriod}
+					onPeriodChange={setObjPeriod}
+					target={objTarget}
+					onTargetChange={setObjTarget}
+					totalRemaining={totalRemaining}
+					inputId="ob-target"
+				/>
 			</div>
 
 			<AnimatePresence>{saveError && <ErrorBanner message={saveError} />}</AnimatePresence>

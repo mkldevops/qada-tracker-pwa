@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.14.1',
+		date: '2026-03-27',
+		changes: {
+			fr: [
+				'Réglages > Dette : refonte de la section objectif avec stepper animé, suggestion et estimation en direct',
+			],
+			en: [
+				'Settings > Debt: redesign objective section with animated stepper, suggestion and live estimation',
+			],
+		},
+	},
+	{
 		version: '1.14.0',
 		date: '2026-03-27',
 		changes: {
