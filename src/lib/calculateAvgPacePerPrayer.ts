@@ -1,5 +1,7 @@
 import type { PrayerLog } from '@/types';
 
+const MAX_SESSIONS = 20;
+
 export function calculateAvgPacePerPrayer(logs: PrayerLog[]): number | null {
 	const sessionMap = new Map<string, PrayerLog[]>();
 	for (const log of logs) {
@@ -18,7 +20,7 @@ export function calculateAvgPacePerPrayer(logs: PrayerLog[]): number | null {
 		const totalQty = entries.reduce((sum, e) => sum + e.quantity, 0);
 		if (totalQty <= 0) continue;
 		paces.push(duration / totalQty);
-		if (paces.length === 20) break;
+		if (paces.length === MAX_SESSIONS) break;
 	}
 
 	if (paces.length === 0) return null;
