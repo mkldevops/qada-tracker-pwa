@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.15.1',
+		date: '2026-03-27',
+		changes: {
+			fr: ['Réglages > Session : ajout d\'indicateurs de focus visibles sur les toggles (accessibilité clavier)'],
+			en: ['Settings > Session: add focus-visible indicators on toggle switches (keyboard accessibility)'],
+		},
+	},
+	{
 		version: '1.15.0',
 		date: '2026-03-27',
 		changes: {
