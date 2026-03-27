@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.15.2',
+		date: '2026-03-27',
+		changes: {
+			fr: ['Onboarding : remplacement des couleurs hexadécimales codées en dur par les tokens du système de design'],
+			en: ['Onboarding: replace hardcoded hex colors with design system tokens'],
+		},
+	},
+	{
 		version: '1.15.1',
 		date: '2026-03-27',
 		changes: {
