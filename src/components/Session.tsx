@@ -857,14 +857,14 @@ export function Session({ onClose }: { onClose: () => void }) {
 
 						{/* Radiating ring */}
 						<motion.div
-							className="absolute w-32 h-32 rounded-full"
+							className="pointer-events-none absolute w-32 h-32 rounded-full"
 							style={{ border: '2px solid #C9A96240' }}
 							initial={{ scale: 0.8, opacity: 0 }}
 							animate={{ scale: 2.5, opacity: 0 }}
 							transition={{ delay: 0.4, duration: 1.2, ease: 'easeOut' }}
 						/>
 						<motion.div
-							className="absolute w-32 h-32 rounded-full"
+							className="pointer-events-none absolute w-32 h-32 rounded-full"
 							style={{ border: '2px solid #C9A96230' }}
 							initial={{ scale: 0.8, opacity: 0 }}
 							animate={{ scale: 3.5, opacity: 0 }}
