@@ -66,7 +66,7 @@ export function SessionTab() {
 							aria-checked={sujoodTrackingEnabled}
 							aria-label={t('settings.sujoodTracking')}
 							onClick={() => setSujoodTrackingEnabled(!sujoodTrackingEnabled)}
-							className="relative flex shrink-0 items-center p-2"
+							className="relative flex shrink-0 items-center rounded-lg p-2 focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
 						>
 							<span
 								className={`relative h-7 w-12 rounded-full transition-colors ${sujoodTrackingEnabled ? 'bg-gold' : 'bg-border'}`}
@@ -95,7 +95,7 @@ export function SessionTab() {
 							aria-checked={isEnabled}
 							aria-label={t('settings.notifications')}
 							onClick={() => (isEnabled ? disable() : enable(reminderTime))}
-							className="relative flex shrink-0 items-center p-2"
+							className="relative flex shrink-0 items-center rounded-lg p-2 focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
 						>
 							<span
 								className={`relative h-7 w-12 rounded-full transition-colors ${isEnabled ? 'bg-gold' : 'bg-border'}`}
