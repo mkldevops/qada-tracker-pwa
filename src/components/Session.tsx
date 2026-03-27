@@ -3,8 +3,10 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { useAvgPacePerPrayer } from '@/hooks/useAvgPacePerPrayer';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
 import { spring, springBouncy } from '@/lib/animations';
+import { formatPace } from '@/lib/calculateAvgPacePerPrayer';
 import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
 import type { Objective, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -323,6 +325,8 @@ export function Session({ onClose }: { onClose: () => void }) {
 
 	const defaultTarget = computeTarget(activeObjective);
 
+	const avgPace = useAvgPacePerPrayer();
+
 	const [phase, setPhase] = useState<Phase>('setup');
 	const [target, setTarget] = useState(defaultTarget);
 	const [targetDir, setTargetDir] = useState<1 | -1>(1);
@@ -571,6 +575,11 @@ export function Session({ onClose }: { onClose: () => void }) {
 										whileHover={{ scale: selected ? 1.06 : 1.03 }}
 									>
 										{n}
+										{avgPace !== null && (
+											<span className="mt-0.5 block text-[10px] font-normal opacity-60">
+												{formatPace(avgPace, n)}
+											</span>
+										)}
 									</motion.button>
 								);
 							})}
@@ -582,6 +591,20 @@ export function Session({ onClose }: { onClose: () => void }) {
 							transition={{ delay: 0.18, ...spring }}
 						>
 							<NumberPicker value={target} dir={targetDir} onChange={changeTarget} />
+							<AnimatePresence>
+								{avgPace !== null && target > 0 && (
+									<motion.p
+										key={target}
+										className="mt-2 text-center text-[11px] tabular-nums text-muted"
+										initial={{ opacity: 0, y: -4 }}
+										animate={{ opacity: 1, y: 0 }}
+										exit={{ opacity: 0 }}
+										transition={spring}
+									>
+										{formatPace(avgPace, target)}
+									</motion.p>
+								)}
+							</AnimatePresence>
 						</motion.div>
 
 						<motion.button
