@@ -668,7 +668,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</motion.div>
 						)}
 
-						{!sensorState.isSupported && phase === 'active' && (
+						{sujoodTrackingEnabled && !sensorState.isSupported && phase === 'active' && (
 							<motion.button
 								onClick={() => {
 									if (sujoodCount === 0) {
@@ -703,7 +703,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</motion.button>
 						)}
 
-						{cfg.rakat > 1 && (
+						{sujoodTrackingEnabled && cfg.rakat > 1 && (
 							<RakatDots total={cfg.rakat} current={currentRakat} color={cfg.hex} />
 						)}
 
