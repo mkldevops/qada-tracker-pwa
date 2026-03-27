@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.14.0',
+		date: '2026-03-27',
+		changes: {
+			fr: ["Session : correction du bouton FERMER bloqué sur l'écran de fin de session"],
+			en: ['Session: fix CLOSE button unresponsive on completion screen'],
+		},
+	},
+	{
 		version: '1.13.3',
 		date: '2026-03-27',
 		changes: {
