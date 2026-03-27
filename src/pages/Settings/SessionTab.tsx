@@ -21,7 +21,8 @@ export function SessionTab() {
 	const { permission, isEnabled, reminderTime, enable, disable, updateTime } = useNotifications(
 		t('settings.notificationsBody'),
 	);
-	const { setSessionOrder, sessionOrder } = usePrayerStore();
+	const { setSessionOrder, sessionOrder, sujoodTrackingEnabled, setSujoodTrackingEnabled } =
+		usePrayerStore();
 
 	const SESSION_ORDERS: { value: SessionOrder; label: string }[] = [
 		{ value: 'chronological', label: t('settings.chronological') },
@@ -51,6 +52,27 @@ export function SessionTab() {
 								{label}
 							</button>
 						))}
+					</div>
+					<div className="flex items-center justify-between pt-1">
+						<div className="flex flex-col gap-0.5">
+							<span className="text-sm font-medium text-foreground">
+								{t('settings.sujoodTracking')}
+							</span>
+							<span className="text-[11px] text-muted">{t('settings.sujoodTrackingDesc')}</span>
+						</div>
+						<button
+							type="button"
+							role="switch"
+							aria-checked={sujoodTrackingEnabled}
+							aria-label={t('settings.sujoodTracking')}
+							onClick={() => setSujoodTrackingEnabled(!sujoodTrackingEnabled)}
+							className={`relative h-7 w-12 shrink-0 rounded-full transition-colors ${sujoodTrackingEnabled ? 'bg-gold' : 'bg-border'}`}
+						>
+							<span
+								className="absolute top-1 h-5 w-5 rounded-full bg-foreground transition-all"
+								style={{ left: sujoodTrackingEnabled ? '50%' : '4px' }}
+							/>
+						</button>
 					</div>
 				</div>
 			</CollapsibleSection>

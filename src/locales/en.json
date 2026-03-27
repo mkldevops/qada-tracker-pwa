@@ -129,6 +129,8 @@
 		"prayerOrderDesc": "Order in which prayers are offered during session",
 		"chronological": "Chronological",
 		"highestDebt": "Debt priority",
+		"sujoodTracking": "Sujood tracking",
+		"sujoodTrackingDesc": "Auto-detect sujood via device sensors",
 		"notifications": "DAILY REMINDER",
 		"notificationsDesc": "Reminder to complete your session",
 		"notificationsTime": "Reminder time",
