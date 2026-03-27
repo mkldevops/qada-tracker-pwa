@@ -17,10 +17,10 @@ type DebtData =
 	| { mode: 'manual'; amounts: Record<PrayerName, number> };
 
 const inputStyle = {
-	background: '#1A1A1C',
-	border: '1px solid #3A3A3C',
+	background: 'var(--background)',
+	border: '1px solid var(--border)',
 	borderRadius: 12,
-	color: '#F5F5F0',
+	color: 'var(--text-primary)',
 	padding: '0 14px',
 	height: 44,
 	fontSize: 15,
@@ -38,7 +38,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
 					className="rounded-full"
 					animate={{
 						width: n === current ? 20 : 6,
-						background: n <= current ? '#C9A962' : '#3A3A3C',
+						background: n <= current ? 'var(--gold)' : 'var(--border)',
 					}}
 					transition={spring}
 					style={{ height: 6 }}
@@ -52,7 +52,7 @@ function ErrorBanner({ message }: { message: string }) {
 	return (
 		<motion.div
 			className="rounded-2xl px-4 py-3 text-sm"
-			style={{ background: '#2A1515', border: '1px solid #D45F5F40', color: '#D45F5F' }}
+			style={{ background: '#2A1515', border: '1px solid #D45F5F40', color: 'var(--danger)' }}
 			initial={{ opacity: 0, y: -8 }}
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: -8 }}
@@ -83,13 +83,13 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 			>
 				<motion.div
 					className="flex h-24 w-24 items-center justify-center rounded-3xl"
-					style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
+					style={{ background: 'linear-gradient(135deg, var(--gold), var(--gold-deep))' }}
 					animate={{ boxShadow: ['0 0 0px #C9A96240', '0 0 30px #C9A96240', '0 0 0px #C9A96240'] }}
 					transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
 				>
 					<p
 						className="font-display text-4xl font-normal leading-none"
-						style={{ color: '#1A1A1C' }}
+						style={{ color: 'var(--background)' }}
 					>
 						قضاء
 					</p>
@@ -101,10 +101,16 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.1, ...spring }}
 				>
-					<h1 className="font-display text-4xl font-normal" style={{ color: '#F5F5F0' }}>
+					<h1
+						className="font-display text-4xl font-normal"
+						style={{ color: 'var(--text-primary)' }}
+					>
 						{t('onboarding.welcome')}
 					</h1>
-					<p className="text-sm leading-relaxed max-w-[260px]" style={{ color: '#6E6E70' }}>
+					<p
+						className="text-sm leading-relaxed max-w-[260px]"
+						style={{ color: 'var(--text-secondary)' }}
+					>
 						{t('onboarding.welcomeSubtitle')}
 					</p>
 				</motion.div>
@@ -118,7 +124,7 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 			>
 				<div
 					className="rounded-[20px] p-5 flex flex-col gap-4 text-left"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+					style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 				>
 					{[
 						{ n: '1', label: t('onboarding.step1Label'), sub: t('onboarding.step1Sub') },
@@ -134,17 +140,17 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 							<div
 								className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold"
 								style={{
-									background: 'linear-gradient(135deg, #C9A962, #8B7845)',
-									color: '#1A1A1C',
+									background: 'linear-gradient(135deg, var(--gold), var(--gold-deep))',
+									color: 'var(--background)',
 								}}
 							>
 								{n}
 							</div>
 							<div className="flex flex-col gap-0.5">
-								<span className="text-sm font-semibold" style={{ color: '#F5F5F0' }}>
+								<span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
 									{label}
 								</span>
-								<span className="text-xs" style={{ color: '#6E6E70' }}>
+								<span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
 									{sub}
 								</span>
 							</div>
@@ -156,7 +162,10 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 					type="button"
 					onClick={onNext}
 					className="w-full rounded-[28px] py-4 text-base font-semibold tracking-[1.5px]"
-					style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
+					style={{
+						background: 'linear-gradient(135deg, var(--gold), var(--gold-deep))',
+						color: 'var(--background)',
+					}}
 					initial={{ opacity: 0, y: 12 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.38, ...spring }}
@@ -169,7 +178,7 @@ function WelcomeStep({ onNext, onSkip }: { onNext: () => void; onSkip: () => voi
 					type="button"
 					onClick={onSkip}
 					className="text-sm py-2"
-					style={{ color: '#4A4A4C' }}
+					style={{ color: 'var(--text-tertiary)' }}
 					whileTap={{ scale: 0.95 }}
 				>
 					{t('onboarding.skipConfig')}
@@ -239,7 +248,7 @@ function DebtStep({
 		>
 			<div className="flex flex-col gap-3">
 				<StepIndicator current={1} total={2} />
-				<h2 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
+				<h2 className="font-display text-3xl font-normal" style={{ color: 'var(--text-primary)' }}>
 					{t('onboarding.debtTitle')}
 				</h2>
 			</div>
@@ -247,7 +256,7 @@ function DebtStep({
 			{/* Mode switcher */}
 			<div
 				className="flex gap-1.5 rounded-2xl p-1"
-				style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 			>
 				{(['years', 'manual'] as const).map((m) => {
 					const active = debtMode === m;
@@ -258,8 +267,8 @@ function DebtStep({
 							onClick={() => setDebtMode(m)}
 							className="flex-1 rounded-xl py-2 text-[13px] font-semibold"
 							animate={{
-								background: active ? '#C9A962' : 'transparent',
-								color: active ? '#1A1A1C' : '#6E6E70',
+								background: active ? 'var(--gold)' : 'transparent',
+								color: active ? 'var(--background)' : 'var(--text-secondary)',
 							}}
 							transition={springSnappy}
 							whileTap={{ scale: 0.96 }}
@@ -275,7 +284,7 @@ function DebtStep({
 					<motion.div
 						key="years"
 						className="flex flex-col gap-4 rounded-[20px] p-5"
-						style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+						style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 						initial={{ opacity: 0, x: 20 }}
 						animate={{ opacity: 1, x: 0 }}
 						exit={{ opacity: 0, x: -20 }}
@@ -283,23 +292,23 @@ function DebtStep({
 					>
 						<div className="flex flex-col gap-4">
 							<div className="flex flex-col gap-3">
-								<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
+								<span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
 									{t('onboarding.missedYears')}
 								</span>
 								<div className="grid grid-cols-2 gap-3">
 									<div
 										className="flex flex-col items-center gap-3 rounded-2xl py-5"
-										style={{ background: '#1A1A1C' }}
+										style={{ background: 'var(--background)' }}
 									>
 										<span
 											className="text-[10px] font-semibold tracking-[1.5px] uppercase"
-											style={{ color: '#6E6E70' }}
+											style={{ color: 'var(--text-secondary)' }}
 										>
 											{t('common.years')}
 										</span>
 										<span
 											className="text-3xl font-semibold tabular-nums"
-											style={{ color: '#F5F5F0' }}
+											style={{ color: 'var(--text-primary)' }}
 										>
 											{missedYears}
 										</span>
@@ -311,7 +320,10 @@ function DebtStep({
 												disabled={missedYears <= 0}
 												aria-label={`− ${t('common.years')}`}
 												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+												style={{
+													background: 'var(--surface-raised)',
+													color: 'var(--text-primary)',
+												}}
 											>
 												−
 											</motion.button>
@@ -322,7 +334,10 @@ function DebtStep({
 												disabled={missedYears >= 80}
 												aria-label={`+ ${t('common.years')}`}
 												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+												style={{
+													background: 'var(--surface-raised)',
+													color: 'var(--text-primary)',
+												}}
 											>
 												+
 											</motion.button>
@@ -330,17 +345,17 @@ function DebtStep({
 									</div>
 									<div
 										className="flex flex-col items-center gap-3 rounded-2xl py-5"
-										style={{ background: '#1A1A1C' }}
+										style={{ background: 'var(--background)' }}
 									>
 										<span
 											className="text-[10px] font-semibold tracking-[1.5px] uppercase"
-											style={{ color: '#6E6E70' }}
+											style={{ color: 'var(--text-secondary)' }}
 										>
 											{t('common.months')}
 										</span>
 										<span
 											className="text-3xl font-semibold tabular-nums"
-											style={{ color: '#F5F5F0' }}
+											style={{ color: 'var(--text-primary)' }}
 										>
 											{missedMonths}
 										</span>
@@ -352,7 +367,10 @@ function DebtStep({
 												disabled={missedMonths <= 0}
 												aria-label={`− ${t('common.months')}`}
 												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+												style={{
+													background: 'var(--surface-raised)',
+													color: 'var(--text-primary)',
+												}}
 											>
 												−
 											</motion.button>
@@ -363,7 +381,10 @@ function DebtStep({
 												disabled={missedMonths >= 11}
 												aria-label={`+ ${t('common.months')}`}
 												className="flex h-9 w-9 items-center justify-center rounded-full text-lg font-semibold disabled:opacity-30"
-												style={{ background: '#2A2A2C', color: '#F5F5F0' }}
+												style={{
+													background: 'var(--surface-raised)',
+													color: 'var(--text-primary)',
+												}}
 											>
 												+
 											</motion.button>
@@ -371,12 +392,12 @@ function DebtStep({
 									</div>
 								</div>
 							</div>
-							<div style={{ height: 1, background: '#2A2A2C' }} />
+							<div style={{ height: 1, background: 'var(--surface-raised)' }} />
 							<div className="flex flex-col gap-1.5">
 								<label
 									htmlFor="ob-excluded"
 									className="text-[11px] font-medium"
-									style={{ color: '#9A9A9C' }}
+									style={{ color: 'var(--text-secondary)' }}
 								>
 									{t('onboarding.excludedDays')}
 								</label>
@@ -392,14 +413,14 @@ function DebtStep({
 							</div>
 						</div>
 
-						<div style={{ height: 1, background: '#2A2A2C' }} />
+						<div style={{ height: 1, background: 'var(--surface-raised)' }} />
 
 						<div className="flex items-center justify-between">
 							<div className="flex flex-col gap-0.5">
-								<span className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
+								<span className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
 									{t('onboarding.female')}
 								</span>
-								<span className="text-[11px]" style={{ color: '#6E6E70' }}>
+								<span className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>
 									{t('onboarding.femaleDesc')}
 								</span>
 							</div>
@@ -410,11 +431,11 @@ function DebtStep({
 								aria-label={t('onboarding.femaleDesc')}
 								onClick={() => setIsFemme((v) => !v)}
 								className="relative h-7 w-12 rounded-full transition-colors"
-								style={{ background: isFemme ? '#C9A962' : '#3A3A3C' }}
+								style={{ background: isFemme ? 'var(--gold)' : 'var(--border)' }}
 							>
 								<motion.span
 									className="absolute top-1 h-5 w-5 rounded-full"
-									style={{ background: '#F5F5F0' }}
+									style={{ background: 'var(--text-primary)' }}
 									animate={{ left: isFemme ? '50%' : '4px' }}
 									transition={springSnappy}
 								/>
@@ -431,7 +452,10 @@ function DebtStep({
 									transition={spring}
 								>
 									<div className="flex items-center justify-between">
-										<span className="text-xs font-medium" style={{ color: '#9A9A9C' }}>
+										<span
+											className="text-xs font-medium"
+											style={{ color: 'var(--text-secondary)' }}
+										>
 											{t('onboarding.haydAvg')}
 										</span>
 										<HaydStepper value={avgHaydDays} onChange={setAvgHaydDays} min={1} max={15} />
@@ -439,7 +463,7 @@ function DebtStep({
 									{totalYears > 0 && (
 										<motion.p
 											className="text-[11px]"
-											style={{ color: '#6E9E6E' }}
+											style={{ color: 'var(--sage)' }}
 											initial={{ opacity: 0 }}
 											animate={{ opacity: 1 }}
 											transition={spring}
@@ -460,7 +484,7 @@ function DebtStep({
 					<motion.div
 						key="manual"
 						className="rounded-[20px] overflow-hidden"
-						style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+						style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 						initial={{ opacity: 0, x: 20 }}
 						animate={{ opacity: 1, x: 0 }}
 						exit={{ opacity: 0, x: -20 }}
@@ -475,7 +499,7 @@ function DebtStep({
 									animate={{ opacity: 1, x: 0 }}
 									transition={{ delay: i * 0.05, ...spring }}
 								>
-									{i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+									{i > 0 && <div style={{ height: 1, background: 'var(--surface-raised)' }} />}
 									<div className="flex items-center gap-3 px-5 py-3">
 										<div className="flex flex-col gap-0.5 w-20">
 											<span
@@ -484,7 +508,7 @@ function DebtStep({
 											>
 												{cfg.labelFr}
 											</span>
-											<span className="text-[10px]" style={{ color: '#4A4A4C' }}>
+											<span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
 												{cfg.labelAr}
 											</span>
 										</div>
@@ -513,12 +537,12 @@ function DebtStep({
 									exit={{ opacity: 0, height: 0 }}
 									transition={spring}
 								>
-									<span className="text-xs" style={{ color: '#6E9E6E' }}>
+									<span className="text-xs" style={{ color: 'var(--sage)' }}>
 										{t('onboarding.total')}
 									</span>
 									<span
 										className="text-base font-semibold tabular-nums"
-										style={{ color: '#F5F5F0' }}
+										style={{ color: 'var(--text-primary)' }}
 									>
 										{manualTotal.toLocaleString()}
 									</span>
@@ -540,17 +564,17 @@ function DebtStep({
 						exit={{ opacity: 0, y: 10 }}
 						transition={spring}
 					>
-						<p className="text-[11px] font-medium tracking-[2px]" style={{ color: '#6E9E6E' }}>
+						<p className="text-[11px] font-medium tracking-[2px]" style={{ color: 'var(--sage)' }}>
 							{t('onboarding.preview')}
 						</p>
 						<div className="flex justify-between items-center">
-							<span className="text-sm" style={{ color: '#6E6E70' }}>
+							<span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
 								{t('onboarding.estimatedTotal')}
 							</span>
 							<motion.span
 								key={totalPreview}
 								className="text-xl font-semibold tabular-nums"
-								style={{ color: '#F5F5F0' }}
+								style={{ color: 'var(--text-primary)' }}
 								initial={{ opacity: 0, y: -6 }}
 								animate={{ opacity: 1, y: 0 }}
 								transition={spring}
@@ -566,7 +590,7 @@ function DebtStep({
 									<span className="text-sm font-medium" style={{ color: cfg.hex }}>
 										{cfg.labelFr}
 									</span>
-									<span className="text-sm tabular-nums" style={{ color: '#6E6E70' }}>
+									<span className="text-sm tabular-nums" style={{ color: 'var(--text-secondary)' }}>
 										{effectiveDays.toLocaleString()}
 									</span>
 								</div>
@@ -584,7 +608,10 @@ function DebtStep({
 					onClick={handleSubmit}
 					disabled={!canProceed || saving}
 					className="w-full rounded-[28px] py-4 text-base font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30 relative overflow-hidden"
-					style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
+					style={{
+						background: 'linear-gradient(135deg, var(--gold), var(--gold-deep))',
+						color: 'var(--background)',
+					}}
 					whileTap={{ scale: 0.95 }}
 					whileHover={{ scale: 1.02 }}
 				>
@@ -608,7 +635,7 @@ function DebtStep({
 					type="button"
 					onClick={onSkip}
 					className="text-sm py-2"
-					style={{ color: '#4A4A4C' }}
+					style={{ color: 'var(--text-tertiary)' }}
 					whileTap={{ scale: 0.95 }}
 				>
 					{t('onboarding.skipStep')}
@@ -658,10 +685,13 @@ function ObjectiveStep({
 			<div className="flex flex-col gap-3">
 				<StepIndicator current={2} total={2} />
 				<div className="flex flex-col gap-1">
-					<h2 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
+					<h2
+						className="font-display text-3xl font-normal"
+						style={{ color: 'var(--text-primary)' }}
+					>
 						{t('onboarding.objectiveTitle')}
 					</h2>
-					<p className="text-sm" style={{ color: '#6E6E70' }}>
+					<p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
 						{t('onboarding.objectiveSubtitle')}
 					</p>
 				</div>
@@ -669,7 +699,7 @@ function ObjectiveStep({
 
 			<div
 				className="flex flex-col gap-4 rounded-[20px] p-5"
-				style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 			>
 				<ObjectiveCard
 					period={objPeriod}
@@ -689,7 +719,10 @@ function ObjectiveStep({
 					onClick={() => effectiveTarget && onNext(objPeriod, effectiveTarget)}
 					disabled={!effectiveTarget || saving}
 					className="w-full rounded-[28px] py-4 text-base font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30"
-					style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
+					style={{
+						background: 'linear-gradient(135deg, var(--gold), var(--gold-deep))',
+						color: 'var(--background)',
+					}}
 					whileTap={{ scale: 0.95 }}
 					whileHover={{ scale: 1.02 }}
 				>
@@ -709,7 +742,7 @@ function ObjectiveStep({
 					type="button"
 					onClick={() => onNext(objPeriod, suggestion ?? 10)}
 					className="text-sm py-2"
-					style={{ color: '#4A4A4C' }}
+					style={{ color: 'var(--text-tertiary)' }}
 					whileTap={{ scale: 0.95 }}
 				>
 					{t('onboarding.skipStep')}
@@ -743,7 +776,7 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 						animate={{ scale: [1, 1.08, 1] }}
 						transition={{ delay: 0.5, duration: 0.6, ease: 'easeInOut' }}
 					>
-						<CheckCircle2 size={72} style={{ color: '#C9A962' }} />
+						<CheckCircle2 size={72} style={{ color: 'var(--gold)' }} />
 					</motion.div>
 				</motion.div>
 				{[
@@ -768,35 +801,35 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 0.25, ...spring }}
 			>
-				<h2 className="font-display text-4xl font-normal" style={{ color: '#F5F5F0' }}>
+				<h2 className="font-display text-4xl font-normal" style={{ color: 'var(--text-primary)' }}>
 					{t('onboarding.summaryTitle')}
 				</h2>
-				<p className="text-sm" style={{ color: '#6E6E70' }}>
+				<p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
 					{t('onboarding.summarySubtitle')}
 				</p>
 			</motion.div>
 
 			<motion.div
 				className="w-full rounded-[20px] overflow-hidden"
-				style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 0.35, ...spring }}
 			>
 				<div className="flex items-center justify-between px-5 py-4">
-					<span className="text-sm" style={{ color: '#6E6E70' }}>
+					<span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
 						{t('onboarding.prayersToCatch')}
 					</span>
-					<span className="text-xl font-semibold tabular-nums" style={{ color: '#C9A962' }}>
+					<span className="text-xl font-semibold tabular-nums" style={{ color: 'var(--gold)' }}>
 						{totalRemaining.toLocaleString()}
 					</span>
 				</div>
-				<div style={{ height: 1, background: '#2A2A2C' }} />
+				<div style={{ height: 1, background: 'var(--surface-raised)' }} />
 				<div className="flex items-center justify-between px-5 py-4">
-					<span className="text-sm" style={{ color: '#6E6E70' }}>
+					<span className="text-sm" style={{ color: 'var(--text-secondary)' }}>
 						{t('onboarding.summaryObjective')}
 					</span>
-					<span className="text-sm font-semibold" style={{ color: '#F5F5F0' }}>
+					<span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
 						{activeObjective
 							? t('onboarding.summaryObjectivePeriod', {
 									target: activeObjective.target,
@@ -813,7 +846,10 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 				type="button"
 				onClick={onComplete}
 				className="w-full rounded-[28px] py-4 text-base font-semibold tracking-[1.5px]"
-				style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
+				style={{
+					background: 'linear-gradient(135deg, var(--gold), var(--gold-deep))',
+					color: 'var(--background)',
+				}}
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 0.45, ...spring }}
@@ -869,7 +905,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 	return (
 		<motion.div
 			className="fixed inset-0 z-50 flex flex-col"
-			style={{ background: '#1A1A1C' }}
+			style={{ background: 'var(--background)' }}
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 			transition={{ duration: 0.25 }}
