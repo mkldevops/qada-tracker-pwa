@@ -197,6 +197,7 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => ({
 	},
 
 	setSessionsPerDay: (value) => {
+		if (![1, 2, 3, 4, 5].includes(value)) return;
 		localStorage.setItem(SESSIONS_PER_DAY_KEY, String(value));
 		set({ sessionsPerDay: value });
 	},

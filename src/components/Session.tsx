@@ -7,24 +7,14 @@ import { useAvgPacePerPrayer } from '@/hooks/useAvgPacePerPrayer';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
 import { spring, springBouncy } from '@/lib/animations';
 import { formatPace } from '@/lib/calculateAvgPacePerPrayer';
+import { computeTarget } from '@/lib/sessionUtils';
 import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
-import type { Objective, PrayerName } from '@/types';
+import type { PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
 type Phase = 'setup' | 'active' | 'complete';
 
 const PRESETS = [5, 10, 15, 20];
-
-function computeTarget(obj: Objective | null, sessionsPerDay = 1): number {
-	if (!obj) return 10;
-	const daily =
-		obj.period === 'daily'
-			? obj.target
-			: obj.period === 'weekly'
-				? Math.round(obj.target / 7)
-				: Math.round(obj.target / 30);
-	return Math.max(1, Math.ceil(daily / sessionsPerDay));
-}
 
 const ghostVariants = {
 	enter: (d: number) => ({ y: d > 0 ? 40 : -40, opacity: 0 }),

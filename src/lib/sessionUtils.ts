@@ -3,15 +3,16 @@ import { PRAYER_NAMES } from '@/types';
 
 const DEFAULT_TARGET = 10;
 
-export function computeTarget(obj: Objective | null): number {
+export function computeTarget(obj: Objective | null, sessionsPerDay = 1): number {
 	if (!obj) return DEFAULT_TARGET;
+	const safe = Math.max(1, sessionsPerDay);
 	switch (obj.period) {
 		case 'daily':
-			return Math.max(1, obj.target);
+			return Math.max(1, Math.ceil(Math.max(1, obj.target) / safe));
 		case 'weekly':
-			return Math.max(1, Math.round(obj.target / 7));
+			return Math.max(1, Math.ceil(Math.max(1, Math.round(obj.target / 7)) / safe));
 		case 'monthly':
-			return Math.max(1, Math.round(obj.target / 30));
+			return Math.max(1, Math.ceil(Math.max(1, Math.round(obj.target / 30)) / safe));
 	}
 }
 
