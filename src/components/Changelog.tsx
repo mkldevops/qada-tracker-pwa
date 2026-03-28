@@ -10,10 +10,10 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
-		version: '1.15.5',
+		version: '1.16.0',
 		date: '2026-03-28',
 		changes: {
-			fr: ['Réglages : répartir l\'objectif journalier sur 2 à 5 sessions par jour'],
+			fr: ["Réglages : répartir l'objectif journalier sur 2 à 5 sessions par jour"],
 			en: ['Settings: split the daily objective across 2 to 5 sessions per day'],
 		},
 	},
