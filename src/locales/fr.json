@@ -131,6 +131,8 @@
 		"highestDebt": "Priorité dette",
 		"sujoodTracking": "Suivi sujoud",
 		"sujoodTrackingDesc": "Détection automatique des sujoud via les capteurs",
+		"sessionsPerDay": "Sessions / jour",
+		"sessionsPerDayDesc": "L'objectif du jour sera réparti entre chaque session",
 		"notifications": "RAPPEL QUOTIDIEN",
 		"notificationsDesc": "Rappel pour ne pas oublier votre session",
 		"notificationsTime": "Heure du rappel",

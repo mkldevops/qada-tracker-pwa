@@ -10,10 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.16.0',
+		date: '2026-03-28',
+		changes: {
+			fr: ["Réglages : répartir l'objectif journalier sur 2 à 5 sessions par jour"],
+			en: ['Settings: split the daily objective across 2 to 5 sessions per day'],
+		},
+	},
+	{
 		version: '1.15.4',
 		date: '2026-03-27',
 		changes: {
-			fr: ['Session : estimation de la durée affichée à côté de chaque preset et du sélecteur personnalisé'],
+			fr: [
+				'Session : estimation de la durée affichée à côté de chaque preset et du sélecteur personnalisé',
+			],
 			en: ['Session: estimated completion time shown next to each preset and the custom picker'],
 		},
 	},
@@ -21,7 +31,9 @@ const ENTRIES: ChangelogEntry[] = [
 		version: '1.15.3',
 		date: '2026-03-27',
 		changes: {
-			fr: ['Refactoring interne : calcul de suggestion d\'objectif mutualisé entre l\'onboarding et les réglages'],
+			fr: [
+				"Refactoring interne : calcul de suggestion d'objectif mutualisé entre l'onboarding et les réglages",
+			],
 			en: ['Internal refactor: shared suggestion calculation between onboarding and settings'],
 		},
 	},
@@ -29,7 +41,9 @@ const ENTRIES: ChangelogEntry[] = [
 		version: '1.15.2',
 		date: '2026-03-27',
 		changes: {
-			fr: ['Onboarding : remplacement des couleurs hexadécimales codées en dur par les tokens du système de design'],
+			fr: [
+				'Onboarding : remplacement des couleurs hexadécimales codées en dur par les tokens du système de design',
+			],
 			en: ['Onboarding: replace hardcoded hex colors with design system tokens'],
 		},
 	},
@@ -37,15 +51,21 @@ const ENTRIES: ChangelogEntry[] = [
 		version: '1.15.1',
 		date: '2026-03-27',
 		changes: {
-			fr: ['Réglages > Session : ajout d\'indicateurs de focus visibles sur les toggles (accessibilité clavier)'],
-			en: ['Settings > Session: add focus-visible indicators on toggle switches (keyboard accessibility)'],
+			fr: [
+				"Réglages > Session : ajout d'indicateurs de focus visibles sur les toggles (accessibilité clavier)",
+			],
+			en: [
+				'Settings > Session: add focus-visible indicators on toggle switches (keyboard accessibility)',
+			],
 		},
 	},
 	{
 		version: '1.15.0',
 		date: '2026-03-27',
 		changes: {
-			fr: ['Réglages > Session : augmentation des zones tactiles des toggles à 44px minimum (accessibilité)'],
+			fr: [
+				'Réglages > Session : augmentation des zones tactiles des toggles à 44px minimum (accessibilité)',
+			],
 			en: ['Settings > Session: increase toggle touch targets to 44px minimum (accessibility)'],
 		},
 	},

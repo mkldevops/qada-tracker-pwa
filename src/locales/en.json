@@ -131,6 +131,8 @@
 		"highestDebt": "Debt priority",
 		"sujoodTracking": "Sujood tracking",
 		"sujoodTrackingDesc": "Auto-detect sujood via device sensors",
+		"sessionsPerDay": "Sessions / day",
+		"sessionsPerDayDesc": "The daily objective will be split across each session",
 		"notifications": "DAILY REMINDER",
 		"notificationsDesc": "Reminder to complete your session",
 		"notificationsTime": "Reminder time",

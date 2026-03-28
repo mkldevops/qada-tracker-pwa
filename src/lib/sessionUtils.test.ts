@@ -37,6 +37,26 @@ describe('computeTarget', () => {
 		expect(computeTarget(makeObj('monthly', 450))).toBe(15);
 		expect(computeTarget(makeObj('monthly', 14))).toBe(1); // round(14/30)=0 → clamped to 1
 	});
+
+	it('sessionsPerDay=2: splits daily target (ceil)', () => {
+		expect(computeTarget(makeObj('daily', 10), 2)).toBe(5);
+		expect(computeTarget(makeObj('daily', 11), 2)).toBe(6); // ceil(11/2)=6
+	});
+
+	it('sessionsPerDay=5: result is always at least 1', () => {
+		expect(computeTarget(makeObj('daily', 1), 5)).toBe(1); // ceil(1/5)=1
+		expect(computeTarget(makeObj('daily', 10), 5)).toBe(2); // ceil(10/5)=2
+	});
+
+	it('sessionsPerDay with weekly objective', () => {
+		expect(computeTarget(makeObj('weekly', 14), 2)).toBe(1); // round(14/7)=2, ceil(2/2)=1
+		expect(computeTarget(makeObj('weekly', 70), 2)).toBe(5); // round(70/7)=10, ceil(10/2)=5
+	});
+
+	it('guards against invalid sessionsPerDay (0, negative)', () => {
+		expect(computeTarget(makeObj('daily', 10), 0)).toBe(10); // safe=max(1,0)=1
+		expect(computeTarget(makeObj('daily', 10), -1)).toBe(10); // safe=max(1,-1)=1
+	});
 });
 
 // ─── getNextPrayer ────────────────────────────────────────────────────────────

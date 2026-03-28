@@ -21,8 +21,15 @@ export function SessionTab() {
 	const { permission, isEnabled, reminderTime, enable, disable, updateTime } = useNotifications(
 		t('settings.notificationsBody'),
 	);
-	const { setSessionOrder, sessionOrder, sujoodTrackingEnabled, setSujoodTrackingEnabled } =
-		usePrayerStore();
+	const {
+		setSessionOrder,
+		sessionOrder,
+		sujoodTrackingEnabled,
+		setSujoodTrackingEnabled,
+		activeObjective,
+		sessionsPerDay,
+		setSessionsPerDay,
+	} = usePrayerStore();
 
 	const SESSION_ORDERS: { value: SessionOrder; label: string }[] = [
 		{ value: 'chronological', label: t('settings.chronological') },
@@ -78,6 +85,33 @@ export function SessionTab() {
 							</span>
 						</button>
 					</div>
+					{activeObjective && (
+						<>
+							<div className="h-px bg-border" />
+							<div className="flex flex-col gap-1">
+								<span className="text-sm font-medium text-foreground">
+									{t('settings.sessionsPerDay')}
+								</span>
+								<span className="text-[11px] text-muted">{t('settings.sessionsPerDayDesc')}</span>
+							</div>
+							<div className="flex gap-2">
+								{[1, 2, 3, 4, 5].map((n) => (
+									<button
+										type="button"
+										key={n}
+										onClick={() => setSessionsPerDay(n)}
+										className={`flex-1 rounded-[20px] py-2.5 text-[13px] transition-colors ${
+											sessionsPerDay === n
+												? 'bg-gold text-background font-semibold'
+												: 'bg-background border border-border text-tertiary font-medium'
+										}`}
+									>
+										{n}
+									</button>
+								))}
+							</div>
+						</>
+					)}
 				</div>
 			</CollapsibleSection>
 
