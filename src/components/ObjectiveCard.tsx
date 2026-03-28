@@ -38,7 +38,10 @@ export function ObjectiveCard({
 }: ObjectiveCardProps) {
 	const { t } = useTranslation();
 
-	const suggestion = useMemo(() => calculateSuggestion(totalRemaining, period), [totalRemaining, period]);
+	const suggestion = useMemo(
+		() => calculateSuggestion(totalRemaining, period),
+		[totalRemaining, period],
+	);
 
 	const parsedTarget = parseInt(target, 10);
 	const effectiveTarget = !Number.isNaN(parsedTarget) && parsedTarget > 0 ? parsedTarget : null;
