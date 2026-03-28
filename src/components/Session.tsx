@@ -15,12 +15,15 @@ type Phase = 'setup' | 'active' | 'complete';
 
 const PRESETS = [5, 10, 15, 20];
 
-function computeTarget(obj: Objective | null): number {
+function computeTarget(obj: Objective | null, sessionsPerDay = 1): number {
 	if (!obj) return 10;
-	if (obj.period === 'daily') return obj.target;
-	if (obj.period === 'weekly') return Math.round(obj.target / 7);
-	if (obj.period === 'monthly') return Math.round(obj.target / 30);
-	return 10;
+	const daily =
+		obj.period === 'daily'
+			? obj.target
+			: obj.period === 'weekly'
+				? Math.round(obj.target / 7)
+				: Math.round(obj.target / 30);
+	return Math.max(1, Math.ceil(daily / sessionsPerDay));
 }
 
 const ghostVariants = {
@@ -322,8 +325,9 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
 	const sessionOrder = usePrayerStore((s) => s.sessionOrder);
 	const sujoodTrackingEnabled = usePrayerStore((s) => s.sujoodTrackingEnabled);
+	const sessionsPerDay = usePrayerStore((s) => s.sessionsPerDay);
 
-	const defaultTarget = computeTarget(activeObjective);
+	const defaultTarget = computeTarget(activeObjective, sessionsPerDay);
 
 	const avgPace = useAvgPacePerPrayer();
 
@@ -340,11 +344,11 @@ export function Session({ onClose }: { onClose: () => void }) {
 
 	useEffect(() => {
 		if (userEdited || phase !== 'setup') return;
-		const t = computeTarget(activeObjective);
+		const t = computeTarget(activeObjective, sessionsPerDay);
 		if (t === target) return;
 		setTargetDir(t >= target ? 1 : -1);
 		setTarget(t);
-	}, [activeObjective, userEdited, phase, target]);
+	}, [activeObjective, sessionsPerDay, userEdited, phase, target]);
 	const [prayerOrder, setPrayerOrder] = useState<PrayerName[]>([...PRAYER_NAMES]);
 	const [completed, setCompleted] = useState(0);
 	const [currentPrayerIndex, setCurrentPrayerIndex] = useState(0);
