@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.20.0',
+		date: '2026-03-29',
+		changes: {
+			fr: ["Session : le message d\u2019encouragement est maintenant affiché au-dessus du bouton Démarrer"],
+			en: ['Session: encouragement message is now displayed above the Start button'],
+		},
+	},
+	{
 		version: '1.19.0',
 		date: '2026-03-29',
 		changes: {

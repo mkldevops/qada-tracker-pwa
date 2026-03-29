@@ -610,6 +610,8 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</AnimatePresence>
 						</motion.div>
 
+						<EncouragementMessage />
+
 						<motion.button
 							onClick={handleStart}
 							disabled={target === 0}
@@ -635,8 +637,6 @@ export function Session({ onClose }: { onClose: () => void }) {
 						>
 							{t('session.cancel')}
 						</motion.button>
-
-						<EncouragementMessage />
 					</motion.div>
 				)}
 
