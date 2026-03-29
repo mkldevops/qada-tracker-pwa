@@ -112,7 +112,7 @@ export function App() {
 	}
 
 	const pages = {
-		dashboard: <Dashboard />,
+		dashboard: <Dashboard onRestartOnboarding={handleRestartOnboarding} />,
 		log: <LogPrayers />,
 		stats: <Stats />,
 		settings: <Settings onRestartOnboarding={handleRestartOnboarding} />,

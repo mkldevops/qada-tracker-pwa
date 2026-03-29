@@ -32,7 +32,10 @@
 		"estimation": "estimation",
 		"estimationRate": "Estimation au rythme de {{rate}} prière/jour pour finir",
 		"prayers": "PRIÈRES",
-		"remaining": "{{count}} restantes"
+		"remaining": "{{count}} restantes",
+		"allCaughtUp": "Toutes vos prières sont à jour.",
+		"allCaughtUpSub": "Définissez de nouveaux chiffres pour continuer à suivre vos qada.",
+		"reconfigure": "RECONFIGURER"
 	},
 	"stats": {
 		"title": "Statistiques",
