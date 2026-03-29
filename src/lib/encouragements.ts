@@ -7,7 +7,7 @@ export const ENCOURAGEMENTS = [
 	"Le repentir sinc\u00e8re efface ce qui est pass\u00e9. Commence aujourd\u2019hui.",
 	"Nul ne conna\u00eet la mis\u00e9ricorde d\u2019Allah mieux que celui qui revient \u00e0 Lui.",
 	"Chaque jour est une nouvelle chance offerte par Allah.",
-	"La r\u00e9gularit\u00e9, m\u00eame modeste, est aim\u00e9e d\u2019Allah.",
+	"La r\u00e9gularit\u00e9, m\u00eame modeste, est agr\u00e9e d\u2019Allah.",
 	"Ce que tu accomplis aujourd\u2019hui, tu le retrouveras demain.",
 	"Chaque session est une victoire sur la procrastination.",
 	"Tu es plus proche du bilan qu\u2019hier. Continue.",
