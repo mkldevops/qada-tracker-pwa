@@ -16,10 +16,12 @@ const ENTRIES: ChangelogEntry[] = [
 			fr: [
 				'Accueil : écran vide avec bouton de reconfiguration lorsque toutes les prières sont à jour',
 				'Correction : la PWA iOS ne colle plus en haut \u2014 prise en compte du safe-area-inset-top',
+				'Correction : le message d\u2019encouragement dans la session n\u2019est plus masqué par la barre de navigation',
 			],
 			en: [
 				'Dashboard: zero state with reconfigure button when all prayers are caught up',
 				'Fix: iOS PWA content no longer overlaps the status bar (safe-area-inset-top)',
+				'Fix: session setup encouragement message is no longer hidden behind the bottom nav',
 			],
 		},
 	},
