@@ -21,6 +21,7 @@ const ENTRIES: ChangelogEntry[] = [
 				'Réglages : le sélecteur d\u2019objectif affiche la valeur actuelle par défaut, avec conversion automatique entre périodes',
 				'Session : correction du décompte des rak\u2019a restantes ; le sélecteur ne revient plus à 0 après avoir appliqué l\u2019objectif ; affichage du temps estimé en or avec icône',
 				'Accueil : écran vide avec bouton de reconfiguration lorsque toutes les prières sont à jour',
+				'Correction : la PWA iOS ne colle plus en haut — prise en compte du safe-area-inset-top',
 			],
 			en: [
 				'Onboarding: Islamic reminder carousel on the objective step (rotates every 7 s)',
@@ -30,6 +31,7 @@ const ENTRIES: ChangelogEntry[] = [
 				'Settings: objective stepper now defaults to the current value, with automatic period conversion',
 				'Session: fix off-by-one in rakat remaining countdown; stepper no longer resets to 0 after applying objective; timer display styled with gold icon',
 				'Dashboard: show a zero state with reconfigure button when all prayers are caught up',
+				'Fix: iOS PWA safe-area-inset-top — content no longer overlaps the status bar',
 			],
 		},
 	},
