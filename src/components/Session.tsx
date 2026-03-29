@@ -527,7 +527,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 				{phase === 'setup' && (
 					<motion.div
 						key="setup"
-						className="flex flex-1 flex-col overflow-y-auto px-7 pt-14 pb-32"
+						className="flex flex-1 flex-col overflow-y-auto px-7 pt-6 pb-32"
 						initial={{ opacity: 0, x: 40 }}
 						animate={{ opacity: 1, x: 0 }}
 						exit={{ opacity: 0, x: -40 }}
