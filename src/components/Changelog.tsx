@@ -16,10 +16,12 @@ const ENTRIES: ChangelogEntry[] = [
 			fr: [
 				"Correction : le message d\u2019encouragement n\u2019est plus tronqué en bas de l\u2019écran de session",
 				"Correction : espacement réduit en haut de l\u2019écran de lancement de session",
+				"Session : suppression des boutons de pr\u00e9s\u00e9lection rapide (5, 10, 15, 20)",
 			],
 			en: [
 				'Fix: encouragement message no longer clipped at the bottom of the session setup screen',
 				'Fix: reduced top padding on the session setup screen',
+				'Session: removed quick-select preset buttons (5, 10, 15, 20)',
 			],
 		},
 	},
