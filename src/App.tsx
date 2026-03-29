@@ -2,6 +2,7 @@ import { useRegisterSW } from 'virtual:pwa-register/react';
 import { AnimatePresence } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Toaster, toast } from 'sonner';
 import { BottomNav } from '@/components/BottomNav';
 import { InstallBanner } from '@/components/InstallBanner';
 import { MilestoneModal } from '@/components/MilestoneModal';
@@ -73,13 +74,27 @@ export function App() {
 	}, []);
 
 	useEffect(() => {
+		if (localStorage.getItem('pwa_updated')) {
+			localStorage.removeItem('pwa_updated');
+			toast.success(`v${__APP_VERSION__}`, {
+				description: t('app.updateSuccess'),
+				duration: 4000,
+			});
+		}
+	}, [t]);
+
+	useEffect(() => {
 		if (!needRefresh) return;
-		if (document.hidden) {
+		const triggerUpdate = () => {
+			localStorage.setItem('pwa_updated', '1');
 			updateServiceWorker(true);
+		};
+		if (document.hidden) {
+			triggerUpdate();
 			return;
 		}
 		const handleHide = () => {
-			if (document.hidden) updateServiceWorker(true);
+			if (document.hidden) triggerUpdate();
 		};
 		document.addEventListener('visibilitychange', handleHide);
 		return () => document.removeEventListener('visibilitychange', handleHide);
@@ -141,6 +156,17 @@ export function App() {
 			</AnimatePresence>
 			<MilestoneModal milestone={pendingMilestone} onClose={clearMilestone} />
 			<BottomNav activeTab={activeTab} onTabChange={handleTabChange} />
+			<Toaster
+				position="top-center"
+				toastOptions={{
+					style: {
+						background: 'var(--surface-raised)',
+						border: '1px solid var(--border)',
+						color: 'var(--text-primary)',
+						fontFamily: 'inherit',
+					},
+				}}
+			/>
 		</div>
 	);
 }

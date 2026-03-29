@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.19.0',
+		date: '2026-03-29',
+		changes: {
+			fr: ["Notification de mise \u00e0 jour : un toast s\u2019affiche avec le num\u00e9ro de version apr\u00e8s chaque mise \u00e0 jour de l\u2019application"],
+			en: ['Update notification: a toast appears with the version number after each app update'],
+		},
+	},
+	{
 		version: '1.18.0',
 		date: '2026-03-29',
 		changes: {

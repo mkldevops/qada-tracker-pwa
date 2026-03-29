@@ -16,6 +16,9 @@
 		"years": "Years",
 		"months": "Months"
 	},
+	"app": {
+		"updateSuccess": "Update installed successfully"
+	},
 	"nav": {
 		"home": "HOME",
 		"log": "LOG",
