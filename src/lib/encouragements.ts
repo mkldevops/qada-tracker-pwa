@@ -1,24 +1,33 @@
 export const ENCOURAGEMENTS = [
-	"Chaque pri\u00e8re rattrap\u00e9e est un pas de plus vers Sa satisfaction.",
-	"Allah r\u00e9compense chaque effort, m\u00eame le plus petit.",
-	"La constance vaut mieux que l\u2019intensit\u00e9. Avance \u00e0 ton rythme.",
-	"Tu as fait le premier pas. C\u2019est le plus courageux.",
-	"Allah agr\u00e9e que Son serviteur revienne \u00e0 Lui, encore et encore.",
-	"Le repentir sinc\u00e8re efface ce qui est pass\u00e9. Commence aujourd\u2019hui.",
-	"Nul ne conna\u00eet la mis\u00e9ricorde d\u2019Allah mieux que celui qui revient \u00e0 Lui.",
-	"Chaque jour est une nouvelle chance offerte par Allah.",
-	"La r\u00e9gularit\u00e9, m\u00eame modeste, est agr\u00e9e d\u2019Allah.",
-	"Ce que tu accomplis aujourd\u2019hui, tu le retrouveras demain.",
-	"Chaque session est une victoire sur la procrastination.",
-	"Tu es plus proche du bilan qu\u2019hier. Continue.",
-	"Allah voit ton effort, m\u00eame quand personne d\u2019autre ne le voit.",
-	"Une pri\u00e8re rattrap\u00e9e vaut mieux que mille intentions.",
-	"Le chemin est long, mais chaque pas compte.",
-	"Sois fier de ce que tu as accompli aujourd\u2019hui.",
-	"Allah n\u2019impose \u00e0 aucune \u00e2me plus qu\u2019elle ne peut supporter.",
-	"Ce qui est fait avec sinc\u00e9rit\u00e9 ne se perd jamais.",
-	"Revenir \u00e0 Allah est toujours possible, \u00e0 tout moment.",
-	"La douceur envers soi-m\u00eame fait partie de la sagesse.",
+	// Pardon & repentir
+	'\u00d4 fils d\u2019Adam, tant que tu M\u2019implores avec espoir, Je te pardonnerai quelles que soient tes fautes.',
+	'Ceux qui se souviennent d\u2019Allah et demandent pardon pour leurs fautes \u2014 nul autre qu\u2019Allah ne pardonne.',
+	'Allah pardonne tous les p\u00e9ch\u00e9s, sauf l\u2019association. Ne d\u00e9sesp\u00e8re jamais de Sa mis\u00e9ricorde.',
+	'Le repentir sinc\u00e8re efface ce qui est pass\u00e9. Il n\u2019est jamais trop tard.',
+
+	// Pri\u00e8re & proximit\u00e9 divine
+	'L\u2019esclave est le plus proche de l\u2019agr\u00e9ment de son Seigneur lorsqu\u2019il est en prosternation.',
+	'La pri\u00e8re emp\u00eache l\u2019abominable \u2014 chaque rak\u2019a rattrap\u00e9e en est la preuve.',
+	'La pri\u00e8re en assembl\u00e9e d\u00e9passe de vingt-sept degr\u00e9s la pri\u00e8re accomplie seul.',
+	'Pers\u00e9v\u00e8re dans la pri\u00e8re \u2014 c\u2019est un commandement direct de ton Seigneur.',
+
+	// Urgence & bilan
+	'Que chaque \u00e2me regarde ce qu\u2019elle envoie pour demain.',
+	'Qui s\u2019\u00e9loigne du rappel d\u2019Allah aura une vie difficile. Tu as choisi le retour.',
+	'La tombe est soit un jardin du Paradis, soit une fosse de l\u2019Enfer \u2014 pr\u00e9pare-toi d\u00e8s maintenant.',
+	'Chaque session est un acte envoy\u00e9 pour demain. Aucun ne se perd.',
+
+	// Patience & \u00e9preuves
+	'Quiconque craint Allah, Il lui m\u00e9nagera une issue et lui accordera au-del\u00e0 de toute attente.',
+	'Quiconque s\u2019en remet \u00e0 Allah \u2014 Il lui suffit.',
+	'Les plus grandes \u00e9preuves touchent les prophètes, puis les meilleurs \u2014 ta lutte t\u00e9moigne de ta foi.',
+	'La patience dans l\u2019\u00e9preuve \u00e9l\u00e8ve le rang et efface les p\u00e9ch\u00e9s.',
+
+	// Pr\u00e9destination & confiance
+	'Allah a cr\u00e9\u00e9 toute chose par pr\u00e9destination \u2014 y compris ce moment de retour \u00e0 Lui.',
+	'Ce qu\u2019Allah a voulu est\u00a0; ce qu\u2019Il n\u2019a pas voulu n\u2019est pas. Ton retour \u00e9tait dans Son d\u00e9cret.',
+	'Vous ne voulez que si Allah le veut \u2014 Il a voulu que tu sois l\u00e0, en ce moment.',
+	'Chaque prosternation te rapproche du Jour o\u00f9 les actes seront pes\u00e9s.',
 ];
 
 export function randomEncouragement(): string {
