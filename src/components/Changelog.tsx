@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.21.0',
+		date: '2026-03-29',
+		changes: {
+			fr: ["Historique : la dur\u00e9e des sessions affiche maintenant les minutes et les secondes"],
+			en: ['History: session duration now displays minutes and seconds'],
+		},
+	},
+	{
 		version: '1.20.0',
 		date: '2026-03-29',
 		changes: {

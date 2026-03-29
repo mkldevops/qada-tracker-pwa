@@ -243,14 +243,16 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 				{groups.map((group, gi) => {
 					const totalPrayers = group.entries.reduce((s, e) => s + e.quantity, 0);
 					const isSession = group.sessionId?.startsWith('session-') ?? false;
-					const durationMin =
+					const durationSec =
 						isSession && group.entries.length > 1
 							? Math.floor(
 									(new Date(group.entries[0].logged_at).getTime() -
 										new Date(group.entries[group.entries.length - 1].logged_at).getTime()) /
-										60000,
+										1000,
 								)
 							: 0;
+					const durationMin = Math.floor(durationSec / 60);
+					const durationRemSec = durationSec % 60;
 
 					return (
 						<motion.div
@@ -285,9 +287,13 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 								>
 									+{totalPrayers}
 								</span>
-								{durationMin >= 1 && (
+								{durationSec >= 1 && (
 									<span className="text-[10px]" style={{ color: '#4A4A4C' }}>
-										{durationMin} min
+										{durationMin >= 1
+											? durationRemSec > 0
+												? `${durationMin} min ${durationRemSec}s`
+												: `${durationMin} min`
+											: `${durationSec}s`}
 									</span>
 								)}
 							</div>
