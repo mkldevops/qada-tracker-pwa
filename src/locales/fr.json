@@ -16,6 +16,9 @@
 		"years": "Années",
 		"months": "Mois"
 	},
+	"app": {
+		"updateSuccess": "Mise à jour installée avec succès"
+	},
 	"nav": {
 		"home": "ACCUEIL",
 		"log": "LOGGER",

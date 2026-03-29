@@ -21,6 +21,7 @@ export function useVersionCheck(): void {
 				}
 
 				if (data.version !== currentVersionRef.current) {
+					localStorage.setItem('pwa_updated', '1');
 					if (document.hidden) {
 						window.location.reload();
 					} else {
