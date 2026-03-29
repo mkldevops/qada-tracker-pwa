@@ -10,9 +10,18 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 	const { t } = useTranslation();
 	const { setObjective, activeObjective } = usePrayerStore();
 	const totalRemaining = useTotalRemaining();
-	const [objPeriod, setObjPeriod] = useState<Period>('daily');
-	const [objTarget, setObjTarget] = useState<number>(0);
+	const [objPeriod, setObjPeriod] = useState<Period>(() => activeObjective?.period ?? 'daily');
+	const [objTarget, setObjTarget] = useState<number>(() => activeObjective?.target ?? 0);
 	const [error, setError] = useState<string | null>(null);
+
+	function handlePeriodChange(newPeriod: Period) {
+		const perDay =
+			objPeriod === 'daily' ? objTarget : objPeriod === 'weekly' ? objTarget / 7 : objTarget / 30;
+		const newTarget =
+			newPeriod === 'daily' ? perDay : newPeriod === 'weekly' ? perDay * 7 : perDay * 30;
+		setObjPeriod(newPeriod);
+		setObjTarget(Math.round(Math.max(1, newTarget)));
+	}
 
 	const handleSetObjective = async () => {
 		if (objTarget > 0) {
@@ -45,7 +54,7 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 
 					<ObjectiveCard
 						period={objPeriod}
-						onPeriodChange={setObjPeriod}
+						onPeriodChange={handlePeriodChange}
 						target={objTarget}
 						onTargetChange={setObjTarget}
 						totalRemaining={totalRemaining}
