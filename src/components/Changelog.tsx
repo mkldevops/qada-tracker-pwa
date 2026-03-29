@@ -10,6 +10,22 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.18.0',
+		date: '2026-03-29',
+		changes: {
+			fr: [
+				'Accueil : écran vide avec bouton de reconfiguration lorsque toutes les prières sont à jour',
+				'Correction : la PWA iOS ne colle plus en haut \u2014 prise en compte du safe-area-inset-top',
+				'Correction : le message d\u2019encouragement dans la session n\u2019est plus masqué par la barre de navigation',
+			],
+			en: [
+				'Dashboard: zero state with reconfigure button when all prayers are caught up',
+				'Fix: iOS PWA content no longer overlaps the status bar (safe-area-inset-top)',
+				'Fix: session setup encouragement message is no longer hidden behind the bottom nav',
+			],
+		},
+	},
+	{
 		version: '1.17.0',
 		date: '2026-03-29',
 		changes: {
@@ -20,6 +36,8 @@ const ENTRIES: ChangelogEntry[] = [
 				'Onboarding : saisie de l\u2019objectif convertie en sélecteur +/- avec conversion automatique jour/semaine/mois',
 				'Réglages : le sélecteur d\u2019objectif affiche la valeur actuelle par défaut, avec conversion automatique entre périodes',
 				'Session : correction du décompte des rak\u2019a restantes ; le sélecteur ne revient plus à 0 après avoir appliqué l\u2019objectif ; affichage du temps estimé en or avec icône',
+				'Accueil : écran vide avec bouton de reconfiguration lorsque toutes les prières sont à jour',
+				'Correction : la PWA iOS ne colle plus en haut — prise en compte du safe-area-inset-top',
 			],
 			en: [
 				'Onboarding: Islamic reminder carousel on the objective step (rotates every 7 s)',
@@ -28,6 +46,8 @@ const ENTRIES: ChangelogEntry[] = [
 				'Onboarding: objective input replaced with +/- stepper with automatic day/week/month conversion',
 				'Settings: objective stepper now defaults to the current value, with automatic period conversion',
 				'Session: fix off-by-one in rakat remaining countdown; stepper no longer resets to 0 after applying objective; timer display styled with gold icon',
+				'Dashboard: show a zero state with reconfigure button when all prayers are caught up',
+				'Fix: iOS PWA safe-area-inset-top — content no longer overlaps the status bar',
 			],
 		},
 	},

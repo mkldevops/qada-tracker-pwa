@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus, RotateCcw } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -173,7 +173,7 @@ function PrayerRow({
 	);
 }
 
-export function Dashboard() {
+export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
 	const { t } = useTranslation();
 	const { logPrayer } = usePrayerStore();
 	const debts = useDebts();
@@ -225,59 +225,93 @@ export function Dashboard() {
 					{catchUpLabel && <p className="text-sm text-background/50">{catchUpLabel}</p>}
 				</motion.div>
 
-				<motion.button
-					type="button"
-					onClick={() => setShowSession(true)}
-					disabled={totalRemaining === 0}
-					className="w-full rounded-[28px] py-4 font-semibold tracking-[1.5px] bg-surface border border-gold text-gold disabled:opacity-30"
-					initial={{ opacity: 0, y: 10 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.1, ...spring }}
-					whileTap={{ scale: 0.97 }}
-					whileHover={{ scale: 1.01 }}
-				>
-					{t('dashboard.launchSession')}
-				</motion.button>
-
-				<div className="flex gap-3">
-					<StatPill
-						label={t('dashboard.today')}
-						value={activeObjective ? `${stats.today} / ${activeObjective.target}` : stats.today}
-						color="var(--gold)"
-						index={0}
-					/>
-					<AnimatePresence>
-						{stats.estimatedDays !== null && (
-							<EstimationCard
-								key="estimation"
-								estimatedDays={stats.estimatedDays}
-								avgPerDay={stats.avgPerDay}
-							/>
-						)}
-					</AnimatePresence>
-				</div>
-
-				<div className="flex flex-col gap-2.5">
-					<motion.p
-						className="text-[11px] font-medium tracking-[3px] text-tertiary"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ delay: 0.24 }}
+				{totalRemaining === 0 ? (
+					<motion.div
+						className="flex flex-col items-center gap-6 py-8"
+						initial={{ opacity: 0, y: 16 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.12, ...spring }}
 					>
-						{t('dashboard.prayers')}
-					</motion.p>
-					{PRAYER_NAMES.map((prayer, index) => (
-						<PrayerRow
-							key={prayer}
-							prayer={prayer}
-							remaining={debts[prayer]?.remaining ?? 0}
-							totalOwed={debts[prayer]?.total_owed ?? 0}
-							totalCompleted={debts[prayer]?.total_completed ?? 0}
-							onLog={logPrayer}
-							index={index}
-						/>
-					))}
-				</div>
+						<div className="flex flex-col items-center gap-2 text-center px-4">
+							<p
+								className="font-display text-2xl italic"
+								style={{ color: 'var(--text-secondary)' }}
+							>
+								{t('dashboard.allCaughtUp')}
+							</p>
+							<p className="text-xs text-muted leading-relaxed">{t('dashboard.allCaughtUpSub')}</p>
+						</div>
+						{onRestartOnboarding && (
+							<motion.button
+								type="button"
+								onClick={onRestartOnboarding}
+								className="flex items-center gap-2.5 rounded-[28px] px-6 py-4 bg-surface border border-border"
+								whileTap={{ scale: 0.97 }}
+								whileHover={{ scale: 1.01 }}
+							>
+								<RotateCcw size={15} className="text-gold" />
+								<span className="text-xs font-semibold tracking-[1px] text-gold">
+									{t('dashboard.reconfigure')}
+								</span>
+							</motion.button>
+						)}
+					</motion.div>
+				) : (
+					<>
+						<motion.button
+							type="button"
+							onClick={() => setShowSession(true)}
+							className="w-full rounded-[28px] py-4 font-semibold tracking-[1.5px] bg-surface border border-gold text-gold"
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ delay: 0.1, ...spring }}
+							whileTap={{ scale: 0.97 }}
+							whileHover={{ scale: 1.01 }}
+						>
+							{t('dashboard.launchSession')}
+						</motion.button>
+
+						<div className="flex gap-3">
+							<StatPill
+								label={t('dashboard.today')}
+								value={activeObjective ? `${stats.today} / ${activeObjective.target}` : stats.today}
+								color="var(--gold)"
+								index={0}
+							/>
+							<AnimatePresence>
+								{stats.estimatedDays !== null && (
+									<EstimationCard
+										key="estimation"
+										estimatedDays={stats.estimatedDays}
+										avgPerDay={stats.avgPerDay}
+									/>
+								)}
+							</AnimatePresence>
+						</div>
+
+						<div className="flex flex-col gap-2.5">
+							<motion.p
+								className="text-[11px] font-medium tracking-[3px] text-tertiary"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								transition={{ delay: 0.24 }}
+							>
+								{t('dashboard.prayers')}
+							</motion.p>
+							{PRAYER_NAMES.map((prayer, index) => (
+								<PrayerRow
+									key={prayer}
+									prayer={prayer}
+									remaining={debts[prayer]?.remaining ?? 0}
+									totalOwed={debts[prayer]?.total_owed ?? 0}
+									totalCompleted={debts[prayer]?.total_completed ?? 0}
+									onLog={logPrayer}
+									index={index}
+								/>
+							))}
+						</div>
+					</>
+				)}
 			</div>
 
 			<AnimatePresence>

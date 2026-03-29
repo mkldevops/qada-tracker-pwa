@@ -112,7 +112,7 @@ export function App() {
 	}
 
 	const pages = {
-		dashboard: <Dashboard />,
+		dashboard: <Dashboard onRestartOnboarding={handleRestartOnboarding} />,
 		log: <LogPrayers />,
 		stats: <Stats />,
 		settings: <Settings onRestartOnboarding={handleRestartOnboarding} />,
@@ -120,7 +120,7 @@ export function App() {
 
 	return (
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
-			<main className="mx-auto max-w-lg pt-4 pb-28 overflow-hidden">
+			<main className="mx-auto max-w-lg pt-safe pb-28 overflow-hidden">
 				{(Object.keys(pages) as Tab[]).map(
 					(tab) =>
 						mountedTabs.has(tab) && (
