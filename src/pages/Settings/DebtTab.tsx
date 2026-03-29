@@ -27,7 +27,6 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 		if (objTarget > 0) {
 			try {
 				await setObjective(objPeriod, objTarget);
-				setObjTarget(0);
 			} catch {
 				setError(t('settings.importError'));
 			}

@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronsUpDown } from 'lucide-react';
+import { CheckCircle2, ChevronsUpDown, Timer } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -508,7 +508,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 			i++;
 		}
 	}
-	const effectiveRakatsRemaining = Math.max(0, sessionRakatsRemaining - (currentRakat - 1));
+	const effectiveRakatsRemaining = Math.max(0, sessionRakatsRemaining - currentRakat);
 
 	const currentEntry =
 		phase === 'active' ? getNextPrayer(debts, prayerOrder, currentPrayerIndex) : null;
@@ -590,16 +590,22 @@ export function Session({ onClose }: { onClose: () => void }) {
 							<NumberPicker value={target} dir={targetDir} onChange={changeTarget} />
 							<AnimatePresence>
 								{avgPace !== null && target > 0 && (
-									<motion.p
+									<motion.div
 										key={target}
-										className="mt-2 text-center text-[11px] tabular-nums text-muted"
+										className="mt-3 flex items-center justify-center gap-1.5"
 										initial={{ opacity: 0, y: -4 }}
 										animate={{ opacity: 1, y: 0 }}
 										exit={{ opacity: 0 }}
 										transition={spring}
 									>
-										{formatPace(avgPace, target)}
-									</motion.p>
+										<Timer size={11} style={{ color: 'var(--gold)', opacity: 0.7 }} />
+										<span
+											className="text-[11px] tabular-nums font-medium"
+											style={{ color: 'var(--gold)', opacity: 0.7 }}
+										>
+											{formatPace(avgPace, target)}
+										</span>
+									</motion.div>
 								)}
 							</AnimatePresence>
 						</motion.div>
