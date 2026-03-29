@@ -10,6 +10,28 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.17.0',
+		date: '2026-03-29',
+		changes: {
+			fr: [
+				'Onboarding : carousel de rappels islamiques sur l\u2019étape objectif (rotation toutes les 7 s)',
+				'Messages d\u2019encouragement islamiques affichés à la fin de l\u2019onboarding, au démarrage et à la fin d\u2019une session',
+				'Session : affichage agrandi des rak\u2019a restantes, décompte en temps réel à chaque rak\u2019a accomplie',
+				'Onboarding : saisie de l\u2019objectif convertie en sélecteur +/- avec conversion automatique jour/semaine/mois',
+				'Réglages : le sélecteur d\u2019objectif affiche la valeur actuelle par défaut, avec conversion automatique entre périodes',
+				'Session : correction du décompte des rak\u2019a restantes ; le sélecteur ne revient plus à 0 après avoir appliqué l\u2019objectif ; affichage du temps estimé en or avec icône',
+			],
+			en: [
+				'Onboarding: Islamic reminder carousel on the objective step (rotates every 7 s)',
+				'Islamic encouragement messages shown at the end of onboarding, session start, and session completion',
+				'Session: enlarged remaining rak\u2019a display, real-time countdown per completed rak\u2019a',
+				'Onboarding: objective input replaced with +/- stepper with automatic day/week/month conversion',
+				'Settings: objective stepper now defaults to the current value, with automatic period conversion',
+				'Session: fix off-by-one in rakat remaining countdown; stepper no longer resets to 0 after applying objective; timer display styled with gold icon',
+			],
+		},
+	},
+	{
 		version: '1.16.0',
 		date: '2026-03-28',
 		changes: {

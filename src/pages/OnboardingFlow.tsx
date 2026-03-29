@@ -3,10 +3,12 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { HaydStepper } from '@/components/HaydStepper';
+import { IslamicReminder } from '@/components/IslamicReminder';
 import { ObjectiveCard } from '@/components/ObjectiveCard';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { spring, springSnappy } from '@/lib/animations';
 import { calculateSuggestion } from '@/lib/calculateSuggestion';
+import { randomEncouragement } from '@/lib/encouragements';
 import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -532,13 +534,16 @@ function DebtStep({
 							{manualTotal > 0 && (
 								<motion.div
 									className="flex items-center justify-between px-5 py-3"
-									style={{ background: '#1A2820', borderTop: '1px solid #6E9E6E30' }}
+									style={{
+										background: 'var(--surface-raised)',
+										borderTop: '1px solid var(--border)',
+									}}
 									initial={{ opacity: 0, height: 0 }}
 									animate={{ opacity: 1, height: 'auto' }}
 									exit={{ opacity: 0, height: 0 }}
 									transition={spring}
 								>
-									<span className="text-xs" style={{ color: 'var(--sage)' }}>
+									<span className="text-xs" style={{ color: 'var(--gold)' }}>
 										{t('onboarding.total')}
 									</span>
 									<span
@@ -559,13 +564,13 @@ function DebtStep({
 				{debtMode === 'years' && canProceed && (
 					<motion.div
 						className="rounded-[20px] p-5 flex flex-col gap-3"
-						style={{ background: '#1A2820', border: '1px solid #6E9E6E40' }}
+						style={{ background: 'var(--surface)', border: '1px solid #C9A96240' }}
 						initial={{ opacity: 0, y: 10 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 10 }}
 						transition={spring}
 					>
-						<p className="text-[11px] font-medium tracking-[2px]" style={{ color: 'var(--sage)' }}>
+						<p className="text-[11px] font-medium tracking-[2px]" style={{ color: 'var(--gold)' }}>
 							{t('onboarding.preview')}
 						</p>
 						<div className="flex justify-between items-center">
@@ -583,7 +588,7 @@ function DebtStep({
 								{totalPreview.toLocaleString()}
 							</motion.span>
 						</div>
-						<div style={{ height: 1, background: '#2A3A30' }} />
+						<div style={{ height: 1, background: 'var(--border)' }} />
 						{PRAYER_NAMES.map((p) => {
 							const cfg = PRAYER_CONFIG[p];
 							return (
@@ -658,58 +663,67 @@ function ObjectiveStep({
 	const { t } = useTranslation();
 	const totalRemaining = useTotalRemaining();
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
-	const [objTarget, setObjTarget] = useState('');
+	const [objTarget, setObjTarget] = useState<number>(
+		() => calculateSuggestion(totalRemaining, 'daily') ?? 10,
+	);
 
-	const suggestion = calculateSuggestion(totalRemaining, objPeriod);
-
-	const parsedTarget = parseInt(objTarget, 10);
-	const effectiveTarget = !Number.isNaN(parsedTarget) && parsedTarget > 0 ? parsedTarget : null;
+	function handlePeriodChange(newPeriod: Period) {
+		const perDay =
+			objPeriod === 'daily' ? objTarget : objPeriod === 'weekly' ? objTarget / 7 : objTarget / 30;
+		const newTarget =
+			newPeriod === 'daily' ? perDay : newPeriod === 'weekly' ? perDay * 7 : perDay * 30;
+		setObjPeriod(newPeriod);
+		setObjTarget(Math.max(1, Math.round(newTarget)));
+	}
 
 	return (
 		<motion.div
 			key="objective"
-			className="flex flex-1 flex-col min-h-0 px-7 pt-10 pb-8 gap-6 overflow-y-auto"
+			className="flex flex-1 flex-col min-h-0 px-7 pt-10 pb-8"
 			initial={{ opacity: 0, x: 60 }}
 			animate={{ opacity: 1, x: 0 }}
 			exit={{ opacity: 0, x: -60 }}
 			transition={spring}
 		>
-			<div className="flex flex-col gap-3">
-				<StepIndicator current={2} total={2} />
-				<div className="flex flex-col gap-1">
-					<h2
-						className="font-display text-3xl font-normal"
-						style={{ color: 'var(--text-primary)' }}
-					>
-						{t('onboarding.objectiveTitle')}
-					</h2>
-					<p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-						{t('onboarding.objectiveSubtitle')}
-					</p>
+			<div className="flex flex-col gap-6 overflow-y-auto min-h-0 flex-1">
+				<div className="flex flex-col gap-3">
+					<StepIndicator current={2} total={2} />
+					<div className="flex flex-col gap-1">
+						<h2
+							className="font-display text-3xl font-normal"
+							style={{ color: 'var(--text-primary)' }}
+						>
+							{t('onboarding.objectiveTitle')}
+						</h2>
+						<p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+							{t('onboarding.objectiveSubtitle')}
+						</p>
+					</div>
 				</div>
+
+				<div
+					className="flex flex-col gap-4 rounded-[20px] p-5"
+					style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+				>
+					<ObjectiveCard
+						period={objPeriod}
+						onPeriodChange={handlePeriodChange}
+						target={objTarget}
+						onTargetChange={setObjTarget}
+						totalRemaining={totalRemaining}
+					/>
+				</div>
+
+				<AnimatePresence>{saveError && <ErrorBanner message={saveError} />}</AnimatePresence>
+
+				<IslamicReminder />
 			</div>
 
-			<div
-				className="flex flex-col gap-4 rounded-[20px] p-5"
-				style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-			>
-				<ObjectiveCard
-					period={objPeriod}
-					onPeriodChange={setObjPeriod}
-					target={objTarget}
-					onTargetChange={setObjTarget}
-					totalRemaining={totalRemaining}
-					inputId="ob-target"
-				/>
-			</div>
-
-			<AnimatePresence>{saveError && <ErrorBanner message={saveError} />}</AnimatePresence>
-
-			<div className="mt-auto flex flex-col gap-3">
+			<div className="flex flex-col gap-3 pt-4">
 				<motion.button
 					type="button"
-					onClick={() => effectiveTarget && onNext(objPeriod, effectiveTarget)}
-					disabled={!effectiveTarget || saving}
+					onClick={() => onNext(objPeriod, objTarget)}
+					disabled={!objTarget || saving}
 					className="w-full rounded-[28px] py-4 text-base font-semibold tracking-[1.5px] transition-opacity disabled:opacity-30"
 					style={{
 						background: 'linear-gradient(135deg, var(--gold), var(--gold-deep))',
@@ -732,7 +746,7 @@ function ObjectiveStep({
 				</motion.button>
 				<motion.button
 					type="button"
-					onClick={() => onNext(objPeriod, suggestion ?? 10)}
+					onClick={() => onNext(objPeriod, objTarget)}
 					className="text-sm py-2"
 					style={{ color: 'var(--text-tertiary)' }}
 					whileTap={{ scale: 0.95 }}
@@ -748,6 +762,7 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 	const { t } = useTranslation();
 	const totalRemaining = useTotalRemaining();
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
+	const [encouragement] = useState(randomEncouragement);
 
 	return (
 		<motion.div
@@ -834,6 +849,16 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 				</div>
 			</motion.div>
 
+			<motion.p
+				className="font-display text-xl italic text-center px-4 leading-relaxed"
+				style={{ color: 'var(--text-secondary)' }}
+				initial={{ opacity: 0, y: 12 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ delay: 0.42, ...spring }}
+			>
+				{encouragement}
+			</motion.p>
+
 			<motion.button
 				type="button"
 				onClick={onComplete}
@@ -844,7 +869,7 @@ function SummaryStep({ onComplete }: { onComplete: () => void }) {
 				}}
 				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
-				transition={{ delay: 0.45, ...spring }}
+				transition={{ delay: 0.5, ...spring }}
 				whileTap={{ scale: 0.95 }}
 				whileHover={{ scale: 1.02 }}
 			>

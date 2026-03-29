@@ -10,24 +10,30 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 	const { t } = useTranslation();
 	const { setObjective, activeObjective } = usePrayerStore();
 	const totalRemaining = useTotalRemaining();
-	const [objPeriod, setObjPeriod] = useState<Period>('daily');
-	const [objTarget, setObjTarget] = useState('');
+	const [objPeriod, setObjPeriod] = useState<Period>(() => activeObjective?.period ?? 'daily');
+	const [objTarget, setObjTarget] = useState<number>(() => activeObjective?.target ?? 0);
 	const [error, setError] = useState<string | null>(null);
 
+	function handlePeriodChange(newPeriod: Period) {
+		const perDay =
+			objPeriod === 'daily' ? objTarget : objPeriod === 'weekly' ? objTarget / 7 : objTarget / 30;
+		const newTarget =
+			newPeriod === 'daily' ? perDay : newPeriod === 'weekly' ? perDay * 7 : perDay * 30;
+		setObjPeriod(newPeriod);
+		setObjTarget(Math.round(Math.max(1, newTarget)));
+	}
+
 	const handleSetObjective = async () => {
-		const target = parseInt(objTarget, 10);
-		if (!Number.isNaN(target) && target > 0) {
+		if (objTarget > 0) {
 			try {
-				await setObjective(objPeriod, target);
-				setObjTarget('');
+				await setObjective(objPeriod, objTarget);
 			} catch {
 				setError(t('settings.importError'));
 			}
 		}
 	};
 
-	const parsedTarget = parseInt(objTarget, 10);
-	const hasValidTarget = !Number.isNaN(parsedTarget) && parsedTarget > 0;
+	const hasValidTarget = objTarget > 0;
 
 	return (
 		<>
@@ -47,11 +53,10 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 
 					<ObjectiveCard
 						period={objPeriod}
-						onPeriodChange={setObjPeriod}
+						onPeriodChange={handlePeriodChange}
 						target={objTarget}
 						onTargetChange={setObjTarget}
 						totalRemaining={totalRemaining}
-						inputId="settings-obj-target"
 					/>
 
 					<button
