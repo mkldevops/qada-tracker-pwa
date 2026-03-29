@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.18.0',
+		date: '2026-03-29',
+		changes: {
+			fr: [
+				'Accueil : écran vide avec bouton de reconfiguration lorsque toutes les prières sont à jour',
+				'Correction : la PWA iOS ne colle plus en haut \u2014 prise en compte du safe-area-inset-top',
+			],
+			en: [
+				'Dashboard: zero state with reconfigure button when all prayers are caught up',
+				'Fix: iOS PWA content no longer overlaps the status bar (safe-area-inset-top)',
+			],
+		},
+	},
+	{
 		version: '1.17.0',
 		date: '2026-03-29',
 		changes: {
