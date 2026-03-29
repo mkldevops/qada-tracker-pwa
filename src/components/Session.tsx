@@ -15,8 +15,6 @@ import { PRAYER_NAMES } from '@/types';
 
 type Phase = 'setup' | 'active' | 'complete';
 
-const PRESETS = [5, 10, 15, 20];
-
 const pickerSpring = { type: 'spring' as const, stiffness: 320, damping: 38 };
 
 const ghostVariants = {
@@ -527,7 +525,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 				{phase === 'setup' && (
 					<motion.div
 						key="setup"
-						className="flex flex-1 flex-col overflow-y-auto px-7 pt-14 pb-32"
+						className="flex flex-1 flex-col px-7 pt-6 pb-32"
 						initial={{ opacity: 0, x: 40 }}
 						animate={{ opacity: 1, x: 0 }}
 						exit={{ opacity: 0, x: -40 }}
@@ -547,42 +545,8 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</p>
 						</motion.div>
 
-						<motion.div
-							className="mb-8 grid grid-cols-4 gap-3"
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ delay: 0.1, ...spring }}
-						>
-							{PRESETS.map((n, i) => {
-								const selected = target === n;
-								return (
-									<motion.button
-										key={n}
-										onClick={() => changeTarget(n)}
-										className="rounded-2xl py-4 text-lg font-semibold tabular-nums"
-										style={
-											selected
-												? { background: '#C9A962', color: '#1A1A1C' }
-												: { background: '#242426', color: '#F5F5F0', border: '1px solid #3A3A3C' }
-										}
-										whileTap={{ scale: 0.88 }}
-										animate={selected ? { scale: 1.06 } : { scale: 1 }}
-										transition={{ delay: i * 0.04, ...springBouncy }}
-										initial={{ opacity: 0, y: 16 }}
-										whileHover={{ scale: selected ? 1.06 : 1.03 }}
-									>
-										{n}
-										{avgPace !== null && (
-											<span className="mt-0.5 block text-[10px] font-normal opacity-60">
-												{formatPace(avgPace, n)}
-											</span>
-										)}
-									</motion.button>
-								);
-							})}
-						</motion.div>
-
-						<motion.div
+<motion.div
+							className="mb-6"
 							initial={{ opacity: 0, y: 16 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.18, ...spring }}
@@ -636,7 +600,9 @@ export function Session({ onClose }: { onClose: () => void }) {
 							{t('session.cancel')}
 						</motion.button>
 
-						<EncouragementMessage />
+						<div className="pb-safe">
+							<EncouragementMessage />
+						</div>
 					</motion.div>
 				)}
 

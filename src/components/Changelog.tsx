@@ -10,6 +10,26 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.20.0',
+		date: '2026-03-29',
+		changes: {
+			fr: [
+				"Correction : le message d\u2019encouragement n\u2019est plus tronqué en bas de l\u2019écran de session",
+				"Correction : espacement réduit en haut de l\u2019écran de lancement de session",
+				"Session : suppression des boutons de pr\u00e9s\u00e9lection rapide (5, 10, 15, 20)",
+				"Correction : le d\u00e9filement du s\u00e9lecteur de nombre ne fait plus scroller la page",
+				"Correction : marge ajout\u00e9e entre le s\u00e9lecteur de nombre et le bouton D\u00e9marrer",
+			],
+			en: [
+				'Fix: encouragement message no longer clipped at the bottom of the session setup screen',
+				'Fix: reduced top padding on the session setup screen',
+				'Session: removed quick-select preset buttons (5, 10, 15, 20)',
+				'Fix: scrolling the number picker no longer causes the page to scroll',
+				'Fix: added margin between the number picker and the Start button',
+			],
+		},
+	},
+	{
 		version: '1.19.0',
 		date: '2026-03-29',
 		changes: {
