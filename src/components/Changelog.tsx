@@ -13,8 +13,14 @@ const ENTRIES: ChangelogEntry[] = [
 		version: '1.20.0',
 		date: '2026-03-29',
 		changes: {
-			fr: ["Correction : le message d\u2019encouragement n\u2019est plus tronqué en bas de l\u2019écran de session"],
-			en: ['Fix: encouragement message no longer clipped at the bottom of the session setup screen'],
+			fr: [
+				"Correction : le message d\u2019encouragement n\u2019est plus tronqué en bas de l\u2019écran de session",
+				"Correction : espacement réduit en haut de l\u2019écran de lancement de session",
+			],
+			en: [
+				'Fix: encouragement message no longer clipped at the bottom of the session setup screen',
+				'Fix: reduced top padding on the session setup screen',
+			],
 		},
 	},
 	{
