@@ -1,4 +1,4 @@
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, ChevronsUpDown } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useAvgPacePerPrayer } from '@/hooks/useAvgPacePerPrayer';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
 import { spring, springBouncy } from '@/lib/animations';
+import { EncouragementMessage } from '@/components/EncouragementMessage';
 import { formatPace } from '@/lib/calculateAvgPacePerPrayer';
 import { computeTarget } from '@/lib/sessionUtils';
 import { type SessionOrder, useDebts, usePrayerStore } from '@/stores/prayerStore';
@@ -15,6 +16,8 @@ import { PRAYER_NAMES } from '@/types';
 type Phase = 'setup' | 'active' | 'complete';
 
 const PRESETS = [5, 10, 15, 20];
+
+const pickerSpring = { type: 'spring' as const, stiffness: 320, damping: 38 };
 
 const ghostVariants = {
 	enter: (d: number) => ({ y: d > 0 ? 40 : -40, opacity: 0 }),
@@ -83,7 +86,7 @@ function GhostButton({
 					initial="enter"
 					animate="center"
 					exit="exit"
-					transition={springBouncy}
+					transition={pickerSpring}
 					onClick={() => onChange(targetValue)}
 					className="tabular-nums leading-none"
 					style={ghostStyle}
@@ -129,30 +132,38 @@ function NumberPicker({
 		>
 			<GhostButton show={value > 1} targetValue={value - 1} dir={dir} onChange={onChange} />
 
-			<div className="overflow-hidden flex items-center" style={{ height: 110 }}>
-				<AnimatePresence mode="popLayout" custom={dir}>
-					<motion.span
-						key={value}
-						custom={dir}
-						variants={{
-							enter: (d: number) => ({ y: d > 0 ? 48 : -48, opacity: 0, scale: 0.8 }),
-							center: { y: 0, opacity: 1, scale: 1 },
-							exit: (d: number) => ({ y: d > 0 ? -48 : 48, opacity: 0, scale: 0.8 }),
-						}}
-						initial="enter"
-						animate="center"
-						exit="exit"
-						transition={springBouncy}
-						className="tabular-nums leading-none"
-						style={{
-							color: '#F5F5F0',
-							fontSize: 96,
-							fontFamily: "ui-monospace, 'SF Mono', monospace",
-						}}
-					>
-						{value}
-					</motion.span>
-				</AnimatePresence>
+			<div className="flex items-center gap-3">
+				<div className="overflow-hidden flex items-center" style={{ height: 110 }}>
+					<AnimatePresence mode="popLayout" custom={dir}>
+						<motion.span
+							key={value}
+							custom={dir}
+							variants={{
+								enter: (d: number) => ({ y: d > 0 ? 48 : -48, opacity: 0, scale: 0.85 }),
+								center: { y: 0, opacity: 1, scale: 1 },
+								exit: (d: number) => ({ y: d > 0 ? -48 : 48, opacity: 0, scale: 0.85 }),
+							}}
+							initial="enter"
+							animate="center"
+							exit="exit"
+							transition={pickerSpring}
+							className="tabular-nums leading-none"
+							style={{
+								color: '#F5F5F0',
+								fontSize: 96,
+								fontFamily: "ui-monospace, 'SF Mono', monospace",
+							}}
+						>
+							{value}
+						</motion.span>
+					</AnimatePresence>
+				</div>
+				<motion.div
+					animate={{ opacity: [0.3, 0.7, 0.3] }}
+					transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+				>
+					<ChevronsUpDown size={22} style={{ color: '#4A4A4C' }} />
+				</motion.div>
 			</div>
 
 			<GhostButton
@@ -161,15 +172,6 @@ function NumberPicker({
 				dir={dir}
 				onChange={onChange}
 			/>
-
-			<motion.p
-				className="text-xs tracking-widest"
-				style={{ color: '#3A3A3C' }}
-				animate={{ opacity: [0.4, 1, 0.4] }}
-				transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-			>
-				↕
-			</motion.p>
 		</motion.div>
 	);
 }
@@ -506,6 +508,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 			i++;
 		}
 	}
+	const effectiveRakatsRemaining = Math.max(0, sessionRakatsRemaining - (currentRakat - 1));
 
 	const currentEntry =
 		phase === 'active' ? getNextPrayer(debts, prayerOrder, currentPrayerIndex) : null;
@@ -626,6 +629,8 @@ export function Session({ onClose }: { onClose: () => void }) {
 						>
 							{t('session.cancel')}
 						</motion.button>
+
+						<EncouragementMessage />
 					</motion.div>
 				)}
 
@@ -657,18 +662,28 @@ export function Session({ onClose }: { onClose: () => void }) {
 							<AnimatedCounter value={completed} target={target} />
 						</motion.div>
 
-						{sessionPrayersRemaining > 0 && (
+						{effectiveRakatsRemaining > 0 && (
 							<motion.div
-								className="flex items-center justify-center gap-1.5 mb-4 text-xs tabular-nums"
+								className="flex items-center justify-center gap-2 mb-4"
 								initial={{ opacity: 0, y: 4 }}
 								animate={{ opacity: 1, y: 0 }}
 								transition={{ delay: 0.15, ...spring }}
 							>
-								<span style={{ color: '#C9A962' }}>{sessionPrayersRemaining.toLocaleString()}</span>
-								<span style={{ color: '#4A4A4C' }}>{t('session.prayersRemaining')}</span>
-								<span style={{ color: '#3A3A3C' }}>·</span>
-								<span style={{ color: '#4A4A4C' }}>
-									{sessionRakatsRemaining.toLocaleString()} {t('session.rakatsRemaining')}
+								<AnimatePresence mode="wait">
+									<motion.span
+										key={effectiveRakatsRemaining}
+										className="text-2xl font-semibold tabular-nums"
+										style={{ color: '#F5F5F0' }}
+										initial={{ opacity: 0, y: -8 }}
+										animate={{ opacity: 1, y: 0 }}
+										exit={{ opacity: 0, y: 8 }}
+										transition={spring}
+									>
+										{effectiveRakatsRemaining.toLocaleString()}
+									</motion.span>
+								</AnimatePresence>
+								<span className="text-sm" style={{ color: '#4A4A4C' }}>
+									{t('session.rakatsRemaining')}
 								</span>
 							</motion.div>
 						)}
@@ -907,6 +922,8 @@ export function Session({ onClose }: { onClose: () => void }) {
 								{t('session.completedCount', { count: completed })}
 							</motion.p>
 						</motion.div>
+
+						<EncouragementMessage />
 
 						<motion.button
 							onClick={onClose}

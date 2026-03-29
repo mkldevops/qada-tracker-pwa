@@ -11,23 +11,21 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 	const { setObjective, activeObjective } = usePrayerStore();
 	const totalRemaining = useTotalRemaining();
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
-	const [objTarget, setObjTarget] = useState('');
+	const [objTarget, setObjTarget] = useState<number>(0);
 	const [error, setError] = useState<string | null>(null);
 
 	const handleSetObjective = async () => {
-		const target = parseInt(objTarget, 10);
-		if (!Number.isNaN(target) && target > 0) {
+		if (objTarget > 0) {
 			try {
-				await setObjective(objPeriod, target);
-				setObjTarget('');
+				await setObjective(objPeriod, objTarget);
+				setObjTarget(0);
 			} catch {
 				setError(t('settings.importError'));
 			}
 		}
 	};
 
-	const parsedTarget = parseInt(objTarget, 10);
-	const hasValidTarget = !Number.isNaN(parsedTarget) && parsedTarget > 0;
+	const hasValidTarget = objTarget > 0;
 
 	return (
 		<>
@@ -51,7 +49,6 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 						target={objTarget}
 						onTargetChange={setObjTarget}
 						totalRemaining={totalRemaining}
-						inputId="settings-obj-target"
 					/>
 
 					<button
