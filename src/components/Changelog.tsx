@@ -13,8 +13,8 @@ const ENTRIES: ChangelogEntry[] = [
 		version: '1.20.0',
 		date: '2026-03-29',
 		changes: {
-			fr: ["Session : le message d\u2019encouragement est maintenant affiché au-dessus du bouton Démarrer"],
-			en: ['Session: encouragement message is now displayed above the Start button'],
+			fr: ["Correction : le message d\u2019encouragement n\u2019est plus tronqué en bas de l\u2019écran de session"],
+			en: ['Fix: encouragement message no longer clipped at the bottom of the session setup screen'],
 		},
 	},
 	{
