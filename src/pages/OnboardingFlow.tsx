@@ -1,5 +1,4 @@
 import { CheckCircle2 } from 'lucide-react';
-import { randomEncouragement } from '@/lib/encouragements';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,6 +8,7 @@ import { ObjectiveCard } from '@/components/ObjectiveCard';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { spring, springSnappy } from '@/lib/animations';
 import { calculateSuggestion } from '@/lib/calculateSuggestion';
+import { randomEncouragement } from '@/lib/encouragements';
 import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
 import type { Period, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
@@ -534,7 +534,10 @@ function DebtStep({
 							{manualTotal > 0 && (
 								<motion.div
 									className="flex items-center justify-between px-5 py-3"
-									style={{ background: 'var(--surface-raised)', borderTop: '1px solid var(--border)' }}
+									style={{
+										background: 'var(--surface-raised)',
+										borderTop: '1px solid var(--border)',
+									}}
 									initial={{ opacity: 0, height: 0 }}
 									animate={{ opacity: 1, height: 'auto' }}
 									exit={{ opacity: 0, height: 0 }}
@@ -660,7 +663,9 @@ function ObjectiveStep({
 	const { t } = useTranslation();
 	const totalRemaining = useTotalRemaining();
 	const [objPeriod, setObjPeriod] = useState<Period>('daily');
-	const [objTarget, setObjTarget] = useState<number>(() => calculateSuggestion(totalRemaining, 'daily') ?? 10);
+	const [objTarget, setObjTarget] = useState<number>(
+		() => calculateSuggestion(totalRemaining, 'daily') ?? 10,
+	);
 
 	function handlePeriodChange(newPeriod: Period) {
 		const perDay =
