@@ -14,6 +14,16 @@ import { PRAYER_NAMES } from '../types';
 
 const MILESTONES = [100, 500, 1000, 2500, 5000, 10000] as const;
 
+function updateAppBadge(debts: Record<PrayerName, PrayerDebt>) {
+	if (!('setAppBadge' in navigator)) return;
+	const total = PRAYER_NAMES.reduce((sum, p) => sum + (debts[p]?.remaining ?? 0), 0);
+	if (total > 0) {
+		navigator.setAppBadge(total).catch(() => {});
+	} else {
+		navigator.clearAppBadge().catch(() => {});
+	}
+}
+
 function checkMilestone(allTime: number): number | null {
 	let largestMilestone: number | null = null;
 	for (const milestone of MILESTONES) {
@@ -85,6 +95,7 @@ interface PrayerStore {
 	logPrayer: (prayer: PrayerName, quantity?: number) => Promise<void>;
 	logBatch: (entries: BatchEntry[], sessionId: string) => Promise<void>;
 	undoLastLog: () => Promise<void>;
+	deleteLog: (id: number, prayer: PrayerName, quantity: number) => Promise<void>;
 	setDebtManual: (prayer: PrayerName, amount: number) => Promise<void>;
 	setDebtFromYears: (years: number, excludedDays: number) => Promise<void>;
 	setObjective: (period: Period, target: number) => Promise<void>;
@@ -95,122 +106,130 @@ interface PrayerStore {
 	resetAll: () => Promise<void>;
 }
 
-export const usePrayerStore = create<PrayerStore>()((set, get) => ({
-	debts: initialDebts(),
-	stats: EMPTY_STATS,
-	recentLogs: [],
-	activeObjective: null,
-	isLoading: true,
-	sessionOrder: (() => {
-		const raw = localStorage.getItem(SESSION_ORDER_KEY);
-		return raw === 'chronological' || raw === 'highest-debt' ? raw : 'chronological';
-	})(),
-	sujoodTrackingEnabled: localStorage.getItem(SUJOOD_TRACKING_KEY) === 'true',
-	sessionsPerDay: (() => {
-		const raw = parseInt(localStorage.getItem(SESSIONS_PER_DAY_KEY) ?? '', 10);
-		return [1, 2, 3, 4, 5].includes(raw) ? raw : 1;
-	})(),
-	pendingMilestone: null,
-
-	loadAll: async () => {
-		set({ isLoading: true });
-		const [debts, stats, recentLogs, activeObjective] = await Promise.all([
-			queries.getAllDebts(db),
-			queries.getStats(db),
-			queries.getRecentLogs(db, 50),
-			queries.getActiveObjective(db),
-		]);
-		set({ debts, stats, recentLogs, activeObjective, isLoading: false });
-	},
-
-	refresh: async () => {
-		await get().loadAll();
-	},
-
-	logPrayer: async (prayer, quantity = 1) => {
-		await queries.insertLog(db, prayer, quantity);
+export const usePrayerStore = create<PrayerStore>()((set, get) => {
+	async function syncAll() {
 		const [debts, stats, recentLogs] = await Promise.all([
 			queries.getAllDebts(db),
 			queries.getStats(db),
 			queries.getRecentLogs(db, 50),
 		]);
 		set({ debts, stats, recentLogs });
-		const milestone = checkMilestone(stats.allTime);
-		if (milestone) set({ pendingMilestone: milestone });
-	},
+		updateAppBadge(debts);
+		return { debts, stats };
+	}
 
-	logBatch: async (entries, sessionId) => {
-		for (const entry of entries) {
-			if (entry.quantity > 0) {
-				await queries.insertLog(db, entry.prayer, entry.quantity, sessionId);
+	async function syncDebtsStats() {
+		const [debts, stats] = await Promise.all([queries.getAllDebts(db), queries.getStats(db)]);
+		set({ debts, stats });
+		updateAppBadge(debts);
+	}
+
+	return {
+		debts: initialDebts(),
+		stats: EMPTY_STATS,
+		recentLogs: [],
+		activeObjective: null,
+		isLoading: true,
+		sessionOrder: (() => {
+			const raw = localStorage.getItem(SESSION_ORDER_KEY);
+			return raw === 'chronological' || raw === 'highest-debt' ? raw : 'chronological';
+		})(),
+		sujoodTrackingEnabled: localStorage.getItem(SUJOOD_TRACKING_KEY) === 'true',
+		sessionsPerDay: (() => {
+			const raw = parseInt(localStorage.getItem(SESSIONS_PER_DAY_KEY) ?? '', 10);
+			return [1, 2, 3, 4, 5].includes(raw) ? raw : 1;
+		})(),
+		pendingMilestone: null,
+
+		loadAll: async () => {
+			set({ isLoading: true });
+			const [debts, stats, recentLogs, activeObjective] = await Promise.all([
+				queries.getAllDebts(db),
+				queries.getStats(db),
+				queries.getRecentLogs(db, 50),
+				queries.getActiveObjective(db),
+			]);
+			set({ debts, stats, recentLogs, activeObjective, isLoading: false });
+			updateAppBadge(debts);
+		},
+
+		refresh: async () => {
+			await get().loadAll();
+		},
+
+		logPrayer: async (prayer, quantity = 1) => {
+			await queries.insertLog(db, prayer, quantity);
+			const { stats } = await syncAll();
+			const milestone = checkMilestone(stats.allTime);
+			if (milestone) set({ pendingMilestone: milestone });
+		},
+
+		logBatch: async (entries, sessionId) => {
+			for (const entry of entries) {
+				if (entry.quantity > 0) {
+					await queries.insertLog(db, entry.prayer, entry.quantity, sessionId);
+				}
 			}
-		}
-		const [debts, stats, recentLogs] = await Promise.all([
-			queries.getAllDebts(db),
-			queries.getStats(db),
-			queries.getRecentLogs(db, 50),
-		]);
-		set({ debts, stats, recentLogs });
-		const milestone = checkMilestone(stats.allTime);
-		if (milestone) set({ pendingMilestone: milestone });
-	},
+			const { stats } = await syncAll();
+			const milestone = checkMilestone(stats.allTime);
+			if (milestone) set({ pendingMilestone: milestone });
+		},
 
-	undoLastLog: async () => {
-		const logs = await queries.getLastSessionLogs(db);
-		if (logs.length === 0) return;
-		await queries.deleteLogsAndRollback(db, logs);
-		const [debts, stats, recentLogs] = await Promise.all([
-			queries.getAllDebts(db),
-			queries.getStats(db),
-			queries.getRecentLogs(db, 50),
-		]);
-		set({ debts, stats, recentLogs });
-	},
+		undoLastLog: async () => {
+			const logs = await queries.getLastSessionLogs(db);
+			if (logs.length === 0) return;
+			await queries.deleteLogsAndRollback(db, logs);
+			await syncAll();
+		},
 
-	setDebtManual: async (prayer, amount) => {
-		await queries.setDebt(db, prayer, Math.max(0, amount));
-		const [debts, stats] = await Promise.all([queries.getAllDebts(db), queries.getStats(db)]);
-		set({ debts, stats });
-	},
+		deleteLog: async (id, prayer, quantity) => {
+			await queries.deleteLogsAndRollback(db, [{ id, prayer, quantity }]);
+			await syncAll();
+		},
 
-	setDebtFromYears: async (years, excludedDays) => {
-		const effectiveDays = Math.max(0, Math.round(years * 365.25) - excludedDays);
-		await queries.setAllDebts(db, effectiveDays);
-		const [debts, stats] = await Promise.all([queries.getAllDebts(db), queries.getStats(db)]);
-		set({ debts, stats });
-	},
+		setDebtManual: async (prayer, amount) => {
+			await queries.setDebt(db, prayer, Math.max(0, amount));
+			await syncDebtsStats();
+		},
 
-	setObjective: async (period, target) => {
-		await queries.createObjective(db, period, target);
-		const activeObjective = await queries.getActiveObjective(db);
-		set({ activeObjective });
-	},
+		setDebtFromYears: async (years, excludedDays) => {
+			const effectiveDays = Math.max(0, Math.round(years * 365.25) - excludedDays);
+			await queries.setAllDebts(db, effectiveDays);
+			await syncDebtsStats();
+		},
 
-	setSessionOrder: (order) => {
-		localStorage.setItem(SESSION_ORDER_KEY, order);
-		set({ sessionOrder: order });
-	},
+		setObjective: async (period, target) => {
+			await queries.createObjective(db, period, target);
+			const activeObjective = await queries.getActiveObjective(db);
+			set({ activeObjective });
+		},
 
-	setSujoodTrackingEnabled: (enabled) => {
-		localStorage.setItem(SUJOOD_TRACKING_KEY, String(enabled));
-		set({ sujoodTrackingEnabled: enabled });
-	},
+		setSessionOrder: (order) => {
+			localStorage.setItem(SESSION_ORDER_KEY, order);
+			set({ sessionOrder: order });
+		},
 
-	setSessionsPerDay: (value) => {
-		if (![1, 2, 3, 4, 5].includes(value)) return;
-		localStorage.setItem(SESSIONS_PER_DAY_KEY, String(value));
-		set({ sessionsPerDay: value });
-	},
+		setSujoodTrackingEnabled: (enabled) => {
+			localStorage.setItem(SUJOOD_TRACKING_KEY, String(enabled));
+			set({ sujoodTrackingEnabled: enabled });
+		},
 
-	clearMilestone: () => {
-		set({ pendingMilestone: null });
-	},
+		setSessionsPerDay: (value) => {
+			if (![1, 2, 3, 4, 5].includes(value)) return;
+			localStorage.setItem(SESSIONS_PER_DAY_KEY, String(value));
+			set({ sessionsPerDay: value });
+		},
 
-	resetAll: async () => {
-		await queries.resetAll(db);
-		await get().loadAll();
-	},
-}));
+		clearMilestone: () => {
+			set({ pendingMilestone: null });
+		},
+
+		resetAll: async () => {
+			await queries.resetAll(db);
+			await get().loadAll();
+		},
+	};
+});
 
 export const useDebts = () => usePrayerStore((s) => s.debts);
 export const useStats = () => usePrayerStore((s) => s.stats);

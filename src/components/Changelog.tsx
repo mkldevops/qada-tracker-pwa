@@ -10,10 +10,36 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.21.1',
+		date: '2026-03-31',
+		changes: {
+			fr: [
+				'International : les messages d\u2019encouragement sont maintenant traduits en fran\u00e7ais et anglais',
+				'Historique : suppression d\u2019une entr\u00e9e avec un long appui (450ms) et une feuille modale',
+				'Responsive : disposition am\u00e9lior\u00e9e sur l\u2019\u00e9cran de lancement de session pour les petits \u00e9crans',
+				'PWA : mode portrait verrouill\u00e9 en position primaire (sans rotation)',
+				'PWA : mise en cache des polices Google avec une dur\u00e9e de 365 jours',
+				'App Badge : affichage du nombre total de pri\u00e8res restantes sur l\u2019ic\u00f4ne de l\u2019application',
+				'Code : refactorisation des helper de synchronisation dans le store pour r\u00e9duire la duplication',
+			],
+			en: [
+				'i18n: encouragement messages are now translated to French and English',
+				'History: delete an entry with a long press (450ms) and modal sheet',
+				'Responsive: improved layout on the session setup screen for small screens',
+				'PWA: portrait mode locked to primary orientation (no rotation)',
+				'PWA: cached Google Fonts with 365-day duration',
+				'App Badge: display total remaining prayers on the application icon',
+				'Code: refactored sync helpers in the store to reduce duplication',
+			],
+		},
+	},
+	{
 		version: '1.21.0',
 		date: '2026-03-29',
 		changes: {
-			fr: ["Historique : la dur\u00e9e des sessions affiche maintenant les minutes et les secondes"],
+			fr: [
+				'Historique : la dur\u00e9e des sessions affiche maintenant les minutes et les secondes',
+			],
 			en: ['History: session duration now displays minutes and seconds'],
 		},
 	},
@@ -22,11 +48,11 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-03-29',
 		changes: {
 			fr: [
-				"Correction : le message d\u2019encouragement n\u2019est plus tronqué en bas de l\u2019écran de session",
-				"Correction : espacement réduit en haut de l\u2019écran de lancement de session",
-				"Session : suppression des boutons de pr\u00e9s\u00e9lection rapide (5, 10, 15, 20)",
-				"Correction : le d\u00e9filement du s\u00e9lecteur de nombre ne fait plus scroller la page",
-				"Correction : marge ajout\u00e9e entre le s\u00e9lecteur de nombre et le bouton D\u00e9marrer",
+				'Correction : le message d\u2019encouragement n\u2019est plus tronqué en bas de l\u2019écran de session',
+				'Correction : espacement réduit en haut de l\u2019écran de lancement de session',
+				'Session : suppression des boutons de pr\u00e9s\u00e9lection rapide (5, 10, 15, 20)',
+				'Correction : le d\u00e9filement du s\u00e9lecteur de nombre ne fait plus scroller la page',
+				'Correction : marge ajout\u00e9e entre le s\u00e9lecteur de nombre et le bouton D\u00e9marrer',
 			],
 			en: [
 				'Fix: encouragement message no longer clipped at the bottom of the session setup screen',
@@ -41,7 +67,9 @@ const ENTRIES: ChangelogEntry[] = [
 		version: '1.19.0',
 		date: '2026-03-29',
 		changes: {
-			fr: ["Notification de mise \u00e0 jour : un toast s\u2019affiche avec le num\u00e9ro de version apr\u00e8s chaque mise \u00e0 jour de l\u2019application"],
+			fr: [
+				'Notification de mise \u00e0 jour : un toast s\u2019affiche avec le num\u00e9ro de version apr\u00e8s chaque mise \u00e0 jour de l\u2019application',
+			],
 			en: ['Update notification: a toast appears with the version number after each app update'],
 		},
 	},

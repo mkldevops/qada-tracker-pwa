@@ -42,7 +42,9 @@ export default defineConfig({
 				theme_color: '#1A1A1C',
 				background_color: '#1A1A1C',
 				display: 'standalone',
-				orientation: 'portrait',
+				display_override: ['standalone', 'minimal-ui'],
+				orientation: 'portrait-primary',
+				categories: ['lifestyle', 'productivity'],
 				scope: '/',
 				start_url: '/',
 				icons: [
@@ -77,6 +79,17 @@ export default defineConfig({
 				globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
 				cleanupOutdatedCaches: true,
 				navigateFallbackDenylist: [/^\/version\.json$/],
+				runtimeCaching: [
+					{
+						urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
+						handler: 'CacheFirst' as const,
+						options: {
+							cacheName: 'google-fonts',
+							expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 365 },
+							cacheableResponse: { statuses: [0, 200] },
+						},
+					},
+				],
 			},
 			devOptions: {
 				enabled: true,

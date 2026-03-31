@@ -24,7 +24,7 @@ const ghostVariants = {
 };
 const ghostStyle = {
 	color: '#F5F5F0',
-	fontSize: 52,
+	fontSize: 42,
 	fontFamily: "ui-monospace, 'SF Mono', monospace",
 } as const;
 const MAX_PICKER_VALUE = 999;
@@ -74,7 +74,7 @@ function GhostButton({
 }) {
 	if (!show) return null;
 	return (
-		<div className="overflow-hidden flex items-center justify-center" style={{ height: 60 }}>
+		<div className="overflow-hidden flex items-center justify-center" style={{ height: 48 }}>
 			<AnimatePresence mode="popLayout" custom={dir}>
 				<motion.button
 					key={targetValue}
@@ -114,7 +114,7 @@ function NumberPicker({
 
 	return (
 		<motion.div
-			className="flex flex-col items-center gap-1 py-4 cursor-ns-resize select-none touch-none"
+			className="flex flex-col items-center gap-1 py-2 cursor-ns-resize select-none touch-none"
 			onPan={(_, info) => {
 				accumulated.current -= info.delta.y;
 				const step = 10;
@@ -131,7 +131,7 @@ function NumberPicker({
 			<GhostButton show={value > 1} targetValue={value - 1} dir={dir} onChange={onChange} />
 
 			<div className="flex items-center gap-3">
-				<div className="overflow-hidden flex items-center" style={{ height: 110 }}>
+				<div className="overflow-hidden flex items-center" style={{ height: 88 }}>
 					<AnimatePresence mode="popLayout" custom={dir}>
 						<motion.span
 							key={value}
@@ -148,7 +148,7 @@ function NumberPicker({
 							className="tabular-nums leading-none"
 							style={{
 								color: '#F5F5F0',
-								fontSize: 96,
+								fontSize: 76,
 								fontFamily: "ui-monospace, 'SF Mono', monospace",
 							}}
 						>
@@ -525,14 +525,14 @@ export function Session({ onClose }: { onClose: () => void }) {
 				{phase === 'setup' && (
 					<motion.div
 						key="setup"
-						className="flex flex-1 flex-col px-7 pt-6 pb-32"
+						className="flex flex-1 flex-col px-7 pt-6 pb-safe overflow-y-auto"
 						initial={{ opacity: 0, x: 40 }}
 						animate={{ opacity: 1, x: 0 }}
 						exit={{ opacity: 0, x: -40 }}
 						transition={spring}
 					>
 						<motion.div
-							className="mb-10 flex flex-col items-center gap-1 text-center"
+							className="mb-5 flex flex-col items-center gap-1 text-center"
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.05, ...spring }}
@@ -545,7 +545,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</p>
 						</motion.div>
 
-<motion.div
+						<motion.div
 							className="mb-6"
 							initial={{ opacity: 0, y: 16 }}
 							animate={{ opacity: 1, y: 0 }}
