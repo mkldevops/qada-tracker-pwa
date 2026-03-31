@@ -2,6 +2,7 @@ import { Check, Minus, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -183,8 +184,9 @@ function DeleteEntrySheet({
 	onConfirm: () => void;
 	onClose: () => void;
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const cfg = PRAYER_CONFIG[log.prayer];
+	const label = i18n.language === 'en' ? cfg.labelEn : cfg.labelFr;
 
 	return (
 		<>
@@ -213,7 +215,7 @@ function DeleteEntrySheet({
 				<div className="flex items-center gap-3 pb-1">
 					<div className="h-3 w-3 rounded-full flex-shrink-0" style={{ background: cfg.hex }} />
 					<span className="font-display text-xl font-medium" style={{ color: cfg.hex }}>
-						{cfg.labelFr}
+						{label}
 					</span>
 					<span className="text-base" style={{ color: `${cfg.hex}80` }}>
 						{cfg.labelAr}
@@ -265,9 +267,12 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 	);
 
 	function startPress(log: PrayerLog) {
+		endPress();
 		pressTimer.current = setTimeout(() => {
-			navigator.vibrate?.(50);
-			setSelectedLog(log);
+			if (logs.find((l) => l.id === log.id)) {
+				navigator.vibrate?.(50);
+				setSelectedLog(log);
+			}
 		}, 450);
 	}
 
@@ -279,9 +284,19 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 	}
 
 	async function handleDeleteConfirm() {
-		if (!selectedLog?.id) return;
-		await deleteLog(selectedLog.id, selectedLog.prayer, selectedLog.quantity);
-		setSelectedLog(null);
+		if (selectedLog?.id == null) {
+			toast.error(t('error'));
+			setSelectedLog(null);
+			return;
+		}
+
+		try {
+			await deleteLog(selectedLog.id, selectedLog.prayer, selectedLog.quantity);
+			setSelectedLog(null);
+			toast.success(t('deleteEntryConfirm'));
+		} catch {
+			toast.error(t('error'));
+		}
 	}
 
 	if (groups.length === 0) {
