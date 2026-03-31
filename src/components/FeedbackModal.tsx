@@ -2,18 +2,14 @@ import { X } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 
-// Replace TALLY_FORM_ID with your form ID from https://tally.so/embed/XXXXXX
 const TALLY_FORM_ID = 'EkDK5X';
 
 interface FeedbackModalProps {
-	isOpen: boolean;
 	onClose: () => void;
 }
 
-export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
+export function FeedbackModal({ onClose }: FeedbackModalProps) {
 	const { t, i18n } = useTranslation();
-
-	if (!isOpen) return null;
 
 	const src = `https://tally.so/embed/${TALLY_FORM_ID}?transparentBackground=1&version=${__APP_VERSION__}&lang=${i18n.language}`;
 
@@ -46,8 +42,8 @@ export function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
 					title={t('settings.sendFeedback')}
 					width="100%"
 					height="500"
-					frameBorder="0"
 					className="border-0"
+					sandbox="allow-scripts allow-forms allow-same-origin"
 				/>
 			</motion.div>
 		</motion.div>

@@ -44,9 +44,13 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 	const handleShare = async () => {
 		const shareText = t('settings.shareText');
 		if (!navigator.share) {
-			await navigator.clipboard.writeText(shareText);
-			toast.success(t('settings.shareCopied'));
-			track({ name: 'share', data: { method: 'clipboard' } });
+			try {
+				await navigator.clipboard.writeText(shareText);
+				toast.success(t('settings.shareCopied'));
+				track({ name: 'share', data: { method: 'clipboard' } });
+			} catch {
+				toast.error(t('settings.shareFailed'));
+			}
 			return;
 		}
 		try {
@@ -98,9 +102,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 		<>
 			<AnimatePresence>
 				{showChangelog && <Changelog onClose={() => setShowChangelog(false)} />}
-				{showFeedback && (
-					<FeedbackModal isOpen={showFeedback} onClose={() => setShowFeedback(false)} />
-				)}
+				{showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
 			</AnimatePresence>
 
 			<CollapsibleSection label={t('settings.data')} defaultOpen={true}>
