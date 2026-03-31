@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { EstimationCard } from '@/components/EstimationCard';
 import { Session } from '@/components/Session';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { track } from '@/lib/analytics';
 import { spring } from '@/lib/animations';
 import { formatCatchUpLabel } from '@/lib/formatDays';
 import {
@@ -244,7 +245,10 @@ export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () =>
 						{onRestartOnboarding && (
 							<motion.button
 								type="button"
-								onClick={onRestartOnboarding}
+								onClick={() => {
+									track({ name: 'restart_onboarding', data: { from: 'dashboard' } });
+									onRestartOnboarding?.();
+								}}
 								className="flex items-center gap-2.5 rounded-[28px] px-6 py-4 bg-surface border border-border"
 								whileTap={{ scale: 0.97 }}
 								whileHover={{ scale: 1.01 }}

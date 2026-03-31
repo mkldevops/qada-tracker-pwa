@@ -15,6 +15,7 @@ import {
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { PRAYER_CONFIG } from '@/constants/prayers';
+import { track } from '@/lib/analytics';
 import { spring } from '@/lib/animations';
 import { groupBySession } from '@/lib/groupBySession';
 import { usePrayerStore } from '@/stores/prayerStore';
@@ -285,17 +286,18 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 
 	async function handleDeleteConfirm() {
 		if (selectedLog?.id == null) {
-			toast.error(t('error'));
+			toast.error(t('common.error'));
 			setSelectedLog(null);
 			return;
 		}
 
 		try {
 			await deleteLog(selectedLog.id, selectedLog.prayer, selectedLog.quantity);
+			track({ name: 'entry_deleted', data: { prayer: selectedLog.prayer } });
 			setSelectedLog(null);
-			toast.success(t('deleteEntryConfirm'));
+			toast.success(t('log.deleteEntryConfirm'));
 		} catch {
-			toast.error(t('error'));
+			toast.error(t('common.error'));
 		}
 	}
 
@@ -521,7 +523,9 @@ export function LogPrayers() {
 			prayer,
 			quantity: quantities[prayer],
 		}));
+		const total = entries.reduce((sum, e) => sum + e.quantity, 0);
 		await logBatch(entries, `batch-${Date.now()}`);
+		track({ name: 'prayers_logged', data: { total } });
 		setQuantities(EMPTY());
 		switchTab('history');
 	}

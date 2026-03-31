@@ -10,6 +10,22 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.21.2',
+		date: '2026-03-31',
+		changes: {
+			fr: [
+				'Analytics : suivi des sessions (d\u00e9marrage, fin, abandon) avec dur\u00e9e et nombre de rak\u2019ats',
+				'Analytics : suivi de l\u2019export, de l\u2019import et de la r\u00e9initialisation des donn\u00e9es',
+				'Analytics : suivi de la consultation du changelog et du red\u00e9marrage de l\u2019onboarding',
+			],
+			en: [
+				'Analytics: session tracking (start, complete, quit) with duration and rak\u2019a count',
+				'Analytics: export, import and data reset tracking',
+				'Analytics: changelog view and onboarding restart tracking',
+			],
+		},
+	},
+	{
 		version: '1.21.1',
 		date: '2026-03-31',
 		changes: {

@@ -14,7 +14,8 @@
 		"dayShort": "j",
 		"lessThanOneDay": "< 1 jour",
 		"years": "Années",
-		"months": "Mois"
+		"months": "Mois",
+		"error": "Une erreur est survenue"
 	},
 	"app": {
 		"updateSuccess": "Mise à jour installée avec succès"
