@@ -208,7 +208,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 				<span className="text-sm font-medium text-foreground">{t('settings.version')}</span>
 				<div className="flex items-center gap-2">
 					<span className="text-sm text-muted">{__APP_VERSION__}</span>
-					<ChevronRight size={14} className="text-tertiary" />
+					<ChevronRight size={14} className="text-tertiary rtl:rotate-180" />
 				</div>
 			</button>
 
