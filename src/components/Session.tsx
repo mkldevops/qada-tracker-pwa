@@ -420,11 +420,14 @@ export function Session({ onClose }: { onClose: () => void }) {
 		};
 	}, [phase]);
 
-	function handleQuit() {
-		const duration_s = sessionStartTime.current
+	function getSessionDuration() {
+		return sessionStartTime.current
 			? Math.round((Date.now() - sessionStartTime.current) / 1000)
 			: 0;
-		track({ name: 'session_quit', data: { completed, target, duration_s } });
+	}
+
+	function handleQuit() {
+		track({ name: 'session_quit', data: { completed, target, duration_s: getSessionDuration() } });
 		onClose();
 	}
 
@@ -469,20 +472,15 @@ export function Session({ onClose }: { onClose: () => void }) {
 			resetSujoodCount();
 			setConfirmDone(false);
 
-			setCompleted((prev) => {
-				const newCompleted = prev + 1;
-				if (newCompleted >= target) {
-					const duration_s = sessionStartTime.current
-						? Math.round((Date.now() - sessionStartTime.current) / 1000)
-						: 0;
-					track({
-						name: 'session_complete',
-						data: { total: newCompleted, duration_s, order: sessionOrder },
-					});
-					setPhase('complete');
-				}
-				return newCompleted;
-			});
+			const newCompleted = completed + 1;
+			setCompleted(newCompleted);
+			if (newCompleted >= target) {
+				track({
+					name: 'session_complete',
+					data: { total: newCompleted, duration_s: getSessionDuration(), order: sessionOrder },
+				});
+				setPhase('complete');
+			}
 
 			const freshDebts2 = usePrayerStore.getState().debts;
 			const next = getNextPrayer(
