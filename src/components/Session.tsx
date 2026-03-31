@@ -6,6 +6,7 @@ import { EncouragementMessage } from '@/components/EncouragementMessage';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useAvgPacePerPrayer } from '@/hooks/useAvgPacePerPrayer';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
+import { track } from '@/lib/analytics';
 import { spring, springBouncy } from '@/lib/animations';
 import { formatPace } from '@/lib/calculateAvgPacePerPrayer';
 import { computeTarget } from '@/lib/sessionUtils';
@@ -343,6 +344,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const [completed, setCompleted] = useState(0);
 	const [currentPrayerIndex, setCurrentPrayerIndex] = useState(0);
 	const [sessionId] = useState(`session-${Date.now()}`);
+	const sessionStartTime = useRef<number | null>(null);
 	const [confirmQuit, setConfirmQuit] = useState(false);
 	const [confirmDone, setConfirmDone] = useState(false);
 	const [pressing, setPressing] = useState(false);
@@ -418,6 +420,17 @@ export function Session({ onClose }: { onClose: () => void }) {
 		};
 	}, [phase]);
 
+	function getSessionDuration() {
+		return sessionStartTime.current
+			? Math.round((Date.now() - sessionStartTime.current) / 1000)
+			: 0;
+	}
+
+	function handleQuit() {
+		track({ name: 'session_quit', data: { completed, target, duration_s: getSessionDuration() } });
+		onClose();
+	}
+
 	async function handleStart() {
 		if (
 			sujoodTrackingEnabled &&
@@ -436,6 +449,8 @@ export function Session({ onClose }: { onClose: () => void }) {
 			return;
 		}
 		setCurrentPrayerIndex(next.index);
+		sessionStartTime.current = Date.now();
+		track({ name: 'session_start', data: { target, order: sessionOrder } });
 		setPhase('active');
 	}
 
@@ -457,13 +472,15 @@ export function Session({ onClose }: { onClose: () => void }) {
 			resetSujoodCount();
 			setConfirmDone(false);
 
-			setCompleted((prev) => {
-				const newCompleted = prev + 1;
-				if (newCompleted >= target) {
-					setPhase('complete');
-				}
-				return newCompleted;
-			});
+			const newCompleted = completed + 1;
+			setCompleted(newCompleted);
+			if (newCompleted >= target) {
+				track({
+					name: 'session_complete',
+					data: { total: newCompleted, duration_s: getSessionDuration(), order: sessionOrder },
+				});
+				setPhase('complete');
+			}
 
 			const freshDebts2 = usePrayerStore.getState().debts;
 			const next = getNextPrayer(
@@ -801,7 +818,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 										</p>
 										<div className="flex gap-4">
 											<motion.button
-												onClick={onClose}
+												onClick={handleQuit}
 												className="px-5 py-2 rounded-2xl text-sm font-medium"
 												style={{ background: '#3A3A3C', color: '#F5F5F0' }}
 												whileTap={{ scale: 0.93 }}

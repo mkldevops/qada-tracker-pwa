@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
 import { ObjectiveCard } from '@/components/ObjectiveCard';
+import { track } from '@/lib/analytics';
 import { usePrayerStore, useTotalRemaining } from '@/stores/prayerStore';
 import type { Period } from '@/types';
 
@@ -73,7 +74,10 @@ export function DebtTab({ onRestartOnboarding }: { onRestartOnboarding?: () => v
 			{onRestartOnboarding && (
 				<button
 					type="button"
-					onClick={onRestartOnboarding}
+					onClick={() => {
+						track({ name: 'restart_onboarding', data: { from: 'settings' } });
+						onRestartOnboarding?.();
+					}}
 					className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-surface border border-border"
 				>
 					<RotateCcw size={16} className="text-gold" />

@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { db } from '@/db/database';
 import { exportBackup, importBackup } from '@/db/queries';
+import { track } from '@/lib/analytics';
 import { markOnboardingUndone } from '@/lib/onboarding';
 import { usePrayerStore } from '@/stores/prayerStore';
 
@@ -40,6 +41,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 	const handleExport = async () => {
 		try {
 			await exportBackup(db);
+			track({ name: 'export' });
 			setDataFeedback({ type: 'success', message: t('settings.exportSuccess') });
 		} catch {
 			setDataFeedback({ type: 'error', message: t('settings.exportError') });
@@ -58,6 +60,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 		if (!pendingFile) return;
 		try {
 			await importBackup(db, pendingFile, loadAll);
+			track({ name: 'import' });
 			setDataFeedback({ type: 'success', message: t('settings.importSuccess') });
 		} catch {
 			setDataFeedback({ type: 'error', message: t('settings.importError') });
@@ -166,7 +169,10 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 
 			<button
 				type="button"
-				onClick={() => setShowChangelog(true)}
+				onClick={() => {
+					setShowChangelog(true);
+					track({ name: 'version_view' });
+				}}
 				className="flex w-full items-center justify-between rounded-[20px] bg-surface border border-border px-5 py-4"
 			>
 				<span className="text-sm font-medium text-foreground">{t('settings.version')}</span>
@@ -204,7 +210,9 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 								onClick={async () => {
 									try {
 										await resetAll();
+										track({ name: 'reset_all_data' });
 										markOnboardingUndone();
+										track({ name: 'restart_onboarding', data: { from: 'reset' } });
 										onRestartOnboarding?.();
 									} catch {
 										setDataFeedback({
