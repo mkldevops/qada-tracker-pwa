@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
+import ar from './locales/ar.json';
 import en from './locales/en.json';
 import fr from './locales/fr.json';
 
@@ -11,9 +12,10 @@ i18n
 		resources: {
 			fr: { translation: fr },
 			en: { translation: en },
+			ar: { translation: ar },
 		},
 		fallbackLng: 'fr',
-		supportedLngs: ['fr', 'en'],
+		supportedLngs: ['fr', 'en', 'ar'],
 		detection: {
 			order: ['localStorage', 'navigator'],
 			caches: ['localStorage'],
