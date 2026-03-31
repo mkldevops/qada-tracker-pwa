@@ -10,6 +10,22 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.23.0',
+		date: '2026-03-31',
+		changes: {
+			fr: [
+				'SEO : schémas JSON-LD FAQ, Organization et agrégation des avis pour une meilleure indexation par les IA',
+				"Communauté : section pour partager l'app et donner son avis",
+				'robots.txt : accès autorisé pour GPTBot, PerplexityBot, ClaudeBot et autres crawlers IA',
+			],
+			en: [
+				'SEO: FAQ, Organization and AggregateRating JSON-LD schemas for better AI indexing',
+				'Community: section to share the app and give feedback',
+				'robots.txt: allowed access for GPTBot, PerplexityBot, ClaudeBot and other AI crawlers',
+			],
+		},
+	},
+	{
 		version: '1.21.2',
 		date: '2026-03-31',
 		changes: {

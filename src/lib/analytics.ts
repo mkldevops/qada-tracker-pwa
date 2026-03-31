@@ -16,7 +16,9 @@ type TrackEvent =
 	| { name: 'import' }
 	| { name: 'version_view' }
 	| { name: 'reset_all_data' }
-	| { name: 'restart_onboarding'; data: { from: 'settings' | 'dashboard' | 'reset' } };
+	| { name: 'restart_onboarding'; data: { from: 'settings' | 'dashboard' | 'reset' } }
+	| { name: 'feedback_open' }
+	| { name: 'share'; data: { method: 'native' | 'clipboard' } };
 
 export function track(event: TrackEvent): void {
 	const data = 'data' in event ? event.data : undefined;

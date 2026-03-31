@@ -1,9 +1,11 @@
-import { ChevronRight, Download, Trash2, Upload } from 'lucide-react';
+import { ChevronRight, Download, MessageSquare, Share2, Trash2, Upload } from 'lucide-react';
 import { AnimatePresence } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { Changelog } from '@/components/Changelog';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
+import { FeedbackModal } from '@/components/FeedbackModal';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -30,6 +32,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 		message: string;
 	} | null>(null);
 	const [showChangelog, setShowChangelog] = useState(false);
+	const [showFeedback, setShowFeedback] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -37,6 +40,32 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 		const timeout = setTimeout(() => setDataFeedback(null), 5000);
 		return () => clearTimeout(timeout);
 	}, [dataFeedback]);
+
+	const handleShare = async () => {
+		const shareText = t('settings.shareText');
+		if (!navigator.share) {
+			try {
+				await navigator.clipboard.writeText(shareText);
+				toast.success(t('settings.shareCopied'));
+				track({ name: 'share', data: { method: 'clipboard' } });
+			} catch {
+				toast.error(t('settings.shareFailed'));
+			}
+			return;
+		}
+		try {
+			await navigator.share({
+				title: 'Qada Tracker',
+				text: shareText,
+				url: 'https://qada.fahari.pro',
+			});
+			track({ name: 'share', data: { method: 'native' } });
+		} catch (err) {
+			if (err instanceof Error && err.name !== 'AbortError') {
+				toast.error(t('settings.shareFailed'));
+			}
+		}
+	};
 
 	const handleExport = async () => {
 		try {
@@ -73,6 +102,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 		<>
 			<AnimatePresence>
 				{showChangelog && <Changelog onClose={() => setShowChangelog(false)} />}
+				{showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
 			</AnimatePresence>
 
 			<CollapsibleSection label={t('settings.data')} defaultOpen={true}>
@@ -181,6 +211,34 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 					<ChevronRight size={14} className="text-tertiary" />
 				</div>
 			</button>
+
+			<CollapsibleSection label={t('settings.community')} defaultOpen={true}>
+				<div className="flex flex-col gap-3">
+					<button
+						type="button"
+						onClick={() => {
+							setShowFeedback(true);
+							track({ name: 'feedback_open' });
+						}}
+						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-background border border-border"
+					>
+						<MessageSquare size={16} className="text-gold" />
+						<span className="text-xs font-semibold tracking-[1px] text-gold">
+							{t('settings.sendFeedback')}
+						</span>
+					</button>
+					<button
+						type="button"
+						onClick={handleShare}
+						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-background border border-border"
+					>
+						<Share2 size={16} className="text-gold" />
+						<span className="text-xs font-semibold tracking-[1px] text-gold">
+							{t('settings.shareApp')}
+						</span>
+					</button>
+				</div>
+			</CollapsibleSection>
 
 			<CollapsibleSection label={t('settings.dangerZone')} defaultOpen={true}>
 				<AlertDialog>
