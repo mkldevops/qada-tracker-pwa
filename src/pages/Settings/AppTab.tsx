@@ -179,7 +179,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 			<CollapsibleSection label={t('settings.configuration')} defaultOpen={true}>
 				<div className="flex flex-col gap-3">
 					<div className="flex gap-2 rounded-[20px] bg-surface border border-border p-3">
-						{(['fr', 'en'] as const).map((lang) => (
+						{(['fr', 'en', 'ar'] as const).map((lang) => (
 							<button
 								key={lang}
 								type="button"
@@ -190,7 +190,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 										: 'bg-background border border-border text-tertiary'
 								}`}
 							>
-								{lang === 'fr' ? 'Français' : 'English'}
+								{lang === 'fr' ? 'Français' : lang === 'en' ? 'English' : 'العربية'}
 							</button>
 						))}
 					</div>
@@ -208,7 +208,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 				<span className="text-sm font-medium text-foreground">{t('settings.version')}</span>
 				<div className="flex items-center gap-2">
 					<span className="text-sm text-muted">{__APP_VERSION__}</span>
-					<ChevronRight size={14} className="text-tertiary" />
+					<ChevronRight size={14} className="text-tertiary rtl:rotate-180" />
 				</div>
 			</button>
 

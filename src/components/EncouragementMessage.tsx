@@ -1,12 +1,12 @@
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { spring } from '@/lib/animations';
 import { randomEncouragement } from '@/lib/encouragements';
 
 export function EncouragementMessage() {
 	const { i18n } = useTranslation();
-	const [message] = useState(() => randomEncouragement(i18n.language));
+	const message = useMemo(() => randomEncouragement(i18n.language), [i18n.language]);
 
 	return (
 		<motion.div

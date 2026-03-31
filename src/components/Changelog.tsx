@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.24.0',
+		date: '2026-03-31',
+		changes: {
+			fr: ["Langue arabe ajoutée — l'interface bascule automatiquement en RTL"],
+			en: ['Arabic language added — the interface automatically switches to RTL'],
+		},
+	},
+	{
 		version: '1.23.0',
 		date: '2026-03-31',
 		changes: {

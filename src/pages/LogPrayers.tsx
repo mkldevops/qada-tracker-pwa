@@ -187,7 +187,8 @@ function DeleteEntrySheet({
 }) {
 	const { t, i18n } = useTranslation();
 	const cfg = PRAYER_CONFIG[log.prayer];
-	const label = i18n.language === 'en' ? cfg.labelEn : cfg.labelFr;
+	const label =
+		i18n.language === 'en' ? cfg.labelEn : i18n.language === 'ar' ? cfg.labelAr : cfg.labelFr;
 
 	return (
 		<>
