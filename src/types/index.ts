@@ -41,6 +41,7 @@ export interface StatsState {
 
 export interface PrayerConfig {
 	labelFr: string;
+	labelEn: string;
 	labelAr: string;
 	color: string;
 	icon: string;

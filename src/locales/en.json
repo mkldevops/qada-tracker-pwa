@@ -80,7 +80,11 @@
 		"undoCancel": "Cancel",
 		"undoConfirm": "Confirm",
 		"session": "SESSION",
-		"rakat": "rak'at"
+		"rakat": "rak'at",
+		"deleteEntry": "Delete this entry",
+		"deleteEntryDesc": "Updates the counter accordingly.",
+		"deleteEntryConfirm": "Delete",
+		"deleteEntryCancel": "Cancel"
 	},
 	"session": {
 		"nextPrayer": "NEXT PRAYER",

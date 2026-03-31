@@ -1,7 +1,8 @@
-import { Check, Minus, Plus, RotateCcw } from 'lucide-react';
+import { Check, Minus, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -174,9 +175,129 @@ function LoggerTab({
 	);
 }
 
+function DeleteEntrySheet({
+	log,
+	onConfirm,
+	onClose,
+}: {
+	log: PrayerLog;
+	onConfirm: () => void;
+	onClose: () => void;
+}) {
+	const { t, i18n } = useTranslation();
+	const cfg = PRAYER_CONFIG[log.prayer];
+	const label = i18n.language === 'en' ? cfg.labelEn : cfg.labelFr;
+
+	return (
+		<>
+			<motion.div
+				className="fixed inset-0 z-[60]"
+				style={{ background: 'rgba(0,0,0,0.6)' }}
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				exit={{ opacity: 0 }}
+				onPointerDown={onClose}
+			/>
+			<motion.div
+				className="fixed bottom-0 inset-x-0 z-[61] rounded-t-[28px] px-6 pt-5 flex flex-col gap-4"
+				style={{
+					background: '#242426',
+					border: '1px solid #3A3A3C',
+					paddingBottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)',
+				}}
+				initial={{ y: '100%' }}
+				animate={{ y: 0 }}
+				exit={{ y: '100%' }}
+				transition={{ type: 'spring', stiffness: 380, damping: 36 }}
+			>
+				<div className="mx-auto w-10 h-1 rounded-full" style={{ background: '#3A3A3C' }} />
+
+				<div className="flex items-center gap-3 pb-1">
+					<div className="h-3 w-3 rounded-full flex-shrink-0" style={{ background: cfg.hex }} />
+					<span className="font-display text-xl font-medium" style={{ color: cfg.hex }}>
+						{label}
+					</span>
+					<span className="text-base" style={{ color: `${cfg.hex}80` }}>
+						{cfg.labelAr}
+					</span>
+					<span className="ml-auto tabular-nums text-sm font-medium" style={{ color: '#6E6E70' }}>
+						+{log.quantity}
+					</span>
+				</div>
+
+				<p className="text-sm" style={{ color: '#6E6E70' }}>
+					{t('log.deleteEntryDesc')}
+				</p>
+
+				<motion.button
+					onClick={onConfirm}
+					className="w-full rounded-[18px] py-4 text-sm font-semibold tracking-[1px] flex items-center justify-center gap-2"
+					style={{ background: '#2A1A1A', border: '1px solid #D45F5F40', color: '#D45F5F' }}
+					whileTap={{ scale: 0.97 }}
+				>
+					<Trash2 size={15} />
+					{t('log.deleteEntryConfirm')}
+				</motion.button>
+
+				<motion.button
+					onClick={onClose}
+					className="w-full rounded-[18px] py-3 text-sm font-medium mb-2"
+					style={{ background: '#2A2A2C', color: '#6E6E70' }}
+					whileTap={{ scale: 0.97 }}
+				>
+					{t('log.deleteEntryCancel')}
+				</motion.button>
+			</motion.div>
+		</>
+	);
+}
+
 function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void }) {
 	const { t, i18n } = useTranslation();
 	const groups = groupBySession(logs);
+	const [selectedLog, setSelectedLog] = useState<PrayerLog | null>(null);
+	const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const { deleteLog } = usePrayerStore();
+
+	useEffect(
+		() => () => {
+			if (pressTimer.current) clearTimeout(pressTimer.current);
+		},
+		[],
+	);
+
+	function startPress(log: PrayerLog) {
+		endPress();
+		pressTimer.current = setTimeout(() => {
+			if (logs.find((l) => l.id === log.id)) {
+				navigator.vibrate?.(50);
+				setSelectedLog(log);
+			}
+		}, 450);
+	}
+
+	function endPress() {
+		if (pressTimer.current) {
+			clearTimeout(pressTimer.current);
+			pressTimer.current = null;
+		}
+	}
+
+	async function handleDeleteConfirm() {
+		if (selectedLog?.id == null) {
+			toast.error(t('error'));
+			setSelectedLog(null);
+			return;
+		}
+
+		try {
+			await deleteLog(selectedLog.id, selectedLog.prayer, selectedLog.quantity);
+			setSelectedLog(null);
+			toast.success(t('deleteEntryConfirm'));
+		} catch {
+			toast.error(t('error'));
+		}
+	}
 
 	if (groups.length === 0) {
 		return (
@@ -197,161 +318,179 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 	}
 
 	return (
-		<div className="flex flex-col gap-4 pt-4">
-			<motion.div
-				className="flex justify-end"
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				transition={{ delay: 0.05 }}
-			>
-				<AlertDialog>
-					<AlertDialogTrigger asChild>
-						<motion.button
-							className="flex items-center gap-1.5 rounded-2xl px-4 py-2 text-[12px] font-medium"
-							style={{ background: '#2A1A1A', border: '1px solid #D45F5F40', color: '#D45F5F' }}
-							whileTap={{ scale: 0.93 }}
-						>
-							<RotateCcw size={12} />
-							{t('log.undoLast')}
-						</motion.button>
-					</AlertDialogTrigger>
-					<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
-						<AlertDialogHeader>
-							<AlertDialogTitle style={{ color: '#F5F5F0' }}>{t('log.undoTitle')}</AlertDialogTitle>
-							<AlertDialogDescription style={{ color: '#6E6E70' }}>
-								{t('log.undoDesc')}
-							</AlertDialogDescription>
-						</AlertDialogHeader>
-						<AlertDialogFooter>
-							<AlertDialogCancel
-								style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
+		<>
+			<div className="flex flex-col gap-4 pt-4">
+				<motion.div
+					className="flex justify-end"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ delay: 0.05 }}
+				>
+					<AlertDialog>
+						<AlertDialogTrigger asChild>
+							<motion.button
+								className="flex items-center gap-1.5 rounded-2xl px-4 py-2 text-[12px] font-medium"
+								style={{ background: '#2A1A1A', border: '1px solid #D45F5F40', color: '#D45F5F' }}
+								whileTap={{ scale: 0.93 }}
 							>
-								{t('log.undoCancel')}
-							</AlertDialogCancel>
-							<AlertDialogAction
-								onClick={onUndo}
-								style={{ background: '#D45F5F', color: '#F5F5F0' }}
-							>
-								{t('log.undoConfirm')}
-							</AlertDialogAction>
-						</AlertDialogFooter>
-					</AlertDialogContent>
-				</AlertDialog>
-			</motion.div>
-
-			<div className="flex flex-col gap-3">
-				{groups.map((group, gi) => {
-					const totalPrayers = group.entries.reduce((s, e) => s + e.quantity, 0);
-					const isSession = group.sessionId?.startsWith('session-') ?? false;
-					const durationSec =
-						isSession && group.entries.length > 1
-							? Math.floor(
-									(new Date(group.entries[0].logged_at).getTime() -
-										new Date(group.entries[group.entries.length - 1].logged_at).getTime()) /
-										1000,
-								)
-							: 0;
-					const durationMin = Math.floor(durationSec / 60);
-					const durationRemSec = durationSec % 60;
-
-					return (
-						<motion.div
-							key={group.sessionId ?? `solo-${gi}`}
-							initial={{ opacity: 0, y: 16 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ delay: gi * 0.04, ...spring }}
-						>
-							<div className="mb-1.5 flex items-center gap-2 px-1">
-								<span
-									className="text-[10px] font-medium tracking-[2px]"
-									style={{ color: '#3A3A3C' }}
+								<RotateCcw size={12} />
+								{t('log.undoLast')}
+							</motion.button>
+						</AlertDialogTrigger>
+						<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
+							<AlertDialogHeader>
+								<AlertDialogTitle style={{ color: '#F5F5F0' }}>
+									{t('log.undoTitle')}
+								</AlertDialogTitle>
+								<AlertDialogDescription style={{ color: '#6E6E70' }}>
+									{t('log.undoDesc')}
+								</AlertDialogDescription>
+							</AlertDialogHeader>
+							<AlertDialogFooter>
+								<AlertDialogCancel
+									style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
 								>
-									{new Date(group.date).toLocaleString(i18n.language, {
-										day: '2-digit',
-										month: '2-digit',
-										hour: '2-digit',
-										minute: '2-digit',
-									})}
-								</span>
-								{group.sessionId?.startsWith('session-') && (
+									{t('log.undoCancel')}
+								</AlertDialogCancel>
+								<AlertDialogAction
+									onClick={onUndo}
+									style={{ background: '#D45F5F', color: '#F5F5F0' }}
+								>
+									{t('log.undoConfirm')}
+								</AlertDialogAction>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					</AlertDialog>
+				</motion.div>
+
+				<div className="flex flex-col gap-3">
+					{groups.map((group, gi) => {
+						const totalPrayers = group.entries.reduce((s, e) => s + e.quantity, 0);
+						const isSession = group.sessionId?.startsWith('session-') ?? false;
+						const durationSec =
+							isSession && group.entries.length > 1
+								? Math.floor(
+										(new Date(group.entries[0].logged_at).getTime() -
+											new Date(group.entries[group.entries.length - 1].logged_at).getTime()) /
+											1000,
+									)
+								: 0;
+						const durationMin = Math.floor(durationSec / 60);
+						const durationRemSec = durationSec % 60;
+
+						return (
+							<motion.div
+								key={group.sessionId ?? `solo-${gi}`}
+								initial={{ opacity: 0, y: 16 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: gi * 0.04, ...spring }}
+							>
+								<div className="mb-1.5 flex items-center gap-2 px-1">
 									<span
-										className="rounded-full px-2 py-0.5 text-[9px] font-medium tracking-wider"
-										style={{ background: '#C9A96215', color: '#C9A96280' }}
+										className="text-[10px] font-medium tracking-[2px]"
+										style={{ color: '#3A3A3C' }}
 									>
-										{t('log.session')}
+										{new Date(group.date).toLocaleString(i18n.language, {
+											day: '2-digit',
+											month: '2-digit',
+											hour: '2-digit',
+											minute: '2-digit',
+										})}
 									</span>
-								)}
-								<span
-									className="text-[11px] font-medium tabular-nums"
-									style={{ color: '#C9A96280' }}
-								>
-									+{totalPrayers}
-								</span>
-								{durationSec >= 1 && (
-									<span className="text-[10px]" style={{ color: '#4A4A4C' }}>
-										{durationMin >= 1
-											? durationRemSec > 0
-												? `${durationMin} min ${durationRemSec}s`
-												: `${durationMin} min`
-											: `${durationSec}s`}
+									{group.sessionId?.startsWith('session-') && (
+										<span
+											className="rounded-full px-2 py-0.5 text-[9px] font-medium tracking-wider"
+											style={{ background: '#C9A96215', color: '#C9A96280' }}
+										>
+											{t('log.session')}
+										</span>
+									)}
+									<span
+										className="text-[11px] font-medium tabular-nums"
+										style={{ color: '#C9A96280' }}
+									>
+										+{totalPrayers}
 									</span>
-								)}
-							</div>
+									{durationSec >= 1 && (
+										<span className="text-[10px]" style={{ color: '#4A4A4C' }}>
+											{durationMin >= 1
+												? durationRemSec > 0
+													? `${durationMin} min ${durationRemSec}s`
+													: `${durationMin} min`
+												: `${durationSec}s`}
+										</span>
+									)}
+								</div>
 
-							<div
-								className="overflow-hidden rounded-[18px]"
-								style={{ background: '#242426', border: '1px solid #2A2A2C' }}
-							>
-								{group.entries.map((log, li) => {
-									const cfg = PRAYER_CONFIG[log.prayer];
-									return (
-										<div key={log.id}>
-											{li > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
-											<motion.div
-												className="flex items-center justify-between px-5 py-3"
-												initial={{ opacity: 0 }}
-												animate={{ opacity: 1 }}
-												transition={{ delay: gi * 0.04 + li * 0.03 }}
-											>
-												<div className="flex items-center gap-2.5">
-													<div
-														className="h-2 w-2 rounded-full flex-shrink-0"
-														style={{ background: cfg.hex }}
-													/>
-													<span
-														className="font-display text-[15px] font-medium"
-														style={{ color: cfg.hex }}
-													>
-														{cfg.labelFr}
-													</span>
-													<span className="text-xs" style={{ color: '#3A3A3C' }}>
-														{cfg.labelAr}
-													</span>
-												</div>
-												<motion.span
-													className="font-display text-lg font-medium tabular-nums"
-													style={{ color: '#C9A962' }}
-													initial={{ scale: 0.8, opacity: 0 }}
-													animate={{ scale: 1, opacity: 1 }}
-													transition={{
-														delay: gi * 0.04 + li * 0.03 + 0.05,
-														type: 'spring' as const,
-														stiffness: 500,
-														damping: 22,
-													}}
+								<div
+									className="overflow-hidden rounded-[18px]"
+									style={{ background: '#242426', border: '1px solid #2A2A2C' }}
+								>
+									{group.entries.map((log, li) => {
+										const cfg = PRAYER_CONFIG[log.prayer];
+										return (
+											<div key={log.id}>
+												{li > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+												<motion.div
+													className="flex items-center justify-between px-5 py-3 select-none"
+													initial={{ opacity: 0 }}
+													animate={{ opacity: 1 }}
+													transition={{ delay: gi * 0.04 + li * 0.03 }}
+													onPointerDown={() => startPress(log)}
+													onPointerUp={endPress}
+													onPointerCancel={endPress}
+													onPointerLeave={endPress}
 												>
-													+{log.quantity}
-												</motion.span>
-											</motion.div>
-										</div>
-									);
-								})}
-							</div>
-						</motion.div>
-					);
-				})}
+													<div className="flex items-center gap-2.5">
+														<div
+															className="h-2 w-2 rounded-full flex-shrink-0"
+															style={{ background: cfg.hex }}
+														/>
+														<span
+															className="font-display text-[15px] font-medium"
+															style={{ color: cfg.hex }}
+														>
+															{cfg.labelFr}
+														</span>
+														<span className="text-xs" style={{ color: '#3A3A3C' }}>
+															{cfg.labelAr}
+														</span>
+													</div>
+													<motion.span
+														className="font-display text-lg font-medium tabular-nums"
+														style={{ color: '#C9A962' }}
+														initial={{ scale: 0.8, opacity: 0 }}
+														animate={{ scale: 1, opacity: 1 }}
+														transition={{
+															delay: gi * 0.04 + li * 0.03 + 0.05,
+															type: 'spring' as const,
+															stiffness: 500,
+															damping: 22,
+														}}
+													>
+														+{log.quantity}
+													</motion.span>
+												</motion.div>
+											</div>
+										);
+									})}
+								</div>
+							</motion.div>
+						);
+					})}
+				</div>
 			</div>
-		</div>
+
+			<AnimatePresence>
+				{selectedLog && (
+					<DeleteEntrySheet
+						log={selectedLog}
+						onConfirm={handleDeleteConfirm}
+						onClose={() => setSelectedLog(null)}
+					/>
+				)}
+			</AnimatePresence>
+		</>
 	);
 }
 

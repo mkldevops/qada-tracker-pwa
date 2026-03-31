@@ -3,6 +3,7 @@ import type { PrayerConfig, PrayerName } from '../types';
 export const PRAYER_CONFIG: Record<PrayerName, PrayerConfig & { hex: string }> = {
 	fajr: {
 		labelFr: 'Fajr',
+		labelEn: 'Fajr',
 		labelAr: 'الفجر',
 		color: '#C9A962',
 		hex: '#C9A962',
@@ -11,6 +12,7 @@ export const PRAYER_CONFIG: Record<PrayerName, PrayerConfig & { hex: string }> =
 	},
 	dhuhr: {
 		labelFr: 'Dhuhr',
+		labelEn: 'Dhuhr',
 		labelAr: 'الظهر',
 		color: '#6B9FD4',
 		hex: '#6B9FD4',
@@ -19,6 +21,7 @@ export const PRAYER_CONFIG: Record<PrayerName, PrayerConfig & { hex: string }> =
 	},
 	asr: {
 		labelFr: 'Asr',
+		labelEn: 'Asr',
 		labelAr: 'العصر',
 		color: '#E8874A',
 		hex: '#E8874A',
@@ -27,6 +30,7 @@ export const PRAYER_CONFIG: Record<PrayerName, PrayerConfig & { hex: string }> =
 	},
 	maghrib: {
 		labelFr: 'Maghrib',
+		labelEn: 'Maghrib',
 		labelAr: 'المغرب',
 		color: '#D45F5F',
 		hex: '#D45F5F',
@@ -35,6 +39,7 @@ export const PRAYER_CONFIG: Record<PrayerName, PrayerConfig & { hex: string }> =
 	},
 	isha: {
 		labelFr: 'Isha',
+		labelEn: 'Isha',
 		labelAr: 'العشاء',
 		color: '#9B72CF',
 		hex: '#9B72CF',

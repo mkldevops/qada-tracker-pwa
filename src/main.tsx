@@ -5,7 +5,7 @@ import './index.css';
 import { App } from './App';
 
 (screen.orientation as ScreenOrientation & { lock?: (o: string) => Promise<void> })
-	.lock?.('portrait')
+	.lock?.('portrait-primary')
 	?.catch(() => {});
 
 const root = document.getElementById('root');

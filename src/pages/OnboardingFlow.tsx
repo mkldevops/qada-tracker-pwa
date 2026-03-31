@@ -759,10 +759,10 @@ function ObjectiveStep({
 }
 
 function SummaryStep({ onComplete }: { onComplete: () => void }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const totalRemaining = useTotalRemaining();
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
-	const [encouragement] = useState(randomEncouragement);
+	const [encouragement] = useState(() => randomEncouragement(i18n.language));
 
 	return (
 		<motion.div
