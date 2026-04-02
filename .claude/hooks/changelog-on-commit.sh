@@ -22,8 +22,8 @@ if [ -z "$MSG" ]; then
   exit 0
 fi
 
-# Skip if Changelog.tsx is already staged — entry was already added for this commit
-if git diff --cached --name-only 2>/dev/null | grep -q 'src/components/Changelog.tsx'; then
+# Skip if the commit message itself is a changelog update (prevents infinite loop)
+if echo "$MSG" | grep -qiE '^chore\(changelog\)|^\[skip changelog\]|changelog.*entr'; then
   exit 0
 fi
 

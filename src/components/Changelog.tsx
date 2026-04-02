@@ -14,10 +14,10 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-04-02',
 		changes: {
 			fr: [
-				'Correctif : la mise à jour du changelog ne boucle plus — ignorée si Changelog.tsx est déjà inclus dans le commit',
+				"Correctif : le hook de changelog ne boucle plus — ignoré si le message de commit commence par chore(changelog)",
 			],
 			en: [
-				'Fix: changelog update no longer loops — skipped when Changelog.tsx is already staged',
+				'Fix: changelog hook no longer loops — skipped when commit message starts with chore(changelog)',
 			],
 		},
 	},
