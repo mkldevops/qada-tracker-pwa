@@ -11,6 +11,18 @@ interface ChangelogEntry {
 const ENTRIES: ChangelogEntry[] = [
 	{
 		version: '1.24.0',
+		date: '2026-04-02',
+		changes: {
+			fr: [
+				'Changelog : ajout des entrées manquantes v1.0.22 à v1.0.27 (SEO, analytics, suivi rakats, picker iOS, tableau de bord animé, CI versioning)',
+			],
+			en: [
+				'Changelog: added missing entries v1.0.22 to v1.0.27 (SEO, analytics, rakat tracking, iOS drum roll picker, animated dashboard, version bump CI)',
+			],
+		},
+	},
+	{
+		version: '1.24.0',
 		date: '2026-03-31',
 		changes: {
 			fr: ["Langue arabe ajoutée — l'interface bascule automatiquement en RTL"],
