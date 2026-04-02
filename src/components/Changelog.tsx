@@ -14,6 +14,18 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-04-02',
 		changes: {
 			fr: [
+				'Correctif : la mise à jour du changelog ne boucle plus — ignorée si Changelog.tsx est déjà inclus dans le commit',
+			],
+			en: [
+				'Fix: changelog update no longer loops — skipped when Changelog.tsx is already staged',
+			],
+		},
+	},
+	{
+		version: '1.24.0',
+		date: '2026-04-02',
+		changes: {
+			fr: [
 				'Changelog : ajout des entrées manquantes v1.0.22 à v1.0.27 (SEO, analytics, suivi rakats, picker iOS, tableau de bord animé, CI versioning)',
 			],
 			en: [
