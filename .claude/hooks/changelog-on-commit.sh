@@ -22,6 +22,11 @@ if [ -z "$MSG" ]; then
   exit 0
 fi
 
+# Skip if Changelog.tsx is already staged — entry was already added for this commit
+if git diff --cached --name-only 2>/dev/null | grep -q 'src/components/Changelog.tsx'; then
+  exit 0
+fi
+
 # Get current version from package.json
 VERSION=$(jq -r '.version' "$CLAUDE_PROJECT_DIR/package.json" 2>/dev/null || echo "unknown")
 TODAY=$(date +%Y-%m-%d)
