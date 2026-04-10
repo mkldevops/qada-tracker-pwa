@@ -78,9 +78,18 @@ export default defineConfig({
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
 				cleanupOutdatedCaches: true,
+				// Claim uncontrolled clients on first cold install so offline works
+				// after a single online visit. Has no effect on the update path
+				// (skipWaiting is still deferred to the prompt flow via registerType: 'prompt').
 				clientsClaim: true,
 				navigateFallback: '/index.html',
-				navigateFallbackDenylist: [/^\/version\.json$/, /^\/privacy\.html$/, /^\/llms\.txt$/],
+				navigateFallbackDenylist: [
+					/^\/version\.json$/,
+					/^\/robots\.txt$/,
+					/^\/sitemap\.xml$/,
+					/^\/privacy\.html$/,
+					/^\/llms\.txt$/,
+				],
 				runtimeCaching: [
 					{
 						urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
