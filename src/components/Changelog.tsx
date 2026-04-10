@@ -19,6 +19,7 @@ const ENTRIES: ChangelogEntry[] = [
 				'Ajout page politique de confidentialité et fichier llms.txt pour les moteurs IA',
 				'Robots.txt : ajout OAI-SearchBot et cohere-ai',
 				'Sitemap : ajout hreflang et page privacy',
+				'Correctif : privacy.html exclue du fallback du service worker, ErrorBoundary ajouté autour des pages lazy',
 			],
 			en: [
 				'SEO: enriched structured data (WebSite, FAQ in French, Organization), fixed hreflang, improved meta description',
@@ -26,6 +27,7 @@ const ENTRIES: ChangelogEntry[] = [
 				'Added privacy policy page and llms.txt file for AI search engines',
 				'Robots.txt: added OAI-SearchBot and cohere-ai',
 				'Sitemap: added hreflang and privacy page',
+				'Fix: privacy.html excluded from SW navigate fallback, ErrorBoundary added around lazy pages',
 			],
 		},
 	},

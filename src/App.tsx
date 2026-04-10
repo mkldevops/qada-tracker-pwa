@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toaster, toast } from 'sonner';
 import { BottomNav } from '@/components/BottomNav';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { InstallBanner } from '@/components/InstallBanner';
 import { MilestoneModal } from '@/components/MilestoneModal';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -118,14 +119,16 @@ export function App() {
 
 	if (showOnboarding) {
 		return (
-			<Suspense fallback={null}>
-				<OnboardingFlow
-					onComplete={() => {
-						markOnboardingDone();
-						setShowOnboarding(false);
-					}}
-				/>
-			</Suspense>
+			<ErrorBoundary>
+				<Suspense fallback={null}>
+					<OnboardingFlow
+						onComplete={() => {
+							markOnboardingDone();
+							setShowOnboarding(false);
+						}}
+					/>
+				</Suspense>
+			</ErrorBoundary>
 		);
 	}
 
@@ -144,14 +147,16 @@ export function App() {
 	return (
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
 			<main className="mx-auto max-w-lg pt-safe pb-28 overflow-hidden">
-				{(Object.keys(pages) as Tab[]).map(
-					(tab) =>
-						mountedTabs.has(tab) && (
-							<div key={tab} hidden={tab !== activeTab}>
-								<Suspense fallback={null}>{pages[tab]}</Suspense>
-							</div>
-						),
-				)}
+				<ErrorBoundary>
+					{(Object.keys(pages) as Tab[]).map(
+						(tab) =>
+							mountedTabs.has(tab) && (
+								<div key={tab} hidden={tab !== activeTab}>
+									<Suspense fallback={null}>{pages[tab]}</Suspense>
+								</div>
+							),
+					)}
+				</ErrorBoundary>
 			</main>
 			<AnimatePresence>
 				{!showOnboarding && installPrompt && shouldShowInstallBanner() && (
