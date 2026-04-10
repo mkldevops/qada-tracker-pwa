@@ -616,6 +616,62 @@ const ENTRIES: ChangelogEntry[] = [
 		},
 	},
 	{
+		version: '1.0.27',
+		date: '2026-03-21',
+		changes: {
+			fr: [
+				'Détection automatique du type de bump de version (major/minor/patch) depuis les commits',
+				'Mise à jour des dépendances (i18next, motion, react-i18next, zustand, biome, tailwind)',
+			],
+			en: [
+				'Auto-detect version bump type (major/minor/patch) from commit messages',
+				'Dependency updates (i18next, motion, react-i18next, zustand, biome, tailwind)',
+			],
+		},
+	},
+	{
+		version: '1.0.25',
+		date: '2026-03-21',
+		changes: {
+			fr: ["Picker iOS style pour le nombre de rakats (chiffres précédent/suivant visibles)"],
+			en: ["iOS-style drum roll picker for rakat count (previous/next numbers visible)"],
+		},
+	},
+	{
+		version: '1.0.24',
+		date: '2026-03-21',
+		changes: {
+			fr: ['Design animé de la page dashboard (animations spring, effets de survol)'],
+			en: ['Animated dashboard page design (spring animations, hover effects)'],
+		},
+	},
+	{
+		version: '1.0.23',
+		date: '2026-03-21',
+		changes: {
+			fr: ["Suivi des rakats au sein d'une prière avant de valider la complétion"],
+			en: ["Track rak'at within a prayer before logging completion"],
+		},
+	},
+	{
+		version: '1.0.22',
+		date: '2026-03-21',
+		changes: {
+			fr: [
+				'SEO : balises meta, image OG, sitemap, robots.txt, vérification Google Search Console',
+				'En-têtes de sécurité HTTP (X-Frame-Options, CSP, etc.)',
+				'Contenu noscript pour les moteurs de recherche',
+				'Tracking Umami (auto-hébergé, sans cookies)',
+			],
+			en: [
+				'SEO: meta tags, OG image, sitemap, robots.txt, Google Search Console verification',
+				'HTTP security headers (X-Frame-Options, CSP, etc.)',
+				'Noscript content for search engines',
+				'Umami analytics (self-hosted, cookie-free)',
+			],
+		},
+	},
+	{
 		version: '1.0.19',
 		date: '2026-03-21',
 		changes: {
