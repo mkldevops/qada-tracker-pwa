@@ -20,6 +20,7 @@ const ENTRIES: ChangelogEntry[] = [
 				'Robots.txt : ajout OAI-SearchBot et cohere-ai',
 				'Sitemap : ajout hreflang et page privacy',
 				'Correctif : privacy.html exclue du fallback du service worker, ErrorBoundary ajouté autour des pages lazy',
+				'Correctif : schéma MobileApplication supprimé (doublon), inLanguage ajouté sur chaque question FAQ, couleur muted de la page confidentialité corrigée',
 			],
 			en: [
 				'SEO: enriched structured data (WebSite, FAQ in French, Organization), fixed hreflang, improved meta description',
@@ -28,6 +29,7 @@ const ENTRIES: ChangelogEntry[] = [
 				'Robots.txt: added OAI-SearchBot and cohere-ai',
 				'Sitemap: added hreflang and privacy page',
 				'Fix: privacy.html excluded from SW navigate fallback, ErrorBoundary added around lazy pages',
+				'Fix: removed duplicate MobileApplication schema, added inLanguage per FAQ question, corrected privacy page muted color',
 			],
 		},
 	},
