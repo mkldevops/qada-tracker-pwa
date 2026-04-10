@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.29.3',
+		date: '2026-04-10',
+		changes: {
+			fr: [
+				'RTL : label des prières et compteur traduits sur tous les écrans (journal, historique, réglages)',
+				'RTL : label arabe masqué en mode arabe pour éviter la duplication',
+			],
+			en: [
+				'RTL: prayer labels and counter translated across all screens (logger, history, settings)',
+				'RTL: Arabic label hidden when Arabic is active to avoid duplication',
+			],
+		},
+	},
+	{
 		version: '1.29.0',
 		date: '2026-04-10',
 		changes: {

@@ -46,8 +46,10 @@ function PrayerRow({
 	onChange: (p: PrayerName, q: number) => void;
 	index: number;
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const cfg = PRAYER_CONFIG[prayer];
+	const label =
+		i18n.language === 'en' ? cfg.labelEn : i18n.language === 'ar' ? cfg.labelAr : cfg.labelFr;
 	const active = qty > 0;
 
 	return (
@@ -60,7 +62,7 @@ function PrayerRow({
 			<div className="flex items-center gap-3 px-5" style={{ height: 70 }}>
 				<div className="flex flex-1 flex-col gap-0.5">
 					<span className="font-display text-lg font-medium" style={{ color: cfg.hex }}>
-						{cfg.labelFr}
+						{label}
 					</span>
 					<span className="text-[11px]" style={{ color: '#4A4A4C' }}>
 						{cfg.labelAr} · {cfg.rakat} {t('log.rakat')}
@@ -435,6 +437,12 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 								>
 									{group.entries.map((log, li) => {
 										const cfg = PRAYER_CONFIG[log.prayer];
+										const entryLabel =
+											i18n.language === 'en'
+												? cfg.labelEn
+												: i18n.language === 'ar'
+													? cfg.labelAr
+													: cfg.labelFr;
 										const prevEntry = group.entries[li + 1];
 										const prayerDurationSec =
 											isSession && prevEntry
@@ -466,7 +474,7 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 															className="font-display text-[15px] font-medium"
 															style={{ color: cfg.hex }}
 														>
-															{cfg.labelFr}
+															{entryLabel}
 														</span>
 														<span className="text-xs" style={{ color: '#3A3A3C' }}>
 															{cfg.labelAr}

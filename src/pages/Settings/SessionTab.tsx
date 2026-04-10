@@ -110,7 +110,7 @@ export function SessionTab() {
 									</button>
 									<span className="min-w-[48px] text-center text-sm font-semibold tabular-nums text-foreground">
 										{Math.round(tashahdDurationMs / 1000)}
-										<span className="text-muted font-normal text-xs ml-0.5">s</span>
+										<span className="text-muted font-normal text-xs ms-0.5">s</span>
 									</span>
 									<button
 										type="button"

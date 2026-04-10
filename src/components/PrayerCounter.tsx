@@ -33,7 +33,9 @@ export function PrayerCounter({ prayer, debt, onLog }: PrayerCounterProps) {
 							<span className="text-base font-semibold" style={{ color: config.color }}>
 								{label}
 							</span>
-							<span className="text-xs text-muted-foreground">{config.labelAr}</span>
+							{i18n.language !== 'ar' && (
+								<span className="text-xs text-muted-foreground">{config.labelAr}</span>
+							)}
 						</div>
 						<p className="mt-0.5 text-xs text-muted-foreground">
 							{t('dashboard.remaining', { count: debt.remaining })}
@@ -76,7 +78,9 @@ export function PrayerRow({ prayer, quantity, onChange }: PrayerRowProps) {
 				<span className="font-medium" style={{ color: config.color }}>
 					{label}
 				</span>
-				<span className="ms-2 text-xs text-muted-foreground">{config.labelAr}</span>
+				{i18n.language !== 'ar' && (
+					<span className="ms-2 text-xs text-muted-foreground">{config.labelAr}</span>
+				)}
 			</div>
 			<div className="flex items-center gap-3">
 				<Button
