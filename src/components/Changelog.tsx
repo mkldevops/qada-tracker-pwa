@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.27.0',
+		date: '2026-04-10',
+		changes: {
+			fr: [
+				"Correctif : l'application fonctionne désormais hors ligne dès la première visite — le service worker prend le contrôle immédiatement et sert index.html pour toutes les navigations",
+			],
+			en: [
+				'Fix: app now works offline from the first visit — service worker claims clients immediately and serves index.html for all navigation requests',
+			],
+		},
+	},
+	{
 		version: '1.25.0',
 		date: '2026-04-10',
 		changes: {

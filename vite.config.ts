@@ -78,6 +78,8 @@ export default defineConfig({
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
 				cleanupOutdatedCaches: true,
+				clientsClaim: true,
+				navigateFallback: '/index.html',
 				navigateFallbackDenylist: [/^\/version\.json$/, /^\/privacy\.html$/, /^\/llms\.txt$/],
 				runtimeCaching: [
 					{
