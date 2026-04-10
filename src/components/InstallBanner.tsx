@@ -55,7 +55,7 @@ export function InstallBanner({ prompt, onDismiss }: InstallBannerProps) {
 						{t('installBanner.subtitle')}
 					</span>
 				</div>
-				<div className="flex gap-2 ml-4">
+				<div className="flex gap-2 ms-4">
 					<button
 						type="button"
 						onClick={handleInstall}

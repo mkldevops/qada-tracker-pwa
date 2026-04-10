@@ -1,4 +1,5 @@
 import { Minus, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -12,7 +13,14 @@ interface PrayerCounterProps {
 }
 
 export function PrayerCounter({ prayer, debt, onLog }: PrayerCounterProps) {
+	const { t, i18n } = useTranslation();
 	const config = PRAYER_CONFIG[prayer];
+	const label =
+		i18n.language === 'en'
+			? config.labelEn
+			: i18n.language === 'ar'
+				? config.labelAr
+				: config.labelFr;
 	const progress =
 		debt.total_owed > 0 ? Math.min(100, (debt.total_completed / debt.total_owed) * 100) : 0;
 
@@ -23,12 +31,12 @@ export function PrayerCounter({ prayer, debt, onLog }: PrayerCounterProps) {
 					<div className="flex-1">
 						<div className="flex items-center gap-2">
 							<span className="text-base font-semibold" style={{ color: config.color }}>
-								{config.labelFr}
+								{label}
 							</span>
 							<span className="text-xs text-muted-foreground">{config.labelAr}</span>
 						</div>
 						<p className="mt-0.5 text-xs text-muted-foreground">
-							{debt.remaining.toLocaleString()} restantes
+							{t('dashboard.remaining', { count: debt.remaining })}
 						</p>
 						<Progress value={progress} className="mt-2 h-1.5" />
 					</div>
@@ -36,7 +44,7 @@ export function PrayerCounter({ prayer, debt, onLog }: PrayerCounterProps) {
 						size="icon"
 						onClick={() => onLog(prayer)}
 						disabled={debt.remaining === 0}
-						className="ml-4 h-10 w-10 shrink-0"
+						className="ms-4 h-10 w-10 shrink-0"
 					>
 						<Plus size={20} />
 					</Button>
@@ -53,15 +61,22 @@ interface PrayerRowProps {
 }
 
 export function PrayerRow({ prayer, quantity, onChange }: PrayerRowProps) {
+	const { i18n } = useTranslation();
 	const config = PRAYER_CONFIG[prayer];
+	const label =
+		i18n.language === 'en'
+			? config.labelEn
+			: i18n.language === 'ar'
+				? config.labelAr
+				: config.labelFr;
 
 	return (
 		<div className="flex items-center justify-between py-2">
 			<div>
 				<span className="font-medium" style={{ color: config.color }}>
-					{config.labelFr}
+					{label}
 				</span>
-				<span className="ml-2 text-xs text-muted-foreground">{config.labelAr}</span>
+				<span className="ms-2 text-xs text-muted-foreground">{config.labelAr}</span>
 			</div>
 			<div className="flex items-center gap-3">
 				<Button

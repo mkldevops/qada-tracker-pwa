@@ -229,7 +229,7 @@ function DeleteEntrySheet({
 					<span className="text-base" style={{ color: `${cfg.hex}80` }}>
 						{cfg.labelAr}
 					</span>
-					<span className="ml-auto tabular-nums text-sm font-medium" style={{ color: '#6E6E70' }}>
+					<span className="ms-auto tabular-nums text-sm font-medium" style={{ color: '#6E6E70' }}>
 						+{log.quantity}
 					</span>
 				</div>
@@ -592,7 +592,7 @@ export function LogPrayers() {
 						</span>
 						{tab === 'history' && recentLogs.length > 0 && (
 							<motion.span
-								className="relative z-10 ml-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums"
+								className="relative z-10 ms-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums"
 								style={{
 									background: activeTab === tab ? '#1A1A1C30' : '#C9A96220',
 									color: activeTab === tab ? '#1A1A1C' : '#C9A962',

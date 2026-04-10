@@ -14,6 +14,8 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-04-10',
 		changes: {
 			fr: [
+				'RTL : classes directionnelles (ml-*, mr-*) remplacées par des propriétés logiques (ms-*, me-*) pour le support arabe',
+				'Composant prière : label et compteur traduits selon la langue active (fin du français codé en dur)',
 				'Session : boutons + / − pour ajuster le nombre de prières à rattraper pendant une session active',
 				"Session : l'estimation de durée se base désormais sur les 30 derniers jours de sessions ou les 30 dernières sessions",
 				'Historique : durée de chaque prière affichée dans les sessions',
@@ -22,6 +24,8 @@ const ENTRIES: ChangelogEntry[] = [
 				"UI : couleurs de fond et d'accentuation du chargement initial remplacées par les tokens CSS du design system",
 			],
 			en: [
+				'RTL: directional margin/padding classes (ml-*, mr-*) replaced with logical properties (ms-*, me-*) for Arabic support',
+				'Prayer component: label and counter now translated per active language (no more hardcoded French)',
 				'Session: + / − buttons to adjust the prayer target during an active session',
 				'Session: duration estimate now uses the last 30 days of sessions or the last 30 sessions',
 				'History: per-prayer duration now shown within session entries',
