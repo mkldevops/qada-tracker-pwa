@@ -112,7 +112,10 @@
 		"completedCount_other": "{{count}} prières accomplies",
 		"close": "FERMER",
 		"prayersRemaining": "prières restantes",
-		"rakatsRemaining": "rak'ats restants"
+		"rakatsRemaining": "rak'ats restants",
+		"tashahd": "Tachahoud",
+		"tashahdDesc": "Récitez le tachahoud avant de terminer la prière",
+		"tashahdEndPrayer": "FIN DE PRIÈRE"
 	},
 	"settings": {
 		"title": "Réglages",
@@ -142,6 +145,8 @@
 		"highestDebt": "Priorité dette",
 		"sujoodTracking": "Suivi sujoud",
 		"sujoodTrackingDesc": "Détection automatique des sujoud via les capteurs",
+		"tashahdDuration": "Durée du tachahoud",
+		"tashahdDurationDesc": "Temps entre le dernier sujoud et la fin de la prière",
 		"sessionsPerDay": "Sessions / jour",
 		"sessionsPerDayDesc": "L'objectif du jour sera réparti entre chaque session",
 		"notifications": "RAPPEL QUOTIDIEN",

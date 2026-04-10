@@ -136,7 +136,10 @@
 		"completedCount_other": "{{count}} صلاة مقضية",
 		"close": "إغلاق",
 		"prayersRemaining": "صلوات متبقية",
-		"rakatsRemaining": "ركعات متبقية"
+		"rakatsRemaining": "ركعات متبقية",
+		"tashahd": "التشهد",
+		"tashahdDesc": "اقرأ التشهد قبل إنهاء الصلاة",
+		"tashahdEndPrayer": "إنهاء الصلاة"
 	},
 	"settings": {
 		"title": "الإعدادات",
@@ -166,6 +169,8 @@
 		"highestDebt": "أولوية الفوائت",
 		"sujoodTracking": "تتبع السجود",
 		"sujoodTrackingDesc": "الكشف التلقائي للسجود عبر مستشعرات الجهاز",
+		"tashahdDuration": "مدة التشهد",
+		"tashahdDurationDesc": "الوقت بين آخر سجدة ونهاية الصلاة",
 		"sessionsPerDay": "الجلسات / اليوم",
 		"sessionsPerDayDesc": "يُقسَّم الهدف اليومي على كل جلسة",
 		"notifications": "تذكير يومي",

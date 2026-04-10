@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.28.0',
+		date: '2026-04-10',
+		changes: {
+			fr: [
+				'Session : pause tachahoud après le dernier sujoud — un décompte s\'affiche et le bouton "Fin de prière" permet de terminer manuellement (la durée réelle est sauvegardée comme nouvelle valeur par défaut)',
+				'Réglages : durée du tachahoud configurable (visible quand le suivi sujoud est activé)',
+			],
+			en: [
+				'Session: tashahhud pause after last sujood — a countdown appears and the "End Prayer" button ends the prayer manually (the actual elapsed time is saved as the new default)',
+				'Settings: configurable tashahhud duration (visible when sujood tracking is enabled)',
+			],
+		},
+	},
+	{
 		version: '1.27.0',
 		date: '2026-04-10',
 		changes: {
