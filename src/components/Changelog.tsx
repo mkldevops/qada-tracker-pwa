@@ -19,6 +19,7 @@ const ENTRIES: ChangelogEntry[] = [
 				'Historique : durée de chaque prière affichée dans les sessions',
 				"Session : correction du premier soujoud qui s'incrémentait automatiquement après la fin du tachahoud",
 				"Session : suppression de la demande d'accès motion/orientation (non utilisée)",
+				"UI : couleurs de fond et d'accentuation du chargement initial remplacées par les tokens CSS du design system",
 			],
 			en: [
 				'Session: + / − buttons to adjust the prayer target during an active session',
@@ -26,6 +27,7 @@ const ENTRIES: ChangelogEntry[] = [
 				'History: per-prayer duration now shown within session entries',
 				'Session: fixed first sujood auto-incrementing after tashahhud ended',
 				'Session: removed unused motion/orientation access permission request',
+				'UI: loading screen background and accent colors now use CSS variable tokens instead of hardcoded hex',
 			],
 		},
 	},
@@ -633,8 +635,8 @@ const ENTRIES: ChangelogEntry[] = [
 		version: '1.0.25',
 		date: '2026-03-21',
 		changes: {
-			fr: ["Picker iOS style pour le nombre de rakats (chiffres précédent/suivant visibles)"],
-			en: ["iOS-style drum roll picker for rakat count (previous/next numbers visible)"],
+			fr: ['Picker iOS style pour le nombre de rakats (chiffres précédent/suivant visibles)'],
+			en: ['iOS-style drum roll picker for rakat count (previous/next numbers visible)'],
 		},
 	},
 	{
