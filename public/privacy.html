@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Politique de confidentialité — Qada Tracker</title>
+    <meta name="description" content="Politique de confidentialité de Qada Tracker. Aucune donnée personnelle collectée. Tout reste sur votre appareil." />
+    <link rel="canonical" href="https://qada.fahari.pro/privacy.html" />
+    <style>
+      :root {
+        --bg: #1a1a1c;
+        --surface: #242426;
+        --border: #3a3a3c;
+        --text: #f5f5f0;
+        --muted: #9e9e9a;
+        --gold: #c9a962;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.7;
+        padding: 2rem 1rem 4rem;
+      }
+      .container { max-width: 680px; margin: 0 auto; }
+      header { margin-bottom: 2.5rem; }
+      header a {
+        color: var(--gold);
+        text-decoration: none;
+        font-size: 0.875rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        margin-bottom: 1.5rem;
+      }
+      header a:hover { text-decoration: underline; }
+      h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.5rem; }
+      .subtitle { color: var(--muted); font-size: 0.9rem; }
+      section { margin-top: 2rem; }
+      h2 { font-size: 1.1rem; font-weight: 600; color: var(--gold); margin-bottom: 0.75rem; }
+      p { margin-bottom: 1rem; }
+      ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+      li { margin-bottom: 0.4rem; }
+      .badge {
+        display: inline-block;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-bottom: 1rem;
+        width: 100%;
+      }
+      .badge strong { color: var(--text); }
+      footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.85rem; }
+      footer a { color: var(--gold); text-decoration: none; }
+      footer a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <a href="/">← Retour à l'application</a>
+        <h1>Politique de confidentialité</h1>
+        <p class="subtitle">Dernière mise à jour : 2 avril 2026</p>
+      </header>
+
+      <div class="badge">
+        <strong>Résumé :</strong> Qada Tracker ne collecte aucune donnée personnelle. Toutes vos données restent sur votre appareil. Aucun compte requis.
+      </div>
+
+      <section>
+        <h2>1. Collecte de données</h2>
+        <p>Qada Tracker est une application 100&nbsp;% hors ligne (<em>offline-first</em>). Nous ne collectons <strong>aucune donnée personnelle</strong>.</p>
+        <p>Toutes les données que vous saisissez (nombre d'années de prières manquées, sessions de rattrapage, objectifs) sont stockées uniquement dans la base de données locale de votre appareil (<strong>IndexedDB</strong>) et ne sont jamais transmises à un serveur.</p>
+      </section>
+
+      <section>
+        <h2>2. Données stockées localement</h2>
+        <p>Les informations suivantes sont stockées sur votre appareil uniquement :</p>
+        <ul>
+          <li>Configuration de votre dette de prières (nombre d'années)</li>
+          <li>Historique de vos sessions de rattrapage</li>
+          <li>Objectif journalier et préférences d'affichage</li>
+          <li>Langue choisie (français, anglais ou arabe)</li>
+        </ul>
+        <p>Ces données ne quittent jamais votre appareil. Vous pouvez les supprimer à tout moment depuis les Paramètres de l'application ou en effaçant les données du site dans votre navigateur.</p>
+      </section>
+
+      <section>
+        <h2>3. Analytique anonyme</h2>
+        <p>L'application utilise <strong>Umami</strong>, un outil d'analytique respectueux de la vie privée et conforme au RGPD, hébergé sur nos propres serveurs (<code>umami.fahari.pro</code>).</p>
+        <p>Umami collecte des statistiques agrégées et anonymes (nombre de visites, pays, type d'appareil). <strong>Aucun cookie de traçage n'est utilisé</strong> et aucune donnée personnelle identifiable n'est collectée.</p>
+      </section>
+
+      <section>
+        <h2>4. Cookies</h2>
+        <p>Qada Tracker n'utilise pas de cookies à des fins publicitaires ou de traçage. Seuls des cookies techniques strictement nécessaires au fonctionnement de l'application (Service Worker, cache PWA) peuvent être présents.</p>
+      </section>
+
+      <section>
+        <h2>5. Services tiers</h2>
+        <p>L'application charge les polices de caractères depuis <strong>Google Fonts</strong> (fonts.googleapis.com). Cette requête peut transmettre votre adresse IP à Google. Si vous souhaitez l'éviter, installez l'application en mode PWA — les polices sont mises en cache et plus aucune requête externe n'est effectuée.</p>
+      </section>
+
+      <section>
+        <h2>6. Vos droits</h2>
+        <p>Puisque nous ne collectons aucune donnée personnelle, il n'y a pas de données à effacer, à exporter ou à rectifier de notre côté. Vous contrôlez intégralement vos données via votre navigateur ou les paramètres de l'application.</p>
+      </section>
+
+      <section>
+        <h2>7. Contact</h2>
+        <p>Pour toute question concernant cette politique de confidentialité, vous pouvez ouvrir une issue sur le dépôt open source du projet :</p>
+        <p><a href="https://github.com/mkldevops/qada-tracker-pwa/issues" style="color: var(--gold);">github.com/mkldevops/qada-tracker-pwa/issues</a></p>
+      </section>
+
+      <hr style="border: none; border-top: 1px solid var(--border); margin-top: 2.5rem;" />
+
+      <section style="margin-top: 1.5rem;">
+        <h2>Privacy Policy (English)</h2>
+        <p><strong>Summary:</strong> Qada Tracker collects no personal data. All data stays on your device. No account required.</p>
+        <p>Qada Tracker is a fully offline PWA. No data is sent to any server. All prayer recovery data (years of missed prayers, session logs, goals) is stored locally in IndexedDB on your device only.</p>
+        <p>Anonymous aggregate analytics are collected via self-hosted Umami (no tracking cookies, no personal data). Google Fonts are loaded on first visit; once installed as a PWA, fonts are served from cache.</p>
+        <p>Since we collect no personal data, there is nothing to delete or export on our end. You can clear all local data from the app Settings or your browser's site data settings.</p>
+      </section>
+
+      <footer>
+        <p>
+          <a href="/">← Qada Tracker</a> &nbsp;·&nbsp;
+          <a href="https://github.com/mkldevops/qada-tracker-pwa">Open source</a> &nbsp;·&nbsp;
+          v<span id="ver"></span>
+        </p>
+        <script>
+          fetch('/version.json').then(r => r.json()).then(d => {
+            const el = document.getElementById('ver');
+            if (el) el.textContent = d.version;
+          }).catch(() => {});
+        </script>
+      </footer>
+    </div>
+  </body>
+</html>

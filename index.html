@@ -9,17 +9,19 @@
     <meta name="apple-mobile-web-app-title" content="Qada Tracker" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="icon" type="image/png" href="/icon-192.png" />
     <link rel="apple-touch-icon" href="/icon-180.png" />
     <link rel="canonical" href="https://qada.fahari.pro/" />
-    <link rel="alternate" hreflang="fr" href="https://qada.fahari.pro" />
-    <link rel="alternate" hreflang="en" href="https://qada.fahari.pro" />
-    <link rel="alternate" hreflang="x-default" href="https://qada.fahari.pro" />
+    <link rel="alternate" hreflang="fr" href="https://qada.fahari.pro/" />
+    <link rel="alternate" hreflang="en" href="https://qada.fahari.pro/" />
+    <link rel="alternate" hreflang="ar" href="https://qada.fahari.pro/" />
+    <link rel="alternate" hreflang="x-default" href="https://qada.fahari.pro/" />
     <meta name="google-site-verification" content="gXjsY5YZJSbeqFBV8h3sORwMf-1TL5sf2Lh0-bONSjM" />
     <title>Qada Tracker — Suivi des prières manquées</title>
-    <meta name="description" content="Suivez et rattrapez vos prières manquées (qada) avec Qada Tracker. Application islamique 100% offline, gratuite et privée." />
-    <meta name="keywords" content="qada, prières, salah, tracker, Islamic, prayer tracker, musulman, missed prayers, rattraper prières" />
+    <meta name="description" content="Suivez et rattrapez vos prières manquées (qada) avec Qada Tracker. Application islamique 100% offline, gratuite et privée. Disponible en français, anglais et arabe." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://qada.fahari.pro/" />
     <meta property="og:title" content="Qada Tracker — Suivi des prières manquées" />
@@ -27,6 +29,9 @@
     <meta property="og:image" content="https://qada.fahari.pro/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="ar_SA" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Qada Tracker — Suivi des prières manquées" />
     <meta name="twitter:description" content="Suivez et rattrapez vos prières manquées (qada). Application islamique 100% offline, gratuite et privée." />
@@ -34,18 +39,66 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Qada Tracker",
+        "url": "https://qada.fahari.pro/",
+        "description": "Application islamique gratuite pour suivre et rattraper les prières manquées.",
+        "inLanguage": ["fr", "en", "ar"]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Qada Tracker",
-        "url": "https://qada.fahari.pro",
+        "url": "https://qada.fahari.pro/",
         "description": "Suivez et rattrapez vos prières manquées (qada). Application islamique 100% offline, gratuite et privée.",
         "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web, iOS, Android",
-        "inLanguage": ["fr", "en"],
+        "operatingSystem": "Web Browser, iOS, Android",
+        "inLanguage": ["fr", "en", "ar"],
         "browserRequirements": "Requires JavaScript",
+        "screenshot": "https://qada.fahari.pro/og-image.png",
+        "featureList": [
+          "Suivi des prières manquées (Fajr, Dhuhr, Asr, Maghrib, Isha)",
+          "Calcul automatique de la dette de prières",
+          "Sessions de rattrapage avec compteur de rak'ats",
+          "Détection automatique des sujouds via capteur de proximité",
+          "Statistiques et heatmap de progression",
+          "100% offline — aucune donnée envoyée sur internet",
+          "Sans compte, sans publicité",
+          "Disponible en français, anglais et arabe (RTL)",
+          "Déduction des jours de menstrues (hayd)",
+          "Installable sur iOS, Android et desktop"
+        ],
         "offers": {
           "@type": "Offer",
           "price": "0",
-          "priceCurrency": "EUR"
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/OnlineOnly"
+        },
+        "creator": {
+          "@type": "Organization",
+          "name": "Qada Tracker",
+          "url": "https://qada.fahari.pro/"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "MobileApplication",
+        "name": "Qada Tracker",
+        "url": "https://qada.fahari.pro/",
+        "description": "Application PWA islamique pour iOS et Android. Suivez et rattrapez vos prières manquées, 100% offline, sans compte.",
+        "applicationCategory": "LifestyleApplication",
+        "operatingSystem": "iOS, Android",
+        "inLanguage": ["fr", "en", "ar"],
+        "screenshot": "https://qada.fahari.pro/og-image.png",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/OnlineOnly"
         }
       }
     </script>
@@ -56,34 +109,58 @@
         "mainEntity": [
           {
             "@type": "Question",
-            "name": "What is qada prayer?",
+            "name": "Qu'est-ce que les prières qada en islam ?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Qada refers to missed obligatory prayers that must be made up. In Islamic law, it is obligatory to complete these prayers as soon as possible."
+              "text": "Les prières qada (قضاء) sont les prières obligatoires manquées qu'un musulman doit rattraper. Selon la jurisprudence islamique (fiqh), il est obligatoire de récupérer ces prières dès que possible. Qada Tracker est une application gratuite conçue spécifiquement pour aider à suivre et rattraper ces prières de façon systématique, sans compte et sans connexion internet. L'application calcule automatiquement le nombre total de prières à rattraper en fonction des années manquées et propose des sessions de rattrapage quotidiennes."
             }
           },
           {
             "@type": "Question",
-            "name": "How does Qada Tracker work?",
+            "name": "Comment calculer le nombre de prières manquées à rattraper ?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Qada Tracker is a free offline-first PWA that helps Muslims track and make up missed prayers. Enter the number of years of missed prayers, and the app calculates and schedules recovery sessions."
+              "text": "Pour calculer vos prières manquées, indiquez dans Qada Tracker le nombre d'années pendant lesquelles vous n'avez pas prié, ainsi que l'âge de votre puberté. L'application calcule automatiquement la dette totale pour les cinq prières quotidiennes (Fajr, Dhuhr, Asr, Maghrib, Isha). Pour les femmes, l'application prend en compte les jours de menstrues (hayd) pour déduire les prières non obligatoires. Vous pouvez ensuite définir un objectif journalier ou hebdomadaire pour rattraper progressivement votre retard."
             }
           },
           {
             "@type": "Question",
-            "name": "Is Qada Tracker free?",
+            "name": "Comment fonctionne Qada Tracker ?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Yes. Qada Tracker is 100% free with no ads and no account required. It works offline and stores all data locally on your device."
+              "text": "Qada Tracker est une application web progressive (PWA) gratuite et 100% offline. Lors de la configuration initiale, vous saisissez le nombre d'années de prières manquées. L'application calcule votre dette totale et vous propose un objectif de rattrapage. Pour chaque session, vous sélectionnez une prière et le nombre de rak'ats à effectuer. L'application peut détecter automatiquement les sujouds via le capteur de proximité de votre téléphone. Vos statistiques et votre progression sont sauvegardées localement sur votre appareil."
             }
           },
           {
             "@type": "Question",
-            "name": "Does the app collect my prayer data?",
+            "name": "Qada Tracker est-il gratuit ?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "No. All data is stored locally on your device using IndexedDB. Nothing is sent to any server. Your prayer history is completely private."
+              "text": "Oui, Qada Tracker est entièrement gratuit, sans publicité et sans abonnement. Aucun compte n'est requis pour utiliser l'application. L'application fonctionne entièrement hors ligne (offline) et toutes vos données sont stockées localement sur votre appareil via la technologie IndexedDB. Rien n'est envoyé sur internet. Vous pouvez l'installer sur iOS, Android ou desktop comme une application native via la fonction PWA de votre navigateur."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "L'application collecte-t-elle mes données de prières ?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Non. Qada Tracker ne collecte aucune donnée personnelle. Toutes vos données (prières, statistiques, progression) sont stockées uniquement sur votre appareil en local via IndexedDB. Aucune information n'est transmise à un serveur. L'application est open source et le code source est disponible sur GitHub pour vérification. Seul Umami Analytics (sans cookies) est utilisé pour mesurer le trafic général du site, sans tracking individuel."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What is qada prayer in Islam?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Qada prayers are missed obligatory prayers (salah) that a Muslim must make up. Islamic jurisprudence holds it obligatory to recover these prayers as soon as possible. Qada Tracker is a free offline-first PWA that helps Muslims systematically track and recover missed prayers across all five daily prayers (Fajr, Dhuhr, Asr, Maghrib, Isha). The app calculates your total prayer debt based on the years missed and helps you set a realistic daily recovery goal, all without an account or internet connection."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How do I make up missed prayers using Qada Tracker?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "To make up missed prayers with Qada Tracker: first enter the number of years you have missed prayers and your age at puberty. The app calculates your total prayer debt across all five daily prayers. Then set a daily or weekly recovery goal. For each session, select a prayer and the number of rak'ats to perform. The app tracks your progress with statistics and a visual heatmap. For women, the app accounts for menses days (hayd) to correctly calculate obligatory prayer counts. All data stays on your device — nothing is sent to any server."
             }
           }
         ]
@@ -94,8 +171,14 @@
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "Qada Tracker",
-        "url": "https://qada.fahari.pro",
-        "logo": "https://qada.fahari.pro/icon-512.png",
+        "url": "https://qada.fahari.pro/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://qada.fahari.pro/icon-512.png",
+          "width": 512,
+          "height": 512
+        },
+        "description": "Application islamique open source pour le suivi et le rattrapage des prières manquées (qada). Gratuite, offline, sans compte.",
         "sameAs": ["https://github.com/mkldevops/qada-tracker-pwa"]
       }
     </script>
@@ -104,21 +187,121 @@
   <body>
     <div id="root"></div>
     <noscript>
-      <main>
+      <main lang="fr">
         <h1>Qada Tracker — Suivi des prières manquées</h1>
-        <p>Suivez et rattrapez vos prières manquées (qada) avec Qada Tracker. Application islamique 100% offline, gratuite et privée.</p>
-        <h2>Fonctionnalités</h2>
+        <p>
+          Qada Tracker est une application islamique gratuite pour suivre et rattraper vos prières manquées (قضاء).
+          100% offline, sans compte, sans publicité. Disponible en français, anglais et arabe.
+          Installez-la directement sur votre téléphone iOS ou Android comme une application native.
+        </p>
+
+        <h2>Qu'est-ce que les prières qada ?</h2>
+        <p>
+          Les prières qada sont les prières obligatoires (salah) qu'un musulman a manquées et doit rattraper.
+          Selon la jurisprudence islamique, il est obligatoire de récupérer ces prières dès que possible.
+          Que vous ayez manqué quelques semaines ou plusieurs années de prières, Qada Tracker vous aide à
+          organiser votre rattrapage de façon systématique et progressive, sans pression.
+        </p>
+
+        <h2>Fonctionnalités principales</h2>
         <ul>
-          <li>Suivi des prières manquées (Fajr, Dhuhr, Asr, Maghrib, Isha)</li>
-          <li>100% offline — aucune donnée envoyée sur internet</li>
-          <li>Détection automatique des sujood via le capteur de proximité</li>
-          <li>Statistiques et heatmap de progression</li>
-          <li>Disponible en français et en anglais</li>
-          <li>Gratuit et privé</li>
+          <li>Suivi des cinq prières quotidiennes : Fajr, Dhuhr, Asr, Maghrib, Isha</li>
+          <li>Calcul automatique de la dette de prières selon les années manquées</li>
+          <li>Sessions de rattrapage avec compteur de rak'ats en temps réel</li>
+          <li>Détection automatique des sujouds via le capteur de proximité</li>
+          <li>Statistiques détaillées et heatmap de progression</li>
+          <li>Déduction des jours de menstrues (hayd) pour les femmes</li>
+          <li>Objectif journalier ou hebdomadaire personnalisable</li>
+          <li>Interface disponible en français, anglais et arabe (avec support RTL)</li>
+          <li>Installable sur iOS, Android et desktop (PWA)</li>
+          <li>100% gratuit — sans publicité, sans abonnement, sans compte</li>
         </ul>
+
         <h2>Comment ça marche ?</h2>
-        <p>Installez l'application sur votre téléphone, saisissez vos prières manquées et loggez chaque session de rattrapage. L'application fonctionne entièrement hors ligne.</p>
-        <p>Téléchargez Qada Tracker sur <a href="https://qada.fahari.pro/">qada.fahari.pro</a></p>
+        <p>
+          L'utilisation de Qada Tracker se fait en trois étapes simples :
+        </p>
+        <ol>
+          <li>
+            <strong>Configurez votre dette</strong> — Indiquez le nombre d'années pendant lesquelles vous n'avez
+            pas prié et votre âge à la puberté. L'application calcule automatiquement le nombre total de prières
+            manquées pour chacune des cinq prières quotidiennes.
+          </li>
+          <li>
+            <strong>Définissez votre objectif</strong> — Choisissez combien de prières vous souhaitez rattraper
+            par jour ou par semaine. L'application suggère un rythme réaliste sur un horizon de 5 ans.
+          </li>
+          <li>
+            <strong>Loggez vos sessions</strong> — Pour chaque session, sélectionnez une prière, effectuez vos
+            rak'ats et validez. Votre progression est sauvegardée instantanément sur votre appareil.
+          </li>
+        </ol>
+
+        <h2>Confidentialité et vie privée</h2>
+        <p>
+          Qada Tracker est conçu dès le départ pour respecter votre vie privée.
+          Toutes vos données (prières manquées, statistiques, objectifs) sont stockées uniquement sur votre
+          appareil grâce à la technologie IndexedDB. Aucune information n'est jamais transmise à un serveur externe.
+          L'application fonctionne entièrement hors ligne — pas besoin de connexion internet après l'installation.
+          Le code source est open source et disponible sur GitHub pour vérification indépendante.
+          Consultez notre <a href="/privacy.html">politique de confidentialité</a> pour plus de détails.
+        </p>
+
+        <h2>Questions fréquentes</h2>
+        <dl>
+          <dt>Qada Tracker est-il halal d'utiliser ?</dt>
+          <dd>
+            Oui. L'application est un outil de suivi qui facilite l'accomplissement d'une obligation islamique.
+            Elle ne remplace pas la prière elle-même mais aide à s'organiser pour rattraper les prières manquées,
+            ce qui est une obligation selon le fiqh islamique.
+          </dd>
+          <dt>Combien de prières dois-je rattraper ?</dt>
+          <dd>
+            Le nombre dépend des années manquées et des cinq prières quotidiennes.
+            Qada Tracker calcule automatiquement votre dette totale lors de la configuration initiale.
+          </dd>
+          <dt>L'application fonctionne-t-elle sans connexion internet ?</dt>
+          <dd>
+            Oui, entièrement. Après la première installation, l'application fonctionne hors ligne à 100%.
+            Vos données ne quittent jamais votre appareil.
+          </dd>
+          <dt>Puis-je utiliser Qada Tracker sur iPhone ?</dt>
+          <dd>
+            Oui. Qada Tracker est une application web progressive (PWA) installable sur iOS via Safari
+            (Partager → Sur l'écran d'accueil), Android via Chrome, et sur desktop.
+          </dd>
+        </dl>
+
+        <hr />
+
+        <section lang="en">
+          <h2>Qada Tracker — Islamic Missed Prayer Tracker</h2>
+          <p>
+            Qada Tracker is a free Islamic app to track and recover missed obligatory prayers (qada).
+            Fully offline, no account required, no ads. Available in French, English, and Arabic with RTL support.
+            Install it directly on iOS or Android as a native PWA.
+          </p>
+          <p>
+            Qada prayers are missed obligatory prayers (salah) that Muslims must make up as soon as possible
+            according to Islamic jurisprudence. Qada Tracker helps you systematically calculate your prayer debt
+            and track your daily recovery progress. Set a realistic goal, log your sessions, and monitor your
+            progress with detailed statistics — all stored privately on your device with no data sent to any server.
+          </p>
+          <ul>
+            <li>Track five daily prayers: Fajr, Dhuhr, Asr, Maghrib, Isha</li>
+            <li>Automatic prayer debt calculation based on missed years</li>
+            <li>Session tracking with real-time rak'at counter</li>
+            <li>Sujood detection via proximity sensor</li>
+            <li>Women's menses (hayd) day deduction</li>
+            <li>Progress statistics and activity heatmap</li>
+            <li>French, English, Arabic (RTL) — 100% free, offline, open source</li>
+          </ul>
+          <p>
+            Download Qada Tracker at <a href="https://qada.fahari.pro/">qada.fahari.pro</a> —
+            free Islamic prayer tracker, no account, no data collection.
+            <a href="/privacy.html">Privacy policy</a>.
+          </p>
+        </section>
       </main>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>
