@@ -26,6 +26,8 @@ export function SessionTab() {
 		sessionOrder,
 		sujoodTrackingEnabled,
 		setSujoodTrackingEnabled,
+		tashahdDurationMs,
+		setTashahdDurationMs,
 		activeObjective,
 		sessionsPerDay,
 		setSessionsPerDay,
@@ -85,6 +87,43 @@ export function SessionTab() {
 							</span>
 						</button>
 					</div>
+					{sujoodTrackingEnabled && (
+						<>
+							<div className="h-px bg-border" />
+							<div className="flex items-center justify-between">
+								<div className="flex flex-col gap-0.5">
+									<span className="text-sm font-medium text-foreground">
+										{t('settings.tashahdDuration')}
+									</span>
+									<span className="text-[11px] text-muted">
+										{t('settings.tashahdDurationDesc')}
+									</span>
+								</div>
+								<div className="flex items-center gap-2">
+									<button
+										type="button"
+										onClick={() => setTashahdDurationMs(tashahdDurationMs - 5000)}
+										disabled={tashahdDurationMs <= 5000}
+										className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-medium text-foreground bg-background border border-border disabled:opacity-30"
+									>
+										−
+									</button>
+									<span className="min-w-[48px] text-center text-sm font-semibold tabular-nums text-foreground">
+										{Math.round(tashahdDurationMs / 1000)}
+										<span className="text-muted font-normal text-xs ml-0.5">s</span>
+									</span>
+									<button
+										type="button"
+										onClick={() => setTashahdDurationMs(tashahdDurationMs + 5000)}
+										disabled={tashahdDurationMs >= 300000}
+										className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-medium text-foreground bg-background border border-border disabled:opacity-30"
+									>
+										+
+									</button>
+								</div>
+							</div>
+						</>
+					)}
 					{activeObjective && (
 						<>
 							<div className="h-px bg-border" />

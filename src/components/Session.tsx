@@ -2,6 +2,7 @@ import { CheckCircle2, ChevronsUpDown, Timer } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { EncouragementMessage } from '@/components/EncouragementMessage';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useAvgPacePerPrayer } from '@/hooks/useAvgPacePerPrayer';
@@ -38,17 +39,14 @@ function RakatDots({ total, current, color }: { total: number; current: number; 
 				const isActive = i === current;
 				return (
 					<motion.div
+						// biome-ignore lint/suspicious/noArrayIndexKey: fixed-length array, items never reorder
 						key={i}
 						animate={
 							isActive
 								? { scale: [1, 1.18, 1], opacity: 1 }
 								: { scale: 1, opacity: isPast ? 0.5 : 0.3 }
 						}
-						transition={
-							isActive
-								? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' }
-								: spring
-						}
+						transition={isActive ? { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } : spring}
 						style={{
 							width: isActive ? 20 : 14,
 							height: isActive ? 20 : 14,
@@ -320,6 +318,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const sessionOrder = usePrayerStore((s) => s.sessionOrder);
 	const sujoodTrackingEnabled = usePrayerStore((s) => s.sujoodTrackingEnabled);
 	const sessionsPerDay = usePrayerStore((s) => s.sessionsPerDay);
+	const setTashahdDurationMs = usePrayerStore((s) => s.setTashahdDurationMs);
 
 	const defaultTarget = computeTarget(activeObjective, sessionsPerDay);
 
@@ -353,6 +352,12 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const [pressing, setPressing] = useState(false);
 	const [sujoodCount, setSujoodCount] = useState<0 | 1>(0);
 	const [currentRakat, setCurrentRakat] = useState(0);
+	const [tashahdActive, setTashahdActive] = useState(false);
+	const [tashahdSecondsLeft, setTashahdSecondsLeft] = useState(0);
+	const [tashahdTotalSeconds, setTashahdTotalSeconds] = useState(0);
+	const tashahdStartRef = useRef<number>(0);
+	const tashahdPendingRef = useRef(false);
+	const autoIncrementRef = useRef<() => void>(() => {});
 	const busyRef = useRef(false);
 	const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
@@ -362,7 +367,13 @@ export function Session({ onClose }: { onClose: () => void }) {
 		const totalRakat = PRAYER_CONFIG[entry.prayer].rakat;
 		const next = currentRakat + 1;
 		if (next >= totalRakat) {
-			handleAutoIncrement();
+			if (sujoodTrackingEnabled) {
+				tashahdStartRef.current = Date.now();
+				tashahdPendingRef.current = true;
+				setTashahdActive(true);
+			} else {
+				handleAutoIncrement();
+			}
 		} else {
 			setCurrentRakat(next);
 			setConfirmDone(false);
@@ -370,7 +381,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	}
 
 	const { resetSujoodCount, ...sensorState } = useProximitySensor(
-		phase === 'active' && sujoodTrackingEnabled,
+		phase === 'active' && sujoodTrackingEnabled && !tashahdActive,
 		() => {
 			navigator.vibrate?.(100);
 			setSujoodCount(1);
@@ -510,6 +521,50 @@ export function Session({ onClose }: { onClose: () => void }) {
 		}
 	};
 	const handleAutoIncrement = () => handleIncrement(false);
+
+	autoIncrementRef.current = handleAutoIncrement;
+
+	useEffect(() => {
+		if (!tashahdActive) return;
+		const durationMs = usePrayerStore.getState().tashahdDurationMs;
+		const totalSec = Math.ceil(durationMs / 1000);
+		setTashahdTotalSeconds(totalSec);
+		setTashahdSecondsLeft(totalSec);
+
+		const iv = setInterval(() => {
+			const remaining = Math.ceil((durationMs - (Date.now() - tashahdStartRef.current)) / 1000);
+			setTashahdSecondsLeft(Math.max(0, remaining));
+		}, 500);
+
+		const to = setTimeout(() => {
+			clearInterval(iv);
+			if (tashahdPendingRef.current) {
+				tashahdPendingRef.current = false;
+				setTashahdActive(false);
+				autoIncrementRef.current();
+			}
+		}, durationMs);
+
+		return () => {
+			clearInterval(iv);
+			clearTimeout(to);
+		};
+	}, [tashahdActive]);
+
+	function handleTashahdEnd() {
+		if (!tashahdPendingRef.current) return;
+		const elapsed = Date.now() - tashahdStartRef.current;
+		const rounded = Math.round(elapsed / 1000) * 1000;
+		if (rounded >= 5000 && rounded <= 300000) {
+			setTashahdDurationMs(rounded);
+			toast.success(t('session.tashahdDurationSaved', { seconds: Math.round(rounded / 1000) }), {
+				duration: 2500,
+			});
+		}
+		tashahdPendingRef.current = false;
+		setTashahdActive(false);
+		autoIncrementRef.current();
+	}
 
 	const sessionPrayersRemaining = target - completed;
 	let sessionRakatsRemaining = 0;
@@ -680,7 +735,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</motion.div>
 						)}
 
-						{sensorState.isSupported && sensorState.isActive && (
+						{!tashahdActive && sensorState.isSupported && sensorState.isActive && (
 							<motion.div
 								className="w-full mb-6 px-4 py-3 rounded-2xl text-center text-sm font-medium"
 								style={{ background: '#242426', color: '#C9A962' }}
@@ -692,40 +747,43 @@ export function Session({ onClose }: { onClose: () => void }) {
 							</motion.div>
 						)}
 
-						{sujoodTrackingEnabled && !sensorState.isSupported && phase === 'active' && (
-							<motion.button
-								onClick={() => {
-									if (sujoodCount === 0) {
-										navigator.vibrate?.(100);
-										setSujoodCount(1);
-									} else if (!busyRef.current) {
-										navigator.vibrate?.([50, 50, 150]);
-										setSujoodCount(0);
-										handleRakatComplete();
+						{!tashahdActive &&
+							sujoodTrackingEnabled &&
+							!sensorState.isSupported &&
+							phase === 'active' && (
+								<motion.button
+									onClick={() => {
+										if (sujoodCount === 0) {
+											navigator.vibrate?.(100);
+											setSujoodCount(1);
+										} else if (!busyRef.current) {
+											navigator.vibrate?.([50, 50, 150]);
+											setSujoodCount(0);
+											handleRakatComplete();
+										}
+									}}
+									className="w-full mb-6 py-5 rounded-2xl text-center font-semibold tracking-[1px]"
+									style={
+										sujoodCount === 0
+											? { background: '#242426', border: '1px solid #3A3A3C', color: '#C9A962' }
+											: { background: '#C9A962', color: '#1A1A1C' }
 									}
-								}}
-								className="w-full mb-6 py-5 rounded-2xl text-center font-semibold tracking-[1px]"
-								style={
-									sujoodCount === 0
-										? { background: '#242426', border: '1px solid #3A3A3C', color: '#C9A962' }
-										: { background: '#C9A962', color: '#1A1A1C' }
-								}
-								initial={{ opacity: 0, y: -8 }}
-								animate={
-									sujoodCount === 1
-										? { opacity: 1, y: 0, scale: [1, 1.05, 1] }
-										: { opacity: 1, y: 0, scale: 1 }
-								}
-								transition={
-									sujoodCount === 1
-										? { duration: 0.8, repeat: Infinity, ease: 'easeInOut' }
-										: { delay: 0.1, ...spring }
-								}
-								whileTap={{ scale: 0.93 }}
-							>
-								{sujoodCount === 0 ? t('session.manualSujood1') : t('session.manualSujood2')}
-							</motion.button>
-						)}
+									initial={{ opacity: 0, y: -8 }}
+									animate={
+										sujoodCount === 1
+											? { opacity: 1, y: 0, scale: [1, 1.05, 1] }
+											: { opacity: 1, y: 0, scale: 1 }
+									}
+									transition={
+										sujoodCount === 1
+											? { duration: 0.8, repeat: Infinity, ease: 'easeInOut' }
+											: { delay: 0.1, ...spring }
+									}
+									whileTap={{ scale: 0.93 }}
+								>
+									{sujoodCount === 0 ? t('session.manualSujood1') : t('session.manualSujood2')}
+								</motion.button>
+							)}
 
 						{cfg.rakat > 1 && (
 							<RakatDots total={cfg.rakat} current={currentRakat} color={cfg.hex} />
@@ -736,7 +794,67 @@ export function Session({ onClose }: { onClose: () => void }) {
 						</AnimatePresence>
 
 						<AnimatePresence mode="wait">
-							{confirmDone ? (
+							{tashahdActive ? (
+								<motion.div
+									key="tashahd"
+									className="mt-8 w-full flex flex-col items-center gap-5"
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: -20 }}
+									transition={spring}
+								>
+									<div className="relative flex items-center justify-center">
+										<svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true">
+											<circle cx="48" cy="48" r="40" fill="none" stroke="#3A3A3C" strokeWidth="4" />
+											<motion.circle
+												cx="48"
+												cy="48"
+												r="40"
+												fill="none"
+												stroke="#C9A962"
+												strokeWidth="4"
+												strokeLinecap="round"
+												strokeDasharray={2 * Math.PI * 40}
+												strokeDashoffset={
+													2 *
+													Math.PI *
+													40 *
+													(1 - tashahdSecondsLeft / Math.max(1, tashahdTotalSeconds))
+												}
+												transform="rotate(-90 48 48)"
+												transition={{ duration: 0.5, ease: 'linear' }}
+											/>
+										</svg>
+										<span
+											className="absolute text-2xl font-semibold tabular-nums"
+											style={{ color: '#C9A962' }}
+										>
+											{tashahdSecondsLeft}
+										</span>
+									</div>
+									<div className="text-center">
+										<p className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
+											{t('session.tashahd')}
+										</p>
+										<p className="text-xs mt-0.5" style={{ color: '#6E6E70' }}>
+											{t('session.tashahdDesc')}
+										</p>
+									</div>
+									<motion.button
+										onClick={handleTashahdEnd}
+										className="w-full rounded-[28px] py-5 text-base font-semibold tracking-[1.5px]"
+										style={{
+											background: 'linear-gradient(135deg, #C9A962, #8B7845)',
+											color: '#1A1A1C',
+										}}
+										whileTap={{ scale: 0.94 }}
+										whileHover={{ scale: 1.02 }}
+										transition={spring}
+									>
+										{t('session.tashahdEndPrayer')}
+									</motion.button>
+								</motion.div>
+							) : confirmDone ? (
 								<motion.div
 									key="confirm-done"
 									className="mt-8 flex flex-col items-center gap-3"

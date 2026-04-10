@@ -78,6 +78,7 @@ export type SessionOrder = 'chronological' | 'highest-debt';
 const SESSION_ORDER_KEY = 'session-order';
 const SUJOOD_TRACKING_KEY = 'sujood-tracking-enabled';
 const SESSIONS_PER_DAY_KEY = 'sessions-per-day';
+const TASHAHD_DURATION_KEY = 'tashahd-duration-ms';
 
 interface PrayerStore {
 	debts: Record<PrayerName, PrayerDebt>;
@@ -88,6 +89,7 @@ interface PrayerStore {
 	sessionOrder: SessionOrder;
 	sujoodTrackingEnabled: boolean;
 	sessionsPerDay: number;
+	tashahdDurationMs: number;
 	pendingMilestone: number | null;
 
 	loadAll: () => Promise<void>;
@@ -102,6 +104,7 @@ interface PrayerStore {
 	setSessionOrder: (order: SessionOrder) => void;
 	setSujoodTrackingEnabled: (enabled: boolean) => void;
 	setSessionsPerDay: (value: number) => void;
+	setTashahdDurationMs: (ms: number) => void;
 	clearMilestone: () => void;
 	resetAll: () => Promise<void>;
 }
@@ -138,6 +141,10 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => {
 		sessionsPerDay: (() => {
 			const raw = parseInt(localStorage.getItem(SESSIONS_PER_DAY_KEY) ?? '', 10);
 			return [1, 2, 3, 4, 5].includes(raw) ? raw : 1;
+		})(),
+		tashahdDurationMs: (() => {
+			const raw = parseInt(localStorage.getItem(TASHAHD_DURATION_KEY) ?? '', 10);
+			return raw >= 5000 && raw <= 300000 ? raw : 30000;
 		})(),
 		pendingMilestone: null,
 
@@ -218,6 +225,12 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => {
 			if (![1, 2, 3, 4, 5].includes(value)) return;
 			localStorage.setItem(SESSIONS_PER_DAY_KEY, String(value));
 			set({ sessionsPerDay: value });
+		},
+
+		setTashahdDurationMs: (ms) => {
+			const clamped = Math.max(5000, Math.min(300000, ms));
+			localStorage.setItem(TASHAHD_DURATION_KEY, String(clamped));
+			set({ tashahdDurationMs: clamped });
 		},
 
 		clearMilestone: () => {
