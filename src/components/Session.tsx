@@ -477,16 +477,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 		onClose();
 	}
 
-	async function handleStart() {
-		if (
-			sujoodTrackingEnabled &&
-			typeof DeviceOrientationEvent !== 'undefined' &&
-			typeof (DeviceOrientationEvent as any).requestPermission === 'function'
-		) {
-			try {
-				await (DeviceOrientationEvent as any).requestPermission();
-			} catch {}
-		}
+	function handleStart() {
 		const order = getSortedPrayerOrder(debts, sessionOrder);
 		setPrayerOrder(order);
 		const next = getNextPrayer(debts, order, 0);
@@ -516,6 +507,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 			setCurrentRakat(0);
 			setSujoodCount(0);
 			resetSujoodCount();
+			setTashahdActive(false);
 			setConfirmDone(false);
 
 			const newCompleted = completed + 1;
@@ -572,7 +564,6 @@ export function Session({ onClose }: { onClose: () => void }) {
 			clearInterval(iv);
 			if (tashahdPendingRef.current) {
 				tashahdPendingRef.current = false;
-				setTashahdActive(false);
 				autoIncrementRef.current();
 			}
 		}, durationMs);
@@ -594,7 +585,6 @@ export function Session({ onClose }: { onClose: () => void }) {
 			});
 		}
 		tashahdPendingRef.current = false;
-		setTashahdActive(false);
 		autoIncrementRef.current();
 	}
 
