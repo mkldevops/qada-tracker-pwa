@@ -25,6 +25,13 @@ import { PRAYER_NAMES } from '@/types';
 const TABS = ['logger', 'history'] as const;
 type Tab = (typeof TABS)[number];
 
+function formatDuration(sec: number): string {
+	const min = Math.floor(sec / 60);
+	const remSec = sec % 60;
+	if (min >= 1) return remSec > 0 ? `${min} min ${remSec}s` : `${min} min`;
+	return `${sec}s`;
+}
+
 const EMPTY = (): Record<PrayerName, number> =>
 	Object.fromEntries(PRAYER_NAMES.map((p) => [p, 0])) as Record<PrayerName, number>;
 
@@ -378,8 +385,6 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 											1000,
 									)
 								: 0;
-						const durationMin = Math.floor(durationSec / 60);
-						const durationRemSec = durationSec % 60;
 
 						return (
 							<motion.div
@@ -416,11 +421,7 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 									</span>
 									{durationSec >= 1 && (
 										<span className="text-[10px]" style={{ color: '#4A4A4C' }}>
-											{durationMin >= 1
-												? durationRemSec > 0
-													? `${durationMin} min ${durationRemSec}s`
-													: `${durationMin} min`
-												: `${durationSec}s`}
+											{formatDuration(durationSec)}
 										</span>
 									)}
 								</div>
@@ -431,6 +432,15 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 								>
 									{group.entries.map((log, li) => {
 										const cfg = PRAYER_CONFIG[log.prayer];
+										const prevEntry = group.entries[li + 1];
+										const prayerDurationSec =
+											isSession && prevEntry
+												? Math.floor(
+														(new Date(log.logged_at).getTime() -
+															new Date(prevEntry.logged_at).getTime()) /
+															1000,
+													)
+												: null;
 										return (
 											<div key={log.id}>
 												{li > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
@@ -459,20 +469,30 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 															{cfg.labelAr}
 														</span>
 													</div>
-													<motion.span
-														className="font-display text-lg font-medium tabular-nums"
-														style={{ color: '#C9A962' }}
-														initial={{ scale: 0.8, opacity: 0 }}
-														animate={{ scale: 1, opacity: 1 }}
-														transition={{
-															delay: gi * 0.04 + li * 0.03 + 0.05,
-															type: 'spring' as const,
-															stiffness: 500,
-															damping: 22,
-														}}
-													>
-														+{log.quantity}
-													</motion.span>
+													<div className="flex items-center gap-2">
+														{prayerDurationSec !== null && prayerDurationSec >= 1 && (
+															<span
+																className="text-[10px] tabular-nums"
+																style={{ color: '#3A3A3C' }}
+															>
+																{formatDuration(prayerDurationSec)}
+															</span>
+														)}
+														<motion.span
+															className="font-display text-lg font-medium tabular-nums"
+															style={{ color: '#C9A962' }}
+															initial={{ scale: 0.8, opacity: 0 }}
+															animate={{ scale: 1, opacity: 1 }}
+															transition={{
+																delay: gi * 0.04 + li * 0.03 + 0.05,
+																type: 'spring' as const,
+																stiffness: 500,
+																damping: 22,
+															}}
+														>
+															+{log.quantity}
+														</motion.span>
+													</div>
 												</motion.div>
 											</div>
 										);

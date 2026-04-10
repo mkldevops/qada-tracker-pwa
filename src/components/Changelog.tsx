@@ -10,6 +10,22 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.29.0',
+		date: '2026-04-10',
+		changes: {
+			fr: [
+				'Session : boutons + / − pour ajuster le nombre de prières à rattraper pendant une session active',
+				"Session : l'estimation de durée se base désormais sur les 30 derniers jours de sessions ou les 30 dernières sessions",
+				'Historique : durée de chaque prière affichée dans les sessions',
+			],
+			en: [
+				'Session: + / − buttons to adjust the prayer target during an active session',
+				'Session: duration estimate now uses the last 30 days of sessions or the last 30 sessions',
+				'History: per-prayer duration now shown within session entries',
+			],
+		},
+	},
+	{
 		version: '1.28.0',
 		date: '2026-04-10',
 		changes: {

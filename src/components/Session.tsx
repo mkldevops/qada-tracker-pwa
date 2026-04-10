@@ -199,7 +199,17 @@ function getNextPrayer(
 	return null;
 }
 
-function AnimatedCounter({ value, target }: { value: number; target: number }) {
+function AnimatedCounter({
+	value,
+	target,
+	onDecrease,
+	onIncrease,
+}: {
+	value: number;
+	target: number;
+	onDecrease?: () => void;
+	onIncrease?: () => void;
+}) {
 	const [display, setDisplay] = useState(value);
 	const prevRef = useRef(value);
 
@@ -239,9 +249,31 @@ function AnimatedCounter({ value, target }: { value: number; target: number }) {
 				>
 					{display}
 				</motion.span>
-				<span className="text-2xl font-light mb-2" style={{ color: '#4A4A4C' }}>
-					/ {target}
-				</span>
+				<div className="flex flex-col items-center gap-1 mb-2">
+					{onIncrease && (
+						<button
+							type="button"
+							onClick={onIncrease}
+							className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium transition-opacity active:opacity-60"
+							style={{ color: '#C9A962', background: '#C9A96220' }}
+						>
+							+
+						</button>
+					)}
+					<span className="text-2xl font-light" style={{ color: '#4A4A4C' }}>
+						/ {target}
+					</span>
+					{onDecrease && (
+						<button
+							type="button"
+							onClick={onDecrease}
+							className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium transition-opacity active:opacity-60"
+							style={{ color: '#C9A962', background: '#C9A96220' }}
+						>
+							−
+						</button>
+					)}
+				</div>
 			</div>
 
 			{/* Progress bar */}
@@ -706,7 +738,18 @@ export function Session({ onClose }: { onClose: () => void }) {
 							animate={{ opacity: 1, scale: 1 }}
 							transition={{ delay: 0.08, ...spring }}
 						>
-							<AnimatedCounter value={completed} target={target} />
+							<AnimatedCounter
+								value={completed}
+								target={target}
+								onDecrease={
+									!tashahdActive && target > completed + 1 ? () => setTarget(target - 1) : undefined
+								}
+								onIncrease={
+									!tashahdActive && target < MAX_PICKER_VALUE
+										? () => setTarget(target + 1)
+										: undefined
+								}
+							/>
 						</motion.div>
 
 						{effectiveRakatsRemaining > 0 && (

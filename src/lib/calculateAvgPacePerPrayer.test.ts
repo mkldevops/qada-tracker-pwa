@@ -50,15 +50,29 @@ describe('calculateAvgPacePerPrayer', () => {
 		expect(calculateAvgPacePerPrayer(logs)).toBe(18000);
 	});
 
-	it('caps at 20 most recent sessions', () => {
-		// Build 25 sessions, each with 2 logs 60s apart, qty=1 each → 60000ms / 2 = 30000ms/prayer
+	it('caps at 30 most recent sessions', () => {
+		// Build 35 sessions far in the past (> 30 days ago), each with 2 logs 60s apart, qty=1 → 30000ms/prayer
 		const logs: PrayerLog[] = [];
-		for (let i = 0; i < 25; i++) {
-			const base = new Date(`2025-01-${String(i + 1).padStart(2, '0')}T10:00:00.000Z`).getTime();
+		const oldBase = new Date('2020-01-01T10:00:00.000Z').getTime();
+		for (let i = 0; i < 35; i++) {
+			const base = oldBase + i * 24 * 60 * 60 * 1000;
 			logs.push(makeLog(`s${i}`, new Date(base + 60_000).toISOString()));
 			logs.push(makeLog(`s${i}`, new Date(base).toISOString()));
 		}
-		// All 25 sessions have pace 30000; average of any 20 is also 30000
+		// Only 30 most recent sessions are used; all have pace 30000 → average is 30000
+		expect(calculateAvgPacePerPrayer(logs)).toBe(30000);
+	});
+
+	it('includes sessions within the 30-day window even beyond the 30-session count', () => {
+		// 32 sessions all within the last 10 days → all should be included
+		const logs: PrayerLog[] = [];
+		const now = Date.now();
+		for (let i = 0; i < 32; i++) {
+			const base = now - i * 6 * 60 * 60 * 1000; // 6 hours apart
+			logs.push(makeLog(`s${i}`, new Date(base + 60_000).toISOString()));
+			logs.push(makeLog(`s${i}`, new Date(base).toISOString()));
+		}
+		// All 32 sessions have pace 30000ms; all within 30-day window so all included
 		expect(calculateAvgPacePerPrayer(logs)).toBe(30000);
 	});
 });
