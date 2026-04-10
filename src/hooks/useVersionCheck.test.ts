@@ -57,7 +57,7 @@ describe('useVersionCheck', () => {
 	});
 
 	it('reloads when tab goes hidden after pending update', async () => {
-		await mountAndSeedVersion(buildFetch('1.0.0', '1.0.1'));
+		await mountAndSeedVersion(buildFetch('1.0.0', '1.0.0', '1.0.1'));
 		await act(() => vi.advanceTimersByTimeAsync(POLL_INTERVAL_MS + 100));
 		await act(async () => {});
 		expect(location.reload).not.toHaveBeenCalled();
