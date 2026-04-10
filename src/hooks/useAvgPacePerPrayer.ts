@@ -17,11 +17,15 @@ export function useAvgPacePerPrayer(): number | null {
 			db.prayer_logs.where('logged_at').aboveOrEqual(cutoffDate).toArray(),
 		])
 			.then(([recent, windowed]: [PrayerLog[], PrayerLog[]]) => {
-				const seen = new Set<number>();
+				const seen = new Set<string>();
 				const merged: PrayerLog[] = [];
 				for (const log of [...recent, ...windowed]) {
-					if (log.id !== undefined && seen.has(log.id)) continue;
-					if (log.id !== undefined) seen.add(log.id);
+					const key =
+						log.id !== undefined
+							? `id:${log.id}`
+							: `${log.logged_at}_${log.session_id}_${log.prayer}`;
+					if (seen.has(key)) continue;
+					seen.add(key);
 					merged.push(log);
 				}
 				setPace(calculateAvgPacePerPrayer(merged));

@@ -379,10 +379,13 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 						const isSession = group.sessionId?.startsWith('session-') ?? false;
 						const durationSec =
 							isSession && group.entries.length > 1
-								? Math.floor(
-										(new Date(group.entries[0].logged_at).getTime() -
-											new Date(group.entries[group.entries.length - 1].logged_at).getTime()) /
-											1000,
+								? Math.max(
+										0,
+										Math.floor(
+											(new Date(group.entries[0].logged_at).getTime() -
+												new Date(group.entries[group.entries.length - 1].logged_at).getTime()) /
+												1000,
+										),
 									)
 								: 0;
 
