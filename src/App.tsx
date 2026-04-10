@@ -109,8 +109,11 @@ export function App() {
 
 	if (isLoading) {
 		return (
-			<div className="flex min-h-dvh items-center justify-center" style={{ background: '#1A1A1C' }}>
-				<span className="font-display text-2xl font-light" style={{ color: '#C9A962' }}>
+			<div
+				className="flex min-h-dvh items-center justify-center"
+				style={{ background: 'var(--background)' }}
+			>
+				<span className="font-display text-2xl font-light" style={{ color: 'var(--gold)' }}>
 					قضاء
 				</span>
 			</div>
@@ -145,7 +148,7 @@ export function App() {
 	};
 
 	return (
-		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
+		<div className="min-h-dvh" style={{ background: 'var(--background)' }}>
 			<main className="mx-auto max-w-lg pt-safe pb-28 overflow-hidden">
 				<ErrorBoundary>
 					{(Object.keys(pages) as Tab[]).map(
