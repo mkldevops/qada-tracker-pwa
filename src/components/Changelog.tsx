@@ -10,11 +10,35 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.25.0',
+		date: '2026-04-10',
+		changes: {
+			fr: [
+				'SEO : données structurées enrichies (WebSite, FAQ en français, Organisation), hreflang corrigés, description méta améliorée',
+				'Performance : chargement différé des pages (React.lazy), découpage des bundles (vendor, motion, db, i18n, ui), préchargement des polices',
+				'Ajout page politique de confidentialité et fichier llms.txt pour les moteurs IA',
+				'Robots.txt : ajout OAI-SearchBot et cohere-ai',
+				'Sitemap : ajout hreflang et page privacy',
+				'Correctif : privacy.html exclue du fallback du service worker, ErrorBoundary ajouté autour des pages lazy',
+				'Correctif : schéma MobileApplication supprimé (doublon), inLanguage ajouté sur chaque question FAQ, couleur muted de la page confidentialité corrigée',
+			],
+			en: [
+				'SEO: enriched structured data (WebSite, FAQ in French, Organization), fixed hreflang, improved meta description',
+				'Performance: lazy-loaded pages (React.lazy), bundle splitting (vendor, motion, db, i18n, ui), font preloading',
+				'Added privacy policy page and llms.txt file for AI search engines',
+				'Robots.txt: added OAI-SearchBot and cohere-ai',
+				'Sitemap: added hreflang and privacy page',
+				'Fix: privacy.html excluded from SW navigate fallback, ErrorBoundary added around lazy pages',
+				'Fix: removed duplicate MobileApplication schema, added inLanguage per FAQ question, corrected privacy page muted color',
+			],
+		},
+	},
+	{
 		version: '1.24.0',
 		date: '2026-04-02',
 		changes: {
 			fr: [
-				"Correctif : le hook de changelog ne boucle plus — ignoré si le message de commit commence par chore(changelog)",
+				'Correctif : le hook de changelog ne boucle plus — ignoré si le message de commit commence par chore(changelog)',
 			],
 			en: [
 				'Fix: changelog hook no longer loops — skipped when commit message starts with chore(changelog)',

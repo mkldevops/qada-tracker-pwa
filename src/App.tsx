@@ -1,21 +1,27 @@
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { AnimatePresence } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Toaster, toast } from 'sonner';
 import { BottomNav } from '@/components/BottomNav';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { InstallBanner } from '@/components/InstallBanner';
 import { MilestoneModal } from '@/components/MilestoneModal';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useVersionCheck } from '@/hooks/useVersionCheck';
 import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
 import { type BeforeInstallPromptEvent, shouldShowInstallBanner } from '@/lib/pwa';
-import { Dashboard } from '@/pages/Dashboard';
-import { LogPrayers } from '@/pages/LogPrayers';
-import { OnboardingFlow } from '@/pages/OnboardingFlow';
-import { Settings } from '@/pages/Settings';
-import { Stats } from '@/pages/Stats';
 import { usePrayerStore } from '@/stores/prayerStore';
+
+const Dashboard = lazy(() => import('@/pages/Dashboard').then((m) => ({ default: m.Dashboard })));
+const LogPrayers = lazy(() =>
+	import('@/pages/LogPrayers').then((m) => ({ default: m.LogPrayers })),
+);
+const OnboardingFlow = lazy(() =>
+	import('@/pages/OnboardingFlow').then((m) => ({ default: m.OnboardingFlow })),
+);
+const Settings = lazy(() => import('@/pages/Settings').then((m) => ({ default: m.Settings })));
+const Stats = lazy(() => import('@/pages/Stats').then((m) => ({ default: m.Stats })));
 
 type Tab = 'dashboard' | 'log' | 'stats' | 'settings';
 
@@ -113,12 +119,16 @@ export function App() {
 
 	if (showOnboarding) {
 		return (
-			<OnboardingFlow
-				onComplete={() => {
-					markOnboardingDone();
-					setShowOnboarding(false);
-				}}
-			/>
+			<ErrorBoundary>
+				<Suspense fallback={null}>
+					<OnboardingFlow
+						onComplete={() => {
+							markOnboardingDone();
+							setShowOnboarding(false);
+						}}
+					/>
+				</Suspense>
+			</ErrorBoundary>
 		);
 	}
 
@@ -137,14 +147,16 @@ export function App() {
 	return (
 		<div className="min-h-dvh" style={{ background: '#1A1A1C' }}>
 			<main className="mx-auto max-w-lg pt-safe pb-28 overflow-hidden">
-				{(Object.keys(pages) as Tab[]).map(
-					(tab) =>
-						mountedTabs.has(tab) && (
-							<div key={tab} hidden={tab !== activeTab}>
-								{pages[tab]}
-							</div>
-						),
-				)}
+				<ErrorBoundary>
+					{(Object.keys(pages) as Tab[]).map(
+						(tab) =>
+							mountedTabs.has(tab) && (
+								<div key={tab} hidden={tab !== activeTab}>
+									<Suspense fallback={null}>{pages[tab]}</Suspense>
+								</div>
+							),
+					)}
+				</ErrorBoundary>
 			</main>
 			<AnimatePresence>
 				{!showOnboarding && installPrompt && shouldShowInstallBanner() && (

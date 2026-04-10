@@ -78,7 +78,7 @@ export default defineConfig({
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
 				cleanupOutdatedCaches: true,
-				navigateFallbackDenylist: [/^\/version\.json$/],
+				navigateFallbackDenylist: [/^\/version\.json$/, /^\/privacy\.html$/, /^\/llms\.txt$/],
 				runtimeCaching: [
 					{
 						urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
@@ -96,6 +96,33 @@ export default defineConfig({
 			},
 		}),
 	],
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks(id) {
+					if (
+						id.includes('node_modules/react') ||
+						id.includes('node_modules/react-dom') ||
+						id.includes('node_modules/scheduler')
+					) {
+						return 'vendor';
+					}
+					if (id.includes('node_modules/motion') || id.includes('node_modules/framer-motion')) {
+						return 'motion';
+					}
+					if (id.includes('node_modules/dexie')) {
+						return 'db';
+					}
+					if (id.includes('node_modules/i18next') || id.includes('node_modules/react-i18next')) {
+						return 'i18n';
+					}
+					if (id.includes('node_modules/@radix-ui')) {
+						return 'ui';
+					}
+				},
+			},
+		},
+	},
 	resolve: {
 		alias: {
 			'@': fileURLToPath(new URL('./src', import.meta.url)),
