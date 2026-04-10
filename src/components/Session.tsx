@@ -2,6 +2,7 @@ import { CheckCircle2, ChevronsUpDown, Timer } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { EncouragementMessage } from '@/components/EncouragementMessage';
 import { PRAYER_CONFIG } from '@/constants/prayers';
 import { useAvgPacePerPrayer } from '@/hooks/useAvgPacePerPrayer';
@@ -317,7 +318,6 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const sessionOrder = usePrayerStore((s) => s.sessionOrder);
 	const sujoodTrackingEnabled = usePrayerStore((s) => s.sujoodTrackingEnabled);
 	const sessionsPerDay = usePrayerStore((s) => s.sessionsPerDay);
-	const tashahdDurationMs = usePrayerStore((s) => s.tashahdDurationMs);
 	const setTashahdDurationMs = usePrayerStore((s) => s.setTashahdDurationMs);
 
 	const defaultTarget = computeTarget(activeObjective, sessionsPerDay);
@@ -354,6 +354,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const [currentRakat, setCurrentRakat] = useState(0);
 	const [tashahdActive, setTashahdActive] = useState(false);
 	const [tashahdSecondsLeft, setTashahdSecondsLeft] = useState(0);
+	const [tashahdTotalSeconds, setTashahdTotalSeconds] = useState(0);
 	const tashahdStartRef = useRef<number>(0);
 	const tashahdPendingRef = useRef(false);
 	const autoIncrementRef = useRef<() => void>(() => {});
@@ -526,7 +527,9 @@ export function Session({ onClose }: { onClose: () => void }) {
 	useEffect(() => {
 		if (!tashahdActive) return;
 		const durationMs = usePrayerStore.getState().tashahdDurationMs;
-		setTashahdSecondsLeft(Math.ceil(durationMs / 1000));
+		const totalSec = Math.ceil(durationMs / 1000);
+		setTashahdTotalSeconds(totalSec);
+		setTashahdSecondsLeft(totalSec);
 
 		const iv = setInterval(() => {
 			const remaining = Math.ceil((durationMs - (Date.now() - tashahdStartRef.current)) / 1000);
@@ -554,6 +557,9 @@ export function Session({ onClose }: { onClose: () => void }) {
 		const rounded = Math.round(elapsed / 1000) * 1000;
 		if (rounded >= 5000 && rounded <= 300000) {
 			setTashahdDurationMs(rounded);
+			toast.success(t('session.tashahdDurationSaved', { seconds: Math.round(rounded / 1000) }), {
+				duration: 2500,
+			});
 		}
 		tashahdPendingRef.current = false;
 		setTashahdActive(false);
@@ -813,8 +819,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 													2 *
 													Math.PI *
 													40 *
-													(1 -
-														tashahdSecondsLeft / Math.max(1, Math.ceil(tashahdDurationMs / 1000)))
+													(1 - tashahdSecondsLeft / Math.max(1, tashahdTotalSeconds))
 												}
 												transform="rotate(-90 48 48)"
 												transition={{ duration: 0.5, ease: 'linear' }}

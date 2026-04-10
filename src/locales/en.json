@@ -115,7 +115,8 @@
 		"rakatsRemaining": "rak'ats remaining",
 		"tashahd": "Tashahhud",
 		"tashahdDesc": "Recite the tashahhud before ending the prayer",
-		"tashahdEndPrayer": "END PRAYER"
+		"tashahdEndPrayer": "END PRAYER",
+		"tashahdDurationSaved": "Tashahhud: {{seconds}}s saved"
 	},
 	"settings": {
 		"title": "Settings",

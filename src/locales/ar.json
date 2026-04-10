@@ -139,7 +139,8 @@
 		"rakatsRemaining": "ركعات متبقية",
 		"tashahd": "التشهد",
 		"tashahdDesc": "اقرأ التشهد قبل إنهاء الصلاة",
-		"tashahdEndPrayer": "إنهاء الصلاة"
+		"tashahdEndPrayer": "إنهاء الصلاة",
+		"tashahdDurationSaved": "تم حفظ مدة التشهد: {{seconds}} ث"
 	},
 	"settings": {
 		"title": "الإعدادات",

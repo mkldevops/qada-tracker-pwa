@@ -115,7 +115,8 @@
 		"rakatsRemaining": "rak'ats restants",
 		"tashahd": "Tachahoud",
 		"tashahdDesc": "Récitez le tachahoud avant de terminer la prière",
-		"tashahdEndPrayer": "FIN DE PRIÈRE"
+		"tashahdEndPrayer": "FIN DE PRIÈRE",
+		"tashahdDurationSaved": "Tachahoud : {{seconds}}s enregistré"
 	},
 	"settings": {
 		"title": "Réglages",
