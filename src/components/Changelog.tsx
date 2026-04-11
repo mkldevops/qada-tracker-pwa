@@ -17,11 +17,13 @@ const ENTRIES: ChangelogEntry[] = [
 				'Clean code : toutes les couleurs hexadécimales codées en dur remplacées par les tokens CSS du design system (var(--gold), var(--surface), etc.)',
 				'Clean code : extraction de getPrayerLabel() — utilitaire partagé pour les labels de prière selon la langue active',
 				'Clean code : boutons dégradé convertis en classe utilitaire .gradient-gold',
+				'Fix : 2 couleurs hex résiduelles corrigées dans Session.tsx (#6E6E70 → var(--text-secondary))',
 			],
 			en: [
 				'Clean code: all hardcoded hex colors replaced with design system CSS variable tokens (var(--gold), var(--surface), etc.)',
 				'Clean code: extracted getPrayerLabel() — shared utility for prayer labels based on active language',
 				'Clean code: gradient buttons converted to .gradient-gold utility class',
+				'Fix: 2 remaining hardcoded hex colors corrected in Session.tsx (#6E6E70 → var(--text-secondary))',
 			],
 		},
 	},
