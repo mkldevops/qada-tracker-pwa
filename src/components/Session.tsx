@@ -1,4 +1,4 @@
-import { CheckCircle2, ChevronsUpDown, Timer } from 'lucide-react';
+import { CheckCircle2, Minus, Plus, Timer } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,16 +19,6 @@ type Phase = 'setup' | 'active' | 'complete';
 
 const pickerSpring = { type: 'spring' as const, stiffness: 320, damping: 38 };
 
-const ghostVariants = {
-	enter: (d: number) => ({ y: d > 0 ? 40 : -40, opacity: 0 }),
-	center: { y: 0, opacity: 0.25 },
-	exit: (d: number) => ({ y: d > 0 ? -40 : 40, opacity: 0 }),
-};
-const ghostStyle = {
-	color: 'var(--text-primary)',
-	fontSize: 42,
-	fontFamily: "ui-monospace, 'SF Mono', monospace",
-} as const;
 const MAX_PICKER_VALUE = 999;
 
 function RakatDots({ total, current, color }: { total: number; current: number; color: string }) {
@@ -63,42 +53,6 @@ function RakatDots({ total, current, color }: { total: number; current: number; 
 	);
 }
 
-function GhostButton({
-	show,
-	targetValue,
-	dir,
-	onChange,
-}: {
-	show: boolean;
-	targetValue: number;
-	dir: 1 | -1;
-	onChange: (v: number) => void;
-}) {
-	if (!show) return null;
-	return (
-		<div className="overflow-hidden flex items-center justify-center" style={{ height: 48 }}>
-			<AnimatePresence mode="popLayout" custom={dir}>
-				<motion.button
-					key={targetValue}
-					type="button"
-					custom={dir}
-					variants={ghostVariants}
-					initial="enter"
-					animate="center"
-					exit="exit"
-					transition={pickerSpring}
-					onClick={() => onChange(targetValue)}
-					className="tabular-nums leading-none"
-					style={ghostStyle}
-					whileTap={{ scale: 0.9 }}
-				>
-					{targetValue}
-				</motion.button>
-			</AnimatePresence>
-		</div>
-	);
-}
-
 function NumberPicker({
 	value,
 	dir,
@@ -116,7 +70,7 @@ function NumberPicker({
 
 	return (
 		<motion.div
-			className="flex flex-col items-center gap-1 py-2 cursor-ns-resize select-none touch-none"
+			className="flex items-center gap-5 py-2 cursor-ns-resize select-none touch-none"
 			onPan={(_, info) => {
 				accumulated.current -= info.delta.y;
 				const step = 10;
@@ -130,48 +84,55 @@ function NumberPicker({
 				accumulated.current = 0;
 			}}
 		>
-			<GhostButton show={value > 1} targetValue={value - 1} dir={dir} onChange={onChange} />
+			<motion.button
+				type="button"
+				onClick={() => onChange(Math.max(1, value - 1))}
+				disabled={value <= 1}
+				className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-surface disabled:opacity-30"
+				whileTap={{ scale: 0.88 }}
+				whileHover={{ scale: 1.06 }}
+				transition={spring}
+			>
+				<Minus size={22} style={{ color: 'var(--gold)' }} />
+			</motion.button>
 
-			<div className="flex items-center gap-3">
-				<div className="overflow-hidden flex items-center" style={{ height: 88 }}>
-					<AnimatePresence mode="popLayout" custom={dir}>
-						<motion.span
-							key={value}
-							custom={dir}
-							variants={{
-								enter: (d: number) => ({ y: d > 0 ? 48 : -48, opacity: 0, scale: 0.85 }),
-								center: { y: 0, opacity: 1, scale: 1 },
-								exit: (d: number) => ({ y: d > 0 ? -48 : 48, opacity: 0, scale: 0.85 }),
-							}}
-							initial="enter"
-							animate="center"
-							exit="exit"
-							transition={pickerSpring}
-							className="tabular-nums leading-none"
-							style={{
-								color: 'var(--text-primary)',
-								fontSize: 76,
-								fontFamily: "ui-monospace, 'SF Mono', monospace",
-							}}
-						>
-							{value}
-						</motion.span>
-					</AnimatePresence>
-				</div>
-				<motion.div
-					animate={{ opacity: [0.3, 0.7, 0.3] }}
-					transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-				>
-					<ChevronsUpDown size={22} style={{ color: 'var(--text-tertiary)' }} />
-				</motion.div>
+			<div className="overflow-hidden flex items-center" style={{ height: 88, minWidth: 72 }}>
+				<AnimatePresence mode="popLayout" custom={dir}>
+					<motion.span
+						key={value}
+						custom={dir}
+						variants={{
+							enter: (d: number) => ({ y: d > 0 ? 48 : -48, opacity: 0, scale: 0.85 }),
+							center: { y: 0, opacity: 1, scale: 1 },
+							exit: (d: number) => ({ y: d > 0 ? -48 : 48, opacity: 0, scale: 0.85 }),
+						}}
+						initial="enter"
+						animate="center"
+						exit="exit"
+						transition={pickerSpring}
+						className="tabular-nums leading-none w-full text-center"
+						style={{
+							color: 'var(--text-primary)',
+							fontSize: 76,
+							fontFamily: "ui-monospace, 'SF Mono', monospace",
+						}}
+					>
+						{value}
+					</motion.span>
+				</AnimatePresence>
 			</div>
 
-			<GhostButton
-				show={value < MAX_PICKER_VALUE}
-				targetValue={value + 1}
-				dir={dir}
-				onChange={onChange}
-			/>
+			<motion.button
+				type="button"
+				onClick={() => onChange(Math.min(MAX_PICKER_VALUE, value + 1))}
+				disabled={value >= MAX_PICKER_VALUE}
+				className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-surface disabled:opacity-30"
+				whileTap={{ scale: 0.88 }}
+				whileHover={{ scale: 1.06 }}
+				transition={spring}
+			>
+				<Plus size={22} style={{ color: 'var(--gold)' }} />
+			</motion.button>
 		</motion.div>
 	);
 }
@@ -238,48 +199,46 @@ function AnimatedCounter({
 
 	return (
 		<div className="flex flex-col items-center gap-4 w-full">
-			<div className="flex items-end gap-1 tabular-nums">
-				<motion.span
-					key={display}
-					className="text-[72px] font-light leading-none"
-					style={{ color: 'var(--text-primary)' }}
-					initial={{ opacity: 0.5, y: 8 }}
-					animate={{ opacity: 1, y: 0 }}
+			<div className="flex items-center gap-10 tabular-nums">
+				<motion.button
+					type="button"
+					onClick={onDecrease}
+					disabled={!onDecrease}
+					className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-surface disabled:opacity-30"
+					whileTap={{ scale: 0.88 }}
+					whileHover={{ scale: 1.06 }}
 					transition={spring}
 				>
-					{display}
-				</motion.span>
-				<div className="flex flex-col items-center gap-1 mb-2">
-					{onIncrease && (
-						<button
-							type="button"
-							onClick={onIncrease}
-							className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium transition-opacity active:opacity-60"
-							style={{
-								color: 'var(--gold)',
-								background: 'color-mix(in srgb, var(--gold) 12%, transparent)',
-							}}
-						>
-							+
-						</button>
-					)}
-					<span className="text-2xl font-light" style={{ color: 'var(--text-tertiary)' }}>
+					<Minus size={22} style={{ color: 'var(--gold)' }} />
+				</motion.button>
+
+				<div className="flex items-end gap-2">
+					<motion.span
+						key={display}
+						className="text-[72px] font-light leading-none"
+						style={{ color: 'var(--text-primary)' }}
+						initial={{ opacity: 0.5, y: 8 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={spring}
+					>
+						{display}
+					</motion.span>
+					<span className="text-2xl font-light mb-2" style={{ color: 'var(--text-tertiary)' }}>
 						/ {target}
 					</span>
-					{onDecrease && (
-						<button
-							type="button"
-							onClick={onDecrease}
-							className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium transition-opacity active:opacity-60"
-							style={{
-								color: 'var(--gold)',
-								background: 'color-mix(in srgb, var(--gold) 12%, transparent)',
-							}}
-						>
-							−
-						</button>
-					)}
 				</div>
+
+				<motion.button
+					type="button"
+					onClick={onIncrease}
+					disabled={!onIncrease}
+					className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-surface disabled:opacity-30"
+					whileTap={{ scale: 0.88 }}
+					whileHover={{ scale: 1.06 }}
+					transition={spring}
+				>
+					<Plus size={22} style={{ color: 'var(--gold)' }} />
+				</motion.button>
 			</div>
 
 			{/* Progress bar */}
@@ -657,7 +616,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 						</motion.div>
 
 						<motion.div
-							className="mb-6"
+							className="my-14 flex flex-col items-center"
 							initial={{ opacity: 0, y: 16 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.18, ...spring }}
