@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EstimationCard } from '@/components/EstimationCard';
 import { Session } from '@/components/Session';
-import { PRAYER_CONFIG } from '@/constants/prayers';
+import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
 import { track } from '@/lib/analytics';
 import { spring } from '@/lib/animations';
 import { formatCatchUpLabel } from '@/lib/formatDays';
@@ -63,7 +63,7 @@ function PrayerRow({
 	onLog: (p: PrayerName) => void;
 	index?: number;
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const cfg = PRAYER_CONFIG[prayer];
 	const progress = totalOwed > 0 ? Math.min(100, (totalCompleted / totalOwed) * 100) : 0;
 	const done = remaining === 0;
@@ -124,9 +124,9 @@ function PrayerRow({
 			<div className="flex flex-1 flex-col gap-1.5">
 				<div className="flex items-center gap-2">
 					<span className="font-display text-lg font-medium" style={{ color: cfg.hex }}>
-						{cfg.labelFr}
+						{getPrayerLabel(cfg, i18n.language)}
 					</span>
-					<span className="text-xs text-tertiary">{cfg.labelAr}</span>
+					{i18n.language !== 'ar' && <span className="text-xs text-tertiary">{cfg.labelAr}</span>}
 					<AnimatePresence mode="popLayout">
 						<motion.span
 							key={remaining}

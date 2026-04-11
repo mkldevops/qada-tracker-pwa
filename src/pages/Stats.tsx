@@ -4,7 +4,7 @@ import { ActivityCalendar } from '@/components/ActivityCalendar';
 import { DebtEvolutionChart } from '@/components/DebtEvolutionChart';
 import { EstimationCard } from '@/components/EstimationCard';
 import { StatsChart } from '@/components/StatsChart';
-import { PRAYER_CONFIG } from '@/constants/prayers';
+import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
 import { formatCatchUpLabel } from '@/lib/formatDays';
 import { useDebts, useStats, useTotalRemaining } from '@/stores/prayerStore';
 import { PRAYER_NAMES } from '@/types';
@@ -21,12 +21,15 @@ function StatTile({
 	return (
 		<div
 			className="flex flex-1 flex-col items-center justify-center gap-1 rounded-2xl py-5"
-			style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+			style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 		>
-			<span className="text-3xl font-semibold tabular-nums" style={{ color: color ?? '#F5F5F0' }}>
+			<span
+				className="text-3xl font-semibold tabular-nums"
+				style={{ color: color ?? 'var(--text-primary)' }}
+			>
 				{value}
 			</span>
-			<span className="text-[10px] font-medium" style={{ color: '#6E6E70' }}>
+			<span className="text-[10px] font-medium" style={{ color: 'var(--text-secondary)' }}>
 				{label}
 			</span>
 		</div>
@@ -34,7 +37,7 @@ function StatTile({
 }
 
 export function Stats() {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const stats = useStats();
 	const debts = useDebts();
 	const totalRemaining = useTotalRemaining();
@@ -43,25 +46,28 @@ export function Stats() {
 
 	return (
 		<div className="space-y-5 px-7 pb-4 pt-1">
-			<h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
+			<h1 className="font-display text-3xl font-normal" style={{ color: 'var(--text-primary)' }}>
 				{t('stats.title')}
 			</h1>
 
-			<div
-				className="flex w-full flex-col justify-center gap-2 rounded-[20px] px-6 py-7"
-				style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
-			>
-				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#1A1A1C88' }}>
+			<div className="gradient-gold flex w-full flex-col justify-center gap-2 rounded-[20px] px-6 py-7">
+				<p
+					className="text-[11px] font-medium tracking-[3px]"
+					style={{ color: 'color-mix(in srgb, var(--background) 53%, transparent)' }}
+				>
 					{t('stats.totalLogged')}
 				</p>
 				<p
 					className="text-[52px] font-light leading-[0.85] tabular-nums"
-					style={{ color: '#1A1A1C' }}
+					style={{ color: 'var(--background)' }}
 				>
 					{stats.allTime.toLocaleString()}
 				</p>
 				{doneLabel && (
-					<p className="text-sm" style={{ color: '#1A1A1C88' }}>
+					<p
+						className="text-sm"
+						style={{ color: 'color-mix(in srgb, var(--background) 53%, transparent)' }}
+					>
 						{doneLabel}
 					</p>
 				)}
@@ -72,13 +78,13 @@ export function Stats() {
 				<StatTile
 					label={t('stats.streak')}
 					value={`${stats.streak}${t('common.dayShort')}`}
-					color="#C9A962"
+					color="var(--gold)"
 				/>
 				<StatTile label={t('stats.thisWeek')} value={stats.thisWeek} />
 				<StatTile
 					label={t('stats.avgPerDay')}
 					value={stats.avgPerDay > 0 ? stats.avgPerDay.toFixed(1) : '—'}
-					color="#6E9E6E"
+					color="var(--sage)"
 				/>
 			</div>
 
@@ -95,36 +101,45 @@ export function Stats() {
 			<StatsChart />
 
 			<div className="flex flex-col gap-2.5">
-				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+				<p
+					className="text-[11px] font-medium tracking-[3px]"
+					style={{ color: 'var(--text-tertiary)' }}
+				>
 					{t('stats.activity')}
 				</p>
 				<div
 					className="rounded-[20px] p-4"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+					style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 				>
 					<ActivityCalendar />
 				</div>
 			</div>
 
 			<div className="flex flex-col gap-2.5">
-				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+				<p
+					className="text-[11px] font-medium tracking-[3px]"
+					style={{ color: 'var(--text-tertiary)' }}
+				>
 					{t('stats.debtEvolution')}
 				</p>
 				<div
 					className="rounded-[20px] p-4"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+					style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 				>
 					<DebtEvolutionChart />
 				</div>
 			</div>
 
 			<div className="flex flex-col gap-2.5">
-				<p className="text-[11px] font-medium tracking-[3px]" style={{ color: '#4A4A4C' }}>
+				<p
+					className="text-[11px] font-medium tracking-[3px]"
+					style={{ color: 'var(--text-tertiary)' }}
+				>
 					{t('stats.debtByPrayer')}
 				</p>
 				<div
 					className="overflow-hidden rounded-[20px]"
-					style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+					style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 				>
 					{PRAYER_NAMES.map((prayer, i) => {
 						const debt = debts[prayer];
@@ -135,23 +150,23 @@ export function Stats() {
 								: 0;
 						return (
 							<div key={prayer}>
-								{i > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+								{i > 0 && <div style={{ height: 1, background: 'var(--border-divider)' }} />}
 								<div className="flex flex-col gap-1.5 px-5 py-3">
 									<div className="flex items-center justify-between">
 										<span
 											className="font-display text-[15px] font-medium"
 											style={{ color: cfg.hex }}
 										>
-											{cfg.labelFr}
+											{getPrayerLabel(cfg, i18n.language)}
 										</span>
-										<span className="text-[11px]" style={{ color: '#6E6E70' }}>
+										<span className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>
 											{(debt?.remaining ?? 0).toLocaleString()} /{' '}
 											{(debt?.total_owed ?? 0).toLocaleString()}
 										</span>
 									</div>
 									<div
 										className="h-[3px] w-full overflow-hidden rounded-full"
-										style={{ background: '#3A3A3C' }}
+										style={{ background: 'var(--border)' }}
 									>
 										<div
 											className="h-full rounded-full"
@@ -166,12 +181,15 @@ export function Stats() {
 
 				<div
 					className="flex items-center justify-between rounded-[20px] px-6"
-					style={{ background: '#242426', border: '1px solid #3A3A3C', height: 60 }}
+					style={{ background: 'var(--surface)', border: '1px solid var(--border)', height: 60 }}
 				>
-					<span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
+					<span className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>
 						{t('stats.totalRemaining')}
 					</span>
-					<span className="text-2xl font-semibold tabular-nums" style={{ color: '#F5F5F0' }}>
+					<span
+						className="text-2xl font-semibold tabular-nums"
+						style={{ color: 'var(--text-primary)' }}
+					>
 						{totalRemaining.toLocaleString()}
 					</span>
 				</div>
