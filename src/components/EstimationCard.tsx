@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { spring } from '@/lib/animations';
-import { formatDays } from '@/lib/formatDays';
+import { formatDays, formatDaysParts } from '@/lib/formatDays';
 
 export function EstimationCard({
 	estimatedDays,
@@ -11,6 +11,8 @@ export function EstimationCard({
 	avgPerDay: number;
 }) {
 	const { t } = useTranslation();
+	const parts = formatDaysParts(estimatedDays, t);
+
 	return (
 		<motion.div
 			initial={{ opacity: 0, scale: 0.85, y: 12 }}
@@ -20,7 +22,15 @@ export function EstimationCard({
 			className="flex flex-[2] flex-col items-center justify-center gap-1 rounded-2xl bg-surface border border-border px-2 py-4"
 		>
 			<span className="text-center text-2xl font-semibold leading-none tabular-nums text-gold">
-				{formatDays(estimatedDays, t)}
+				{parts
+					? parts.map((p, i) => (
+							<span key={p.unit}>
+								{i > 0 && ' '}
+								{p.value}
+								<span className="text-xs font-medium text-muted"> {p.unit}</span>
+							</span>
+						))
+					: formatDays(estimatedDays, t)}
 			</span>
 			<span className="text-center text-[9px] font-medium leading-tight text-muted">
 				{t('dashboard.estimationRate', { rate: avgPerDay.toFixed(1) })}
