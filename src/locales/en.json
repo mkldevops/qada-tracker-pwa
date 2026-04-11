@@ -244,5 +244,9 @@
 		"title": "Keep it up!",
 		"subtitle": "{{count}} prayers made up",
 		"close": "Continue"
+	},
+	"a11y": {
+		"decrease": "Decrease",
+		"increase": "Increase"
 	}
 }

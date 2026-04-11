@@ -20,6 +20,7 @@ const CAMERA_HEIGHT = 60;
 const CAMERA_INTERVAL_MS = 200;
 const CAMERA_DARK_THRESHOLD = 25;
 const CAMERA_LIGHT_THRESHOLD = 50;
+const STARTUP_GRACE_MS = 1500;
 
 export function useProximitySensor(
 	active: boolean,
@@ -63,7 +64,7 @@ export function useProximitySensor(
 
 		setCurrentState('waiting_first');
 		lastDetectionRef.current = 0;
-		ignoreUntilRef.current = Date.now() + 1500;
+		ignoreUntilRef.current = Date.now() + STARTUP_GRACE_MS;
 		sujoodCountRef.current = 0;
 		betaBaselineRef.current = null;
 		sujoodDownTimeRef.current = 0;
@@ -212,7 +213,7 @@ export function useProximitySensor(
 						return;
 					}
 					// Camera may start long after the effect (e.g. permission dialog) — reset grace period
-					ignoreUntilRef.current = Date.now() + 1500;
+					ignoreUntilRef.current = Date.now() + STARTUP_GRACE_MS;
 					const video = document.createElement('video');
 					video.muted = true;
 					video.srcObject = stream;
@@ -224,7 +225,7 @@ export function useProximitySensor(
 					if (!ctx) {
 						for (const t of stream.getTracks()) t.stop();
 						if (!cancelled) {
-							ignoreUntilRef.current = Date.now() + 1500;
+							ignoreUntilRef.current = Date.now() + STARTUP_GRACE_MS;
 							orientationTimerCleanup = setupDeviceOrientationFallback();
 						}
 						return;
@@ -267,7 +268,7 @@ export function useProximitySensor(
 					};
 				} catch {
 					if (!cancelled) {
-						ignoreUntilRef.current = Date.now() + 1500;
+						ignoreUntilRef.current = Date.now() + STARTUP_GRACE_MS;
 						orientationTimerCleanup = setupDeviceOrientationFallback();
 					}
 				}

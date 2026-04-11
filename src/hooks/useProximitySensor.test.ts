@@ -201,8 +201,9 @@ describe('useProximitySensor', () => {
 			renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
 
 			act(() => dispatchOrientation(10)); // baseline = 10
-			act(() => dispatchOrientation(65)); // delta = 55 → down (at PINNED_NOW)
-			vi.setSystemTime(PINNED_NOW + 200);
+			vi.setSystemTime(PINNED_NOW + 1500);
+			act(() => dispatchOrientation(65)); // delta = 55 → down (past grace period)
+			vi.setSystemTime(PINNED_NOW + 1700);
 			act(() => dispatchOrientation(12)); // delta = 2 < 25 but elapsed 200ms < 300 → ignored
 
 			expect(onFirst).not.toHaveBeenCalled();
@@ -267,16 +268,17 @@ describe('useProximitySensor', () => {
 			renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
 
 			act(() => dispatchOrientation(10)); // baseline = 10
-			act(() => dispatchOrientation(65)); // delta = 55 → sujood down at PINNED_NOW
-			vi.setSystemTime(PINNED_NOW + 5001);
+			vi.setSystemTime(PINNED_NOW + 1500);
+			act(() => dispatchOrientation(65)); // delta = 55 → sujood down (past grace period)
+			vi.setSystemTime(PINNED_NOW + 6501);
 			act(() => dispatchOrientation(12)); // elapsed > 5000 → reset, no callback
 
 			expect(onFirst).not.toHaveBeenCalled();
 
 			// A fresh sujood sequence now works
 			act(() => dispatchOrientation(65)); // delta = 55 → new sujood down
-			vi.setSystemTime(PINNED_NOW + 5500);
-			act(() => dispatchOrientation(12)); // delta = 2 < 25, elapsed 499ms → fires
+			vi.setSystemTime(PINNED_NOW + 6900);
+			act(() => dispatchOrientation(12)); // delta = 2 < 25, elapsed 399ms → fires
 
 			expect(onFirst).toHaveBeenCalledOnce();
 		});

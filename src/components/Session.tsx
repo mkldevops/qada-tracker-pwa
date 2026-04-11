@@ -62,6 +62,7 @@ function NumberPicker({
 	dir: 1 | -1;
 	onChange: (v: number) => void;
 }) {
+	const { t } = useTranslation();
 	const accumulated = useRef(0);
 	const valueRef = useRef(value);
 	useEffect(() => {
@@ -86,6 +87,7 @@ function NumberPicker({
 		>
 			<motion.button
 				type="button"
+				aria-label={t('a11y.decrease')}
 				onClick={() => onChange(Math.max(1, value - 1))}
 				disabled={value <= 1}
 				className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-surface disabled:opacity-30"
@@ -124,6 +126,7 @@ function NumberPicker({
 
 			<motion.button
 				type="button"
+				aria-label={t('a11y.increase')}
 				onClick={() => onChange(Math.min(MAX_PICKER_VALUE, value + 1))}
 				disabled={value >= MAX_PICKER_VALUE}
 				className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-surface disabled:opacity-30"
@@ -171,6 +174,7 @@ function AnimatedCounter({
 	onDecrease?: () => void;
 	onIncrease?: () => void;
 }) {
+	const { t } = useTranslation();
 	const [display, setDisplay] = useState(value);
 	const prevRef = useRef(value);
 
@@ -202,6 +206,7 @@ function AnimatedCounter({
 			<div className="flex items-center gap-10 tabular-nums">
 				<motion.button
 					type="button"
+					aria-label={t('a11y.decrease')}
 					onClick={onDecrease}
 					disabled={!onDecrease}
 					className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-surface disabled:opacity-30"
@@ -230,6 +235,7 @@ function AnimatedCounter({
 
 				<motion.button
 					type="button"
+					aria-label={t('a11y.increase')}
 					onClick={onIncrease}
 					disabled={!onIncrease}
 					className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-border bg-surface disabled:opacity-30"
