@@ -46,16 +46,19 @@ function checkMilestone(allTime: number): Milestone | null {
 		}
 	}
 
+	const currentMonths = Math.floor(allTime / PRAYERS_PER_MONTH);
 	const currentYears = Math.floor(allTime / PRAYERS_PER_YEAR);
+
 	if (currentYears > 0) {
 		const key = `celebrated-catchup-year-${currentYears}`;
 		if (!localStorage.getItem(key)) {
 			localStorage.setItem(key, '1');
+			// Also mark the current month milestone to avoid double-fire
+			localStorage.setItem(`celebrated-catchup-month-${currentMonths}`, '1');
 			return { kind: 'year', years: currentYears };
 		}
 	}
 
-	const currentMonths = Math.floor(allTime / PRAYERS_PER_MONTH);
 	if (currentMonths > 0) {
 		const key = `celebrated-catchup-month-${currentMonths}`;
 		if (!localStorage.getItem(key)) {
@@ -260,6 +263,9 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => {
 		},
 
 		resetAll: async () => {
+			for (const key of Object.keys(localStorage)) {
+				if (key.startsWith('celebrated-')) localStorage.removeItem(key);
+			}
 			await queries.resetAll(db);
 			await get().loadAll();
 		},
