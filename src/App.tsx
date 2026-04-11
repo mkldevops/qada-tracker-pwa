@@ -8,7 +8,6 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { InstallBanner } from '@/components/InstallBanner';
 import { MilestoneModal } from '@/components/MilestoneModal';
 import { useNotifications } from '@/hooks/useNotifications';
-import { useVersionCheck } from '@/hooks/useVersionCheck';
 import { isOnboardingDone, markOnboardingDone, markOnboardingUndone } from '@/lib/onboarding';
 import { type BeforeInstallPromptEvent, shouldShowInstallBanner } from '@/lib/pwa';
 import { usePrayerStore } from '@/stores/prayerStore';
@@ -45,8 +44,13 @@ export function App() {
 	const {
 		needRefresh: [needRefresh],
 		updateServiceWorker,
-	} = useRegisterSW();
-	useVersionCheck();
+	} = useRegisterSW({
+		onRegisteredSW(_swUrl, registration) {
+			if (registration) {
+				setInterval(() => registration.update(), 60 * 60 * 1000);
+			}
+		},
+	});
 
 	useEffect(() => {
 		loadAll();

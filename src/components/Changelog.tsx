@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.29.4',
+		date: '2026-04-11',
+		changes: {
+			fr: [
+				'PWA : suppression du mécanisme de vérification de version par polling HTTP (useVersionCheck) — le service worker gère seul les mises à jour',
+				'PWA : vérification du service worker toutes les heures pour détecter les mises à jour sur les onglets ouverts longtemps',
+			],
+			en: [
+				'PWA: removed HTTP polling version check (useVersionCheck) — service worker handles all updates exclusively',
+				'PWA: hourly service worker update check for long-lived tabs',
+			],
+		},
+	},
+	{
 		version: '1.29.3',
 		date: '2026-04-10',
 		changes: {
