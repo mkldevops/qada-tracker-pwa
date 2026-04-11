@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { PRAYER_CONFIG } from '@/constants/prayers';
+import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
 import type { PrayerDebt, PrayerName } from '@/types';
 
 interface PrayerCounterProps {
@@ -15,12 +15,7 @@ interface PrayerCounterProps {
 export function PrayerCounter({ prayer, debt, onLog }: PrayerCounterProps) {
 	const { t, i18n } = useTranslation();
 	const config = PRAYER_CONFIG[prayer];
-	const label =
-		i18n.language === 'en'
-			? config.labelEn
-			: i18n.language === 'ar'
-				? config.labelAr
-				: config.labelFr;
+	const label = getPrayerLabel(config, i18n.language);
 	const progress =
 		debt.total_owed > 0 ? Math.min(100, (debt.total_completed / debt.total_owed) * 100) : 0;
 
@@ -65,12 +60,7 @@ interface PrayerRowProps {
 export function PrayerRow({ prayer, quantity, onChange }: PrayerRowProps) {
 	const { i18n } = useTranslation();
 	const config = PRAYER_CONFIG[prayer];
-	const label =
-		i18n.language === 'en'
-			? config.labelEn
-			: i18n.language === 'ar'
-				? config.labelAr
-				: config.labelFr;
+	const label = getPrayerLabel(config, i18n.language);
 
 	return (
 		<div className="flex items-center justify-between py-2">

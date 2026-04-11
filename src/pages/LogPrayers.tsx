@@ -14,7 +14,7 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { PRAYER_CONFIG } from '@/constants/prayers';
+import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
 import { track } from '@/lib/analytics';
 import { spring } from '@/lib/animations';
 import { groupBySession } from '@/lib/groupBySession';
@@ -48,8 +48,7 @@ function PrayerRow({
 }) {
 	const { t, i18n } = useTranslation();
 	const cfg = PRAYER_CONFIG[prayer];
-	const label =
-		i18n.language === 'en' ? cfg.labelEn : i18n.language === 'ar' ? cfg.labelAr : cfg.labelFr;
+	const label = getPrayerLabel(cfg, i18n.language);
 	const active = qty > 0;
 
 	return (
@@ -58,13 +57,13 @@ function PrayerRow({
 			animate={{ opacity: 1, x: 0 }}
 			transition={{ delay: index * 0.05, ...spring }}
 		>
-			{index > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+			{index > 0 && <div style={{ height: 1, background: 'var(--border-divider)' }} />}
 			<div className="flex items-center gap-3 px-5" style={{ height: 70 }}>
 				<div className="flex flex-1 flex-col gap-0.5">
 					<span className="font-display text-lg font-medium" style={{ color: cfg.hex }}>
 						{label}
 					</span>
-					<span className="text-[11px]" style={{ color: '#4A4A4C' }}>
+					<span className="text-[11px]" style={{ color: 'var(--text-tertiary)' }}>
 						{cfg.labelAr} · {cfg.rakat} {t('log.rakat')}
 					</span>
 				</div>
@@ -72,17 +71,17 @@ function PrayerRow({
 					<motion.button
 						onClick={() => onChange(prayer, qty - 1)}
 						className="flex h-9 w-9 items-center justify-center rounded-full"
-						style={{ background: '#2A2A2C' }}
+						style={{ background: 'var(--surface-raised)' }}
 						whileTap={{ scale: 0.85 }}
 					>
-						<Minus size={14} style={{ color: '#6E6E70' }} />
+						<Minus size={14} style={{ color: 'var(--text-secondary)' }} />
 					</motion.button>
 
 					<AnimatePresence mode="popLayout">
 						<motion.span
 							key={qty}
 							className="w-10 text-center font-display text-xl font-medium tabular-nums"
-							style={{ color: active ? cfg.hex : '#4A4A4C' }}
+							style={{ color: active ? cfg.hex : 'var(--text-tertiary)' }}
 							initial={{ opacity: 0, y: active ? -10 : 10, scale: 0.8 }}
 							animate={{ opacity: 1, y: 0, scale: 1 }}
 							exit={{ opacity: 0, y: active ? 10 : -10, scale: 0.8 }}
@@ -95,12 +94,15 @@ function PrayerRow({
 					<motion.button
 						onClick={() => onChange(prayer, qty + 1)}
 						className="flex h-9 w-9 items-center justify-center rounded-full transition-colors"
-						style={active ? { background: cfg.hex } : { background: '#2A2A2C' }}
+						style={active ? { background: cfg.hex } : { background: 'var(--surface-raised)' }}
 						whileTap={{ scale: 0.85 }}
-						animate={{ background: active ? cfg.hex : '#2A2A2C' }}
+						animate={{ background: active ? cfg.hex : 'var(--surface-raised)' }}
 						transition={{ duration: 0.15 }}
 					>
-						<Plus size={14} style={{ color: active ? '#1A1A1C' : '#6E6E70' }} />
+						<Plus
+							size={14}
+							style={{ color: active ? 'var(--background)' : 'var(--text-secondary)' }}
+						/>
 					</motion.button>
 				</div>
 			</div>
@@ -124,7 +126,7 @@ function LoggerTab({
 		<div className="flex flex-col gap-5 pt-4">
 			<motion.div
 				className="w-full overflow-hidden rounded-[20px]"
-				style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 				initial={{ opacity: 0, y: 12 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={spring}
@@ -142,19 +144,19 @@ function LoggerTab({
 
 			<motion.div
 				className="flex items-center justify-between rounded-[20px] px-6"
-				style={{ background: '#242426', border: '1px solid #3A3A3C', height: 72 }}
+				style={{ background: 'var(--surface)', border: '1px solid var(--border)', height: 72 }}
 				initial={{ opacity: 0, y: 12 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 0.08, ...spring }}
 			>
-				<span className="text-[13px] font-medium" style={{ color: '#6E6E70' }}>
+				<span className="text-[13px] font-medium" style={{ color: 'var(--text-secondary)' }}>
 					{t('log.totalToLog')}
 				</span>
 				<AnimatePresence mode="popLayout">
 					<motion.span
 						key={total}
 						className="font-display text-2xl font-medium tabular-nums"
-						style={{ color: '#C9A962' }}
+						style={{ color: 'var(--gold)' }}
 						initial={{ opacity: 0, y: -8 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 8 }}
@@ -168,16 +170,18 @@ function LoggerTab({
 			<motion.button
 				onClick={onLog}
 				disabled={total === 0}
-				className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 disabled:opacity-30"
-				style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
+				className="gradient-gold flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 disabled:opacity-30"
 				initial={{ opacity: 0, y: 12 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ delay: 0.12, ...spring }}
 				whileTap={{ scale: 0.96 }}
 				whileHover={{ scale: 1.02 }}
 			>
-				<Check size={18} style={{ color: '#1A1A1C' }} strokeWidth={2.5} />
-				<span className="text-[13px] font-semibold tracking-[1.5px]" style={{ color: '#1A1A1C' }}>
+				<Check size={18} style={{ color: 'var(--background)' }} strokeWidth={2.5} />
+				<span
+					className="text-[13px] font-semibold tracking-[1.5px]"
+					style={{ color: 'var(--background)' }}
+				>
 					{t('log.confirm')}
 				</span>
 			</motion.button>
@@ -196,8 +200,7 @@ function DeleteEntrySheet({
 }) {
 	const { t, i18n } = useTranslation();
 	const cfg = PRAYER_CONFIG[log.prayer];
-	const label =
-		i18n.language === 'en' ? cfg.labelEn : i18n.language === 'ar' ? cfg.labelAr : cfg.labelFr;
+	const label = getPrayerLabel(cfg, i18n.language);
 
 	return (
 		<>
@@ -212,8 +215,8 @@ function DeleteEntrySheet({
 			<motion.div
 				className="fixed bottom-0 inset-x-0 z-[61] rounded-t-[28px] px-6 pt-5 flex flex-col gap-4"
 				style={{
-					background: '#242426',
-					border: '1px solid #3A3A3C',
+					background: 'var(--surface)',
+					border: '1px solid var(--border)',
 					paddingBottom: 'calc(env(safe-area-inset-bottom) + 1.5rem)',
 				}}
 				initial={{ y: '100%' }}
@@ -221,7 +224,7 @@ function DeleteEntrySheet({
 				exit={{ y: '100%' }}
 				transition={{ type: 'spring', stiffness: 380, damping: 36 }}
 			>
-				<div className="mx-auto w-10 h-1 rounded-full" style={{ background: '#3A3A3C' }} />
+				<div className="mx-auto w-10 h-1 rounded-full" style={{ background: 'var(--border)' }} />
 
 				<div className="flex items-center gap-3 pb-1">
 					<div className="h-3 w-3 rounded-full flex-shrink-0" style={{ background: cfg.hex }} />
@@ -231,19 +234,26 @@ function DeleteEntrySheet({
 					<span className="text-base" style={{ color: `${cfg.hex}80` }}>
 						{cfg.labelAr}
 					</span>
-					<span className="ms-auto tabular-nums text-sm font-medium" style={{ color: '#6E6E70' }}>
+					<span
+						className="ms-auto tabular-nums text-sm font-medium"
+						style={{ color: 'var(--text-secondary)' }}
+					>
 						+{log.quantity}
 					</span>
 				</div>
 
-				<p className="text-sm" style={{ color: '#6E6E70' }}>
+				<p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
 					{t('log.deleteEntryDesc')}
 				</p>
 
 				<motion.button
 					onClick={onConfirm}
 					className="w-full rounded-[18px] py-4 text-sm font-semibold tracking-[1px] flex items-center justify-center gap-2"
-					style={{ background: '#2A1A1A', border: '1px solid #D45F5F40', color: '#D45F5F' }}
+					style={{
+						background: 'color-mix(in srgb, var(--danger) 8%, var(--background))',
+						border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)',
+						color: 'var(--danger)',
+					}}
 					whileTap={{ scale: 0.97 }}
 				>
 					<Trash2 size={15} />
@@ -253,7 +263,7 @@ function DeleteEntrySheet({
 				<motion.button
 					onClick={onClose}
 					className="w-full rounded-[18px] py-3 text-sm font-medium mb-2"
-					style={{ background: '#2A2A2C', color: '#6E6E70' }}
+					style={{ background: 'var(--surface-raised)', color: 'var(--text-secondary)' }}
 					whileTap={{ scale: 0.97 }}
 				>
 					{t('log.deleteEntryCancel')}
@@ -319,10 +329,10 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 				animate={{ opacity: 1 }}
 				transition={{ delay: 0.1 }}
 			>
-				<p className="text-3xl" style={{ color: '#3A3A3C' }}>
+				<p className="text-3xl" style={{ color: 'var(--border)' }}>
 					—
 				</p>
-				<p className="text-sm" style={{ color: '#4A4A4C' }}>
+				<p className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
 					{t('log.emptyHistory')}
 				</p>
 			</motion.div>
@@ -342,31 +352,41 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 						<AlertDialogTrigger asChild>
 							<motion.button
 								className="flex items-center gap-1.5 rounded-2xl px-4 py-2 text-[12px] font-medium"
-								style={{ background: '#2A1A1A', border: '1px solid #D45F5F40', color: '#D45F5F' }}
+								style={{
+									background: 'color-mix(in srgb, var(--danger) 8%, var(--background))',
+									border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)',
+									color: 'var(--danger)',
+								}}
 								whileTap={{ scale: 0.93 }}
 							>
 								<RotateCcw size={12} />
 								{t('log.undoLast')}
 							</motion.button>
 						</AlertDialogTrigger>
-						<AlertDialogContent style={{ background: '#242426', border: '1px solid #3A3A3C' }}>
+						<AlertDialogContent
+							style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+						>
 							<AlertDialogHeader>
-								<AlertDialogTitle style={{ color: '#F5F5F0' }}>
+								<AlertDialogTitle style={{ color: 'var(--text-primary)' }}>
 									{t('log.undoTitle')}
 								</AlertDialogTitle>
-								<AlertDialogDescription style={{ color: '#6E6E70' }}>
+								<AlertDialogDescription style={{ color: 'var(--text-secondary)' }}>
 									{t('log.undoDesc')}
 								</AlertDialogDescription>
 							</AlertDialogHeader>
 							<AlertDialogFooter>
 								<AlertDialogCancel
-									style={{ background: '#2A2A2C', color: '#F5F5F0', border: 'none' }}
+									style={{
+										background: 'var(--surface-raised)',
+										color: 'var(--text-primary)',
+										border: 'none',
+									}}
 								>
 									{t('log.undoCancel')}
 								</AlertDialogCancel>
 								<AlertDialogAction
 									onClick={onUndo}
-									style={{ background: '#D45F5F', color: '#F5F5F0' }}
+									style={{ background: 'var(--danger)', color: 'var(--text-primary)' }}
 								>
 									{t('log.undoConfirm')}
 								</AlertDialogAction>
@@ -401,7 +421,7 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 								<div className="mb-1.5 flex items-center gap-2 px-1">
 									<span
 										className="text-[10px] font-medium tracking-[2px]"
-										style={{ color: '#3A3A3C' }}
+										style={{ color: 'var(--border)' }}
 									>
 										{new Date(group.date).toLocaleString(i18n.language, {
 											day: '2-digit',
@@ -413,19 +433,22 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 									{group.sessionId?.startsWith('session-') && (
 										<span
 											className="rounded-full px-2 py-0.5 text-[9px] font-medium tracking-wider"
-											style={{ background: '#C9A96215', color: '#C9A96280' }}
+											style={{
+												background: 'color-mix(in srgb, var(--gold) 8%, transparent)',
+												color: 'color-mix(in srgb, var(--gold) 50%, transparent)',
+											}}
 										>
 											{t('log.session')}
 										</span>
 									)}
 									<span
 										className="text-[11px] font-medium tabular-nums"
-										style={{ color: '#C9A96280' }}
+										style={{ color: 'color-mix(in srgb, var(--gold) 50%, transparent)' }}
 									>
 										+{totalPrayers}
 									</span>
 									{durationSec >= 1 && (
-										<span className="text-[10px]" style={{ color: '#4A4A4C' }}>
+										<span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
 											{formatDuration(durationSec)}
 										</span>
 									)}
@@ -433,16 +456,14 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 
 								<div
 									className="overflow-hidden rounded-[18px]"
-									style={{ background: '#242426', border: '1px solid #2A2A2C' }}
+									style={{
+										background: 'var(--surface)',
+										border: '1px solid var(--border-divider)',
+									}}
 								>
 									{group.entries.map((log, li) => {
 										const cfg = PRAYER_CONFIG[log.prayer];
-										const entryLabel =
-											i18n.language === 'en'
-												? cfg.labelEn
-												: i18n.language === 'ar'
-													? cfg.labelAr
-													: cfg.labelFr;
+										const entryLabel = getPrayerLabel(cfg, i18n.language);
 										const prevEntry = group.entries[li + 1];
 										const prayerDurationSec =
 											isSession && prevEntry
@@ -454,7 +475,9 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 												: null;
 										return (
 											<div key={log.id}>
-												{li > 0 && <div style={{ height: 1, background: '#2A2A2C' }} />}
+												{li > 0 && (
+													<div style={{ height: 1, background: 'var(--surface-raised)' }} />
+												)}
 												<motion.div
 													className="flex items-center justify-between px-5 py-3 select-none"
 													initial={{ opacity: 0 }}
@@ -476,7 +499,7 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 														>
 															{entryLabel}
 														</span>
-														<span className="text-xs" style={{ color: '#3A3A3C' }}>
+														<span className="text-xs" style={{ color: 'var(--border)' }}>
 															{cfg.labelAr}
 														</span>
 													</div>
@@ -484,14 +507,14 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 														{prayerDurationSec !== null && prayerDurationSec >= 1 && (
 															<span
 																className="text-[10px] tabular-nums"
-																style={{ color: '#3A3A3C' }}
+																style={{ color: 'var(--border)' }}
 															>
 																{formatDuration(prayerDurationSec)}
 															</span>
 														)}
 														<motion.span
 															className="font-display text-lg font-medium tabular-nums"
-															style={{ color: '#C9A962' }}
+															style={{ color: 'var(--gold)' }}
 															initial={{ scale: 0.8, opacity: 0 }}
 															animate={{ scale: 1, opacity: 1 }}
 															transition={{
@@ -566,10 +589,10 @@ export function LogPrayers() {
 		<div className="flex flex-col px-7 pb-4 pt-1" style={{ minHeight: '100%' }}>
 			{/* Header */}
 			<div className="mb-5 flex flex-col gap-0.5">
-				<h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
+				<h1 className="font-display text-3xl font-normal" style={{ color: 'var(--text-primary)' }}>
 					{t('log.title')}
 				</h1>
-				<p className="text-[13px]" style={{ color: '#6E6E70' }}>
+				<p className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>
 					{t('log.subtitle')}
 				</p>
 			</div>
@@ -577,7 +600,7 @@ export function LogPrayers() {
 			{/* Tab bar */}
 			<div
 				className="relative mb-1 flex rounded-2xl p-1"
-				style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+				style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 			>
 				{TABS.map((tab) => (
 					<button
@@ -585,13 +608,12 @@ export function LogPrayers() {
 						key={tab}
 						onClick={() => switchTab(tab)}
 						className="relative z-10 flex-1 rounded-xl py-2.5 text-[13px] font-medium transition-colors"
-						style={{ color: activeTab === tab ? '#1A1A1C' : '#6E6E70' }}
+						style={{ color: activeTab === tab ? 'var(--background)' : 'var(--text-secondary)' }}
 					>
 						{activeTab === tab && (
 							<motion.div
 								layoutId="tab-pill"
-								className="absolute inset-0 rounded-xl"
-								style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)' }}
+								className="gradient-gold absolute inset-0 rounded-xl"
 								transition={{ type: 'spring' as const, stiffness: 500, damping: 35 }}
 							/>
 						)}
@@ -602,8 +624,11 @@ export function LogPrayers() {
 							<motion.span
 								className="relative z-10 ms-1.5 inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums"
 								style={{
-									background: activeTab === tab ? '#1A1A1C30' : '#C9A96220',
-									color: activeTab === tab ? '#1A1A1C' : '#C9A962',
+									background:
+										activeTab === tab
+											? 'color-mix(in srgb, var(--background) 19%, transparent)'
+											: 'color-mix(in srgb, var(--gold) 12%, transparent)',
+									color: activeTab === tab ? 'var(--background)' : 'var(--gold)',
 								}}
 								animate={{ scale: [1, 1.2, 1] }}
 								transition={{ duration: 0.3 }}

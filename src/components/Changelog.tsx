@@ -10,6 +10,22 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.0',
+		date: '2026-04-11',
+		changes: {
+			fr: [
+				'Clean code : toutes les couleurs hexadécimales codées en dur remplacées par les tokens CSS du design system (var(--gold), var(--surface), etc.)',
+				'Clean code : extraction de getPrayerLabel() — utilitaire partagé pour les labels de prière selon la langue active',
+				'Clean code : boutons dégradé convertis en classe utilitaire .gradient-gold',
+			],
+			en: [
+				'Clean code: all hardcoded hex colors replaced with design system CSS variable tokens (var(--gold), var(--surface), etc.)',
+				'Clean code: extracted getPrayerLabel() — shared utility for prayer labels based on active language',
+				'Clean code: gradient buttons converted to .gradient-gold utility class',
+			],
+		},
+	},
+	{
 		version: '1.29.4',
 		date: '2026-04-11',
 		changes: {
