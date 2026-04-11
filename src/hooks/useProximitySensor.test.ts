@@ -60,6 +60,7 @@ describe('useProximitySensor', () => {
 			const onFirst = vi.fn();
 			const { result } = renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
 
+			vi.setSystemTime(PINNED_NOW + 1500);
 			act(() => dispatchProximity(1));
 
 			expect(result.current.currentState).toBe('waiting_second');
@@ -70,8 +71,9 @@ describe('useProximitySensor', () => {
 			const onSecond = vi.fn();
 			const { result } = renderHook(() => useProximitySensor(true, vi.fn(), onSecond));
 
+			vi.setSystemTime(PINNED_NOW + 1500);
 			act(() => dispatchProximity(1));
-			vi.setSystemTime(PINNED_NOW + 1000);
+			vi.setSystemTime(PINNED_NOW + 2500);
 			act(() => dispatchProximity(1));
 
 			expect(result.current.currentState).toBe('waiting_first');
@@ -91,8 +93,9 @@ describe('useProximitySensor', () => {
 			const onFirst = vi.fn();
 			const { result } = renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
 
+			vi.setSystemTime(PINNED_NOW + 1500);
 			act(() => dispatchProximity(1));
-			vi.setSystemTime(PINNED_NOW + 500);
+			vi.setSystemTime(PINNED_NOW + 2000);
 			act(() => dispatchProximity(1));
 
 			expect(onFirst).toHaveBeenCalledOnce();
@@ -103,8 +106,9 @@ describe('useProximitySensor', () => {
 			const onFirst = vi.fn();
 			renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
 
+			vi.setSystemTime(PINNED_NOW + 1500);
 			act(() => dispatchProximity(1));
-			vi.setSystemTime(PINNED_NOW + 900);
+			vi.setSystemTime(PINNED_NOW + 2400);
 			act(() => dispatchProximity(1));
 
 			// First event → waiting_second, second near event → onSecond (not onFirst again)
@@ -182,8 +186,9 @@ describe('useProximitySensor', () => {
 			const { result } = renderHook(() => useProximitySensor(true, onFirst, vi.fn()));
 
 			act(() => dispatchOrientation(10)); // baseline = 10
+			vi.setSystemTime(PINNED_NOW + 1500);
 			act(() => dispatchOrientation(65)); // delta = 55 > 50 → sujood down
-			vi.setSystemTime(PINNED_NOW + 400);
+			vi.setSystemTime(PINNED_NOW + 1900);
 			act(() => dispatchOrientation(12)); // delta = 2 < 25 && elapsed 400ms ≥ 300 → sujood up
 
 			expect(onFirst).toHaveBeenCalledOnce();
@@ -210,12 +215,13 @@ describe('useProximitySensor', () => {
 			const { result } = renderHook(() => useProximitySensor(true, onFirst, onSecond));
 
 			act(() => dispatchOrientation(10)); // baseline
+			vi.setSystemTime(PINNED_NOW + 1500);
 			act(() => dispatchOrientation(65)); // down 1
-			vi.setSystemTime(PINNED_NOW + 400);
+			vi.setSystemTime(PINNED_NOW + 1900);
 			act(() => dispatchOrientation(12)); // up 1 → onFirst
-			vi.setSystemTime(PINNED_NOW + 1300);
+			vi.setSystemTime(PINNED_NOW + 2800);
 			act(() => dispatchOrientation(65)); // down 2
-			vi.setSystemTime(PINNED_NOW + 1700);
+			vi.setSystemTime(PINNED_NOW + 3200);
 			act(() => dispatchOrientation(12)); // up 2 → onSecond
 
 			expect(onFirst).toHaveBeenCalledOnce();
@@ -343,11 +349,12 @@ describe('useProximitySensor', () => {
 				await Promise.resolve();
 			});
 
+			act(() => vi.advanceTimersByTime(1500)); // advance past 1500ms grace period
 			pixelData.fill(0);
-			act(() => vi.advanceTimersByTime(200)); // tick 1 at +200ms: dark → coveredSinceMs = PINNED_NOW+200
-			act(() => vi.advanceTimersByTime(200)); // tick 2 at +400ms: dark
+			act(() => vi.advanceTimersByTime(200)); // tick: dark → coveredSinceMs set
+			act(() => vi.advanceTimersByTime(200)); // tick: dark
 			pixelData.fill(200);
-			act(() => vi.advanceTimersByTime(200)); // tick 3 at +600ms: bright, elapsed=400ms → fires
+			act(() => vi.advanceTimersByTime(200)); // tick: bright, elapsed=400ms → fires
 
 			expect(onFirst).toHaveBeenCalledOnce();
 			expect(result.current.currentState).toBe('waiting_second');
@@ -377,8 +384,9 @@ describe('useProximitySensor', () => {
 				await Promise.resolve();
 			});
 
+			act(() => vi.advanceTimersByTime(1500)); // advance past 1500ms grace period
 			pixelData.fill(0);
-			act(() => vi.advanceTimersByTime(200)); // dark → coveredSinceMs set at PINNED_NOW+200
+			act(() => vi.advanceTimersByTime(200)); // dark → coveredSinceMs set
 			act(() => vi.advanceTimersByTime(5200)); // advance 5200ms (elapsed > 5000ms max)
 			pixelData.fill(200);
 			act(() => vi.advanceTimersByTime(200)); // bright, but elapsed > 5000ms → no callback
@@ -395,6 +403,7 @@ describe('useProximitySensor', () => {
 				await Promise.resolve();
 			});
 
+			act(() => vi.advanceTimersByTime(1500)); // advance past 1500ms grace period
 			pixelData.fill(0);
 			act(() => vi.advanceTimersByTime(200)); // dark
 			act(() => vi.advanceTimersByTime(200)); // dark
