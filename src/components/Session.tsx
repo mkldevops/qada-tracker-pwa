@@ -346,7 +346,7 @@ function PrayerCard({
 					{cfg.labelAr}
 				</p>
 			)}
-			<p className="text-sm relative" style={{ color: '#6E6E70' }}>
+			<p className="text-sm relative" style={{ color: 'var(--text-secondary)' }}>
 				{cfg.rakat} {t('session.rakats')}
 			</p>
 		</motion.div>
@@ -702,7 +702,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 						<motion.button
 							onClick={onClose}
 							className="mt-5 py-2 text-sm"
-							style={{ color: '#6E6E70' }}
+							style={{ color: 'var(--text-secondary)' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.3 }}
