@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.31.0',
+		date: '2026-04-11',
+		changes: {
+			fr: [
+				'Session : boutons − et + déplacés à gauche et à droite du chiffre (layout horizontal) pour le sélecteur de nombre et le compteur de progression',
+				'Fix : soujoud détecté automatiquement au lancement de session corrigé — la période de grâce se réinitialise au démarrage réel de la caméra (après accord de permission)',
+			],
+			en: [
+				'Session: − and + buttons moved to left and right of the number (horizontal layout) for both the number picker and the progress counter',
+				'Fix: auto-detected sujood at session start corrected — grace period now resets when camera actually starts (after permission is granted)',
+			],
+		},
+	},
+	{
 		version: '1.30.0',
 		date: '2026-04-11',
 		changes: {

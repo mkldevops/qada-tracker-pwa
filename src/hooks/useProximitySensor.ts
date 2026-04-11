@@ -20,6 +20,7 @@ const CAMERA_HEIGHT = 60;
 const CAMERA_INTERVAL_MS = 200;
 const CAMERA_DARK_THRESHOLD = 25;
 const CAMERA_LIGHT_THRESHOLD = 50;
+const STARTUP_GRACE_MS = 1500;
 
 export function useProximitySensor(
 	active: boolean,
@@ -30,6 +31,7 @@ export function useProximitySensor(
 	const [currentState, setCurrentState] = useState<SensorState>('idle');
 	const sensorRef = useRef<any>(null);
 	const lastDetectionRef = useRef<number>(0);
+	const ignoreUntilRef = useRef<number>(0);
 	const sujoodCountRef = useRef<0 | 1>(0);
 	const callbacksRef = useRef({ onFirstSujood, onSecondSujood });
 	const betaBaselineRef = useRef<number | null>(null);
@@ -62,6 +64,7 @@ export function useProximitySensor(
 
 		setCurrentState('waiting_first');
 		lastDetectionRef.current = 0;
+		ignoreUntilRef.current = Date.now() + STARTUP_GRACE_MS;
 		sujoodCountRef.current = 0;
 		betaBaselineRef.current = null;
 		sujoodDownTimeRef.current = 0;
@@ -71,6 +74,7 @@ export function useProximitySensor(
 			if (!isNear || cancelled) return;
 
 			const now = Date.now();
+			if (now < ignoreUntilRef.current) return;
 			if (now - lastDetectionRef.current < DEBOUNCE_MS) return;
 			lastDetectionRef.current = now;
 
@@ -171,7 +175,7 @@ export function useProximitySensor(
 				const delta = Math.abs(event.beta - betaBaselineRef.current);
 
 				if (sujoodDownTimeRef.current === 0) {
-					if (delta > TILT_DOWN_THRESHOLD) {
+					if (delta > TILT_DOWN_THRESHOLD && Date.now() >= ignoreUntilRef.current) {
 						sujoodDownTimeRef.current = Date.now();
 					}
 				} else {
@@ -208,6 +212,8 @@ export function useProximitySensor(
 						for (const t of stream.getTracks()) t.stop();
 						return;
 					}
+					// Camera may start long after the effect (e.g. permission dialog) — reset grace period
+					ignoreUntilRef.current = Date.now() + STARTUP_GRACE_MS;
 					const video = document.createElement('video');
 					video.muted = true;
 					video.srcObject = stream;
@@ -219,6 +225,7 @@ export function useProximitySensor(
 					if (!ctx) {
 						for (const t of stream.getTracks()) t.stop();
 						if (!cancelled) {
+							ignoreUntilRef.current = Date.now() + STARTUP_GRACE_MS;
 							orientationTimerCleanup = setupDeviceOrientationFallback();
 						}
 						return;
@@ -237,7 +244,11 @@ export function useProximitySensor(
 								sum += (data[i] + data[i + 1] + data[i + 2]) / 3;
 							}
 							const avg = sum / (CAMERA_WIDTH * CAMERA_HEIGHT);
-							if (coveredSinceMs === 0 && avg < CAMERA_DARK_THRESHOLD) {
+							if (
+								coveredSinceMs === 0 &&
+								avg < CAMERA_DARK_THRESHOLD &&
+								Date.now() >= ignoreUntilRef.current
+							) {
 								coveredSinceMs = Date.now();
 							} else if (coveredSinceMs > 0 && avg > CAMERA_LIGHT_THRESHOLD) {
 								const elapsed = Date.now() - coveredSinceMs;
@@ -257,6 +268,7 @@ export function useProximitySensor(
 					};
 				} catch {
 					if (!cancelled) {
+						ignoreUntilRef.current = Date.now() + STARTUP_GRACE_MS;
 						orientationTimerCleanup = setupDeviceOrientationFallback();
 					}
 				}

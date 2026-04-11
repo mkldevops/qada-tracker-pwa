@@ -244,5 +244,9 @@
 		"title": "Bravo, continue ainsi !",
 		"subtitle": "{{count}} prières rattrapées",
 		"close": "Continuer"
+	},
+	"a11y": {
+		"decrease": "Diminuer",
+		"increase": "Augmenter"
 	}
 }
