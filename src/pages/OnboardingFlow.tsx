@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { HaydStepper } from '@/components/HaydStepper';
 import { IslamicReminder } from '@/components/IslamicReminder';
 import { ObjectiveCard } from '@/components/ObjectiveCard';
-import { PRAYER_CONFIG } from '@/constants/prayers';
+import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
 import { spring, springSnappy } from '@/lib/animations';
 import { calculateSuggestion } from '@/lib/calculateSuggestion';
 import { randomEncouragement } from '@/lib/encouragements';
@@ -55,7 +55,11 @@ function ErrorBanner({ message }: { message: string }) {
 	return (
 		<motion.div
 			className="rounded-2xl px-4 py-3 text-sm"
-			style={{ background: '#2A1515', border: '1px solid #D45F5F40', color: 'var(--danger)' }}
+			style={{
+				background: 'color-mix(in srgb, var(--danger) 6%, var(--background))',
+				border: '1px solid color-mix(in srgb, var(--danger) 25%, transparent)',
+				color: 'var(--danger)',
+			}}
 			initial={{ opacity: 0, y: -8 }}
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: -8 }}
@@ -202,7 +206,7 @@ function DebtStep({
 	saving: boolean;
 	saveError: string | null;
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const [debtMode, setDebtMode] = useState<DebtMode>('years');
 
 	// Years mode
@@ -509,11 +513,13 @@ function DebtStep({
 												className="font-display text-base font-medium"
 												style={{ color: cfg.hex }}
 											>
-												{cfg.labelFr}
+												{getPrayerLabel(cfg, i18n.language)}
 											</span>
-											<span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
-												{cfg.labelAr}
-											</span>
+											{i18n.language !== 'ar' && (
+												<span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>
+													{cfg.labelAr}
+												</span>
+											)}
 										</div>
 										<input
 											type="number"
@@ -564,7 +570,10 @@ function DebtStep({
 				{debtMode === 'years' && canProceed && (
 					<motion.div
 						className="rounded-[20px] p-5 flex flex-col gap-3"
-						style={{ background: 'var(--surface)', border: '1px solid #C9A96240' }}
+						style={{
+							background: 'var(--surface)',
+							border: '1px solid color-mix(in srgb, var(--gold) 25%, transparent)',
+						}}
 						initial={{ opacity: 0, y: 10 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: 10 }}
@@ -594,7 +603,7 @@ function DebtStep({
 							return (
 								<div key={p} className="flex justify-between items-center">
 									<span className="text-sm font-medium" style={{ color: cfg.hex }}>
-										{cfg.labelFr}
+										{getPrayerLabel(cfg, i18n.language)}
 									</span>
 									<span className="text-sm tabular-nums" style={{ color: 'var(--text-secondary)' }}>
 										{effectiveDays.toLocaleString()}

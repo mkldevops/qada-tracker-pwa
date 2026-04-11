@@ -10,6 +10,24 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.0',
+		date: '2026-04-11',
+		changes: {
+			fr: [
+				'Clean code : toutes les couleurs hexadécimales codées en dur remplacées par les tokens CSS du design system (var(--gold), var(--surface), etc.)',
+				'Clean code : extraction de getPrayerLabel() — utilitaire partagé pour les labels de prière selon la langue active',
+				'Clean code : boutons dégradé convertis en classe utilitaire .gradient-gold',
+				'Fix : 2 couleurs hex résiduelles corrigées dans Session.tsx (#6E6E70 → var(--text-secondary))',
+			],
+			en: [
+				'Clean code: all hardcoded hex colors replaced with design system CSS variable tokens (var(--gold), var(--surface), etc.)',
+				'Clean code: extracted getPrayerLabel() — shared utility for prayer labels based on active language',
+				'Clean code: gradient buttons converted to .gradient-gold utility class',
+				'Fix: 2 remaining hardcoded hex colors corrected in Session.tsx (#6E6E70 → var(--text-secondary))',
+			],
+		},
+	},
+	{
 		version: '1.29.4',
 		date: '2026-04-11',
 		changes: {
@@ -888,7 +906,7 @@ export function Changelog({ onClose }: Props) {
 	return (
 		<motion.div
 			className="fixed inset-0 z-50 flex flex-col"
-			style={{ background: '#1A1A1C' }}
+			style={{ background: 'var(--background)' }}
 			initial={{ x: '100%' }}
 			animate={{ x: 0 }}
 			exit={{ x: '100%' }}
@@ -897,17 +915,20 @@ export function Changelog({ onClose }: Props) {
 			{/* Header */}
 			<div
 				className="flex items-center gap-3 px-4 py-4"
-				style={{ borderBottom: '1px solid #2A2A2C' }}
+				style={{ borderBottom: '1px solid var(--border-divider)' }}
 			>
 				<button
 					type="button"
 					onClick={onClose}
 					className="flex items-center justify-center rounded-full p-2"
-					style={{ background: '#242426' }}
+					style={{ background: 'var(--surface)' }}
 				>
-					<ChevronLeft size={20} style={{ color: '#F5F5F0' }} />
+					<ChevronLeft size={20} style={{ color: 'var(--text-primary)' }} />
 				</button>
-				<span className="text-base font-semibold tracking-wide" style={{ color: '#F5F5F0' }}>
+				<span
+					className="text-base font-semibold tracking-wide"
+					style={{ color: 'var(--text-primary)' }}
+				>
 					{t('settings.changelog')}
 				</span>
 			</div>
@@ -919,13 +940,13 @@ export function Changelog({ onClose }: Props) {
 						<div
 							key={entry.version}
 							className="rounded-[20px] px-5 py-4"
-							style={{ background: '#242426', border: '1px solid #3A3A3C' }}
+							style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
 						>
 							<div className="mb-3 flex items-baseline justify-between">
-								<span className="text-sm font-bold tracking-wide" style={{ color: '#C9A962' }}>
+								<span className="text-sm font-bold tracking-wide" style={{ color: 'var(--gold)' }}>
 									v{entry.version}
 								</span>
-								<span className="text-xs" style={{ color: '#4A4A4C' }}>
+								<span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>
 									{new Date(`${entry.date}T00:00:00`).toLocaleDateString(i18n.language, {
 										day: 'numeric',
 										month: 'short',
@@ -938,7 +959,7 @@ export function Changelog({ onClose }: Props) {
 									<li key={change} className="flex items-start gap-2">
 										<span
 											className="mt-1.5 h-1 w-1 shrink-0 rounded-full"
-											style={{ background: '#6E6E70' }}
+											style={{ background: 'var(--text-secondary)' }}
 										/>
 										<span className="text-sm leading-relaxed" style={{ color: '#A0A0A4' }}>
 											{change}

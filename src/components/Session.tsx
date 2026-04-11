@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { EncouragementMessage } from '@/components/EncouragementMessage';
-import { PRAYER_CONFIG } from '@/constants/prayers';
+import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
 import { useAvgPacePerPrayer } from '@/hooks/useAvgPacePerPrayer';
 import { useProximitySensor } from '@/hooks/useProximitySensor';
 import { track } from '@/lib/analytics';
@@ -25,7 +25,7 @@ const ghostVariants = {
 	exit: (d: number) => ({ y: d > 0 ? -40 : 40, opacity: 0 }),
 };
 const ghostStyle = {
-	color: '#F5F5F0',
+	color: 'var(--text-primary)',
 	fontSize: 42,
 	fontFamily: "ui-monospace, 'SF Mono', monospace",
 } as const;
@@ -149,7 +149,7 @@ function NumberPicker({
 							transition={pickerSpring}
 							className="tabular-nums leading-none"
 							style={{
-								color: '#F5F5F0',
+								color: 'var(--text-primary)',
 								fontSize: 76,
 								fontFamily: "ui-monospace, 'SF Mono', monospace",
 							}}
@@ -162,7 +162,7 @@ function NumberPicker({
 					animate={{ opacity: [0.3, 0.7, 0.3] }}
 					transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
 				>
-					<ChevronsUpDown size={22} style={{ color: '#4A4A4C' }} />
+					<ChevronsUpDown size={22} style={{ color: 'var(--text-tertiary)' }} />
 				</motion.div>
 			</div>
 
@@ -242,7 +242,7 @@ function AnimatedCounter({
 				<motion.span
 					key={display}
 					className="text-[72px] font-light leading-none"
-					style={{ color: '#F5F5F0' }}
+					style={{ color: 'var(--text-primary)' }}
 					initial={{ opacity: 0.5, y: 8 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={spring}
@@ -255,12 +255,15 @@ function AnimatedCounter({
 							type="button"
 							onClick={onIncrease}
 							className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium transition-opacity active:opacity-60"
-							style={{ color: '#C9A962', background: '#C9A96220' }}
+							style={{
+								color: 'var(--gold)',
+								background: 'color-mix(in srgb, var(--gold) 12%, transparent)',
+							}}
 						>
 							+
 						</button>
 					)}
-					<span className="text-2xl font-light" style={{ color: '#4A4A4C' }}>
+					<span className="text-2xl font-light" style={{ color: 'var(--text-tertiary)' }}>
 						/ {target}
 					</span>
 					{onDecrease && (
@@ -268,7 +271,10 @@ function AnimatedCounter({
 							type="button"
 							onClick={onDecrease}
 							className="flex items-center justify-center w-6 h-6 rounded-full text-xs font-medium transition-opacity active:opacity-60"
-							style={{ color: '#C9A962', background: '#C9A96220' }}
+							style={{
+								color: 'var(--gold)',
+								background: 'color-mix(in srgb, var(--gold) 12%, transparent)',
+							}}
 						>
 							−
 						</button>
@@ -277,10 +283,13 @@ function AnimatedCounter({
 			</div>
 
 			{/* Progress bar */}
-			<div className="w-full h-1 rounded-full overflow-hidden" style={{ background: '#2A2A2C' }}>
+			<div
+				className="w-full h-1 rounded-full overflow-hidden"
+				style={{ background: 'var(--surface-raised)' }}
+			>
 				<motion.div
 					className="h-full rounded-full"
-					style={{ background: 'linear-gradient(90deg, #C9A962, #8B7845)' }}
+					style={{ background: 'linear-gradient(90deg, var(--gold), var(--gold-deep))' }}
 					initial={{ width: 0 }}
 					animate={{ width: `${progress * 100}%` }}
 					transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
@@ -297,7 +306,7 @@ function PrayerCard({
 	prayer: PrayerName;
 	cfg: (typeof PRAYER_CONFIG)[PrayerName];
 }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 
 	return (
 		<motion.div
@@ -330,12 +339,14 @@ function PrayerCard({
 				style={{ color: cfg.hex }}
 				layoutId="prayer-name-fr"
 			>
-				{cfg.labelFr}
+				{getPrayerLabel(cfg, i18n.language)}
 			</motion.p>
-			<p className="text-3xl relative" style={{ color: `${cfg.hex}AA` }}>
-				{cfg.labelAr}
-			</p>
-			<p className="text-sm relative" style={{ color: '#6E6E70' }}>
+			{i18n.language !== 'ar' && (
+				<p className="text-3xl relative" style={{ color: `${cfg.hex}AA` }}>
+					{cfg.labelAr}
+				</p>
+			)}
+			<p className="text-sm relative" style={{ color: 'var(--text-secondary)' }}>
 				{cfg.rakat} {t('session.rakats')}
 			</p>
 		</motion.div>
@@ -612,7 +623,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	return (
 		<motion.div
 			className="fixed inset-0 z-50 flex flex-col"
-			style={{ background: '#1A1A1C' }}
+			style={{ background: 'var(--background)' }}
 			initial={{ y: '100%' }}
 			animate={{ y: 0 }}
 			exit={{ y: '100%' }}
@@ -634,10 +645,13 @@ export function Session({ onClose }: { onClose: () => void }) {
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.05, ...spring }}
 						>
-							<h2 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
+							<h2
+								className="font-display text-3xl font-normal"
+								style={{ color: 'var(--text-primary)' }}
+							>
 								{t('session.newSession')}
 							</h2>
-							<p className="text-sm" style={{ color: '#6E6E70' }}>
+							<p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
 								{t('session.setupSubtitle')}
 							</p>
 						</motion.div>
@@ -674,8 +688,8 @@ export function Session({ onClose }: { onClose: () => void }) {
 						<motion.button
 							onClick={handleStart}
 							disabled={target === 0}
-							className="w-full rounded-[28px] py-4 text-base font-semibold tracking-[1.5px] disabled:opacity-30"
-							style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
+							className="gradient-gold w-full rounded-[28px] py-4 text-base font-semibold tracking-[1.5px] disabled:opacity-30"
+							style={{ color: 'var(--background)' }}
 							initial={{ opacity: 0, y: 16 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.22, ...spring }}
@@ -688,7 +702,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 						<motion.button
 							onClick={onClose}
 							className="mt-5 py-2 text-sm"
-							style={{ color: '#6E6E70' }}
+							style={{ color: 'var(--text-secondary)' }}
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.3 }}
@@ -714,7 +728,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 					>
 						<motion.div
 							className="mb-2 text-[11px] font-medium tracking-[3px]"
-							style={{ color: '#4A4A4C' }}
+							style={{ color: 'var(--text-tertiary)' }}
 							initial={{ opacity: 0, y: -10 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.05 }}
@@ -753,7 +767,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 									<motion.span
 										key={effectiveRakatsRemaining}
 										className="text-2xl font-semibold tabular-nums"
-										style={{ color: '#F5F5F0' }}
+										style={{ color: 'var(--text-primary)' }}
 										initial={{ opacity: 0, y: -8 }}
 										animate={{ opacity: 1, y: 0 }}
 										exit={{ opacity: 0, y: 8 }}
@@ -762,7 +776,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 										{effectiveRakatsRemaining.toLocaleString()}
 									</motion.span>
 								</AnimatePresence>
-								<span className="text-sm" style={{ color: '#4A4A4C' }}>
+								<span className="text-sm" style={{ color: 'var(--text-tertiary)' }}>
 									{t('session.rakatsRemaining')}
 								</span>
 							</motion.div>
@@ -771,7 +785,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 						{!tashahdActive && sensorState.isSupported && sensorState.isActive && (
 							<motion.div
 								className="w-full mb-6 px-4 py-3 rounded-2xl text-center text-sm font-medium"
-								style={{ background: '#242426', color: '#C9A962' }}
+								style={{ background: 'var(--surface)', color: 'var(--gold)' }}
 								initial={{ opacity: 0, y: -8 }}
 								animate={{ opacity: 1, y: 0 }}
 								transition={{ delay: 0.1, ...spring }}
@@ -798,8 +812,12 @@ export function Session({ onClose }: { onClose: () => void }) {
 									className="w-full mb-6 py-5 rounded-2xl text-center font-semibold tracking-[1px]"
 									style={
 										sujoodCount === 0
-											? { background: '#242426', border: '1px solid #3A3A3C', color: '#C9A962' }
-											: { background: '#C9A962', color: '#1A1A1C' }
+											? {
+													background: 'var(--surface)',
+													border: '1px solid var(--border)',
+													color: 'var(--gold)',
+												}
+											: { background: 'var(--gold)', color: 'var(--background)' }
 									}
 									initial={{ opacity: 0, y: -8 }}
 									animate={
@@ -838,13 +856,20 @@ export function Session({ onClose }: { onClose: () => void }) {
 								>
 									<div className="relative flex items-center justify-center">
 										<svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true">
-											<circle cx="48" cy="48" r="40" fill="none" stroke="#3A3A3C" strokeWidth="4" />
+											<circle
+												cx="48"
+												cy="48"
+												r="40"
+												fill="none"
+												stroke="var(--border)"
+												strokeWidth="4"
+											/>
 											<motion.circle
 												cx="48"
 												cy="48"
 												r="40"
 												fill="none"
-												stroke="#C9A962"
+												stroke="var(--gold)"
 												strokeWidth="4"
 												strokeLinecap="round"
 												strokeDasharray={2 * Math.PI * 40}
@@ -860,25 +885,24 @@ export function Session({ onClose }: { onClose: () => void }) {
 										</svg>
 										<span
 											className="absolute text-2xl font-semibold tabular-nums"
-											style={{ color: '#C9A962' }}
+											style={{ color: 'var(--gold)' }}
 										>
 											{tashahdSecondsLeft}
 										</span>
 									</div>
 									<div className="text-center">
-										<p className="text-sm font-medium" style={{ color: '#F5F5F0' }}>
+										<p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
 											{t('session.tashahd')}
 										</p>
-										<p className="text-xs mt-0.5" style={{ color: '#6E6E70' }}>
+										<p className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
 											{t('session.tashahdDesc')}
 										</p>
 									</div>
 									<motion.button
 										onClick={handleTashahdEnd}
-										className="w-full rounded-[28px] py-5 text-base font-semibold tracking-[1.5px]"
+										className="gradient-gold w-full rounded-[28px] py-5 text-base font-semibold tracking-[1.5px]"
 										style={{
-											background: 'linear-gradient(135deg, #C9A962, #8B7845)',
-											color: '#1A1A1C',
+											color: 'var(--background)',
 										}}
 										whileTap={{ scale: 0.94 }}
 										whileHover={{ scale: 1.02 }}
@@ -896,7 +920,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 									exit={{ opacity: 0, y: 8 }}
 									transition={spring}
 								>
-									<p className="text-sm text-center" style={{ color: '#6E6E70' }}>
+									<p className="text-sm text-center" style={{ color: 'var(--text-secondary)' }}>
 										{t('session.donePartialConfirm', { current: currentRakat, total: cfg.rakat })}
 									</p>
 									<div className="flex gap-4">
@@ -904,7 +928,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 											onClick={() => handleIncrement(true)}
 											disabled={pressing}
 											className="px-5 py-2 rounded-2xl text-sm font-medium"
-											style={{ background: '#C9A962', color: '#1A1A1C' }}
+											style={{ background: 'var(--gold)', color: 'var(--background)' }}
 											whileTap={{ scale: 0.93 }}
 										>
 											{t('session.logAnyway')}
@@ -912,7 +936,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 										<motion.button
 											onClick={() => setConfirmDone(false)}
 											className="px-5 py-2 rounded-2xl text-sm font-medium"
-											style={{ background: '#242426', color: '#6E6E70' }}
+											style={{ background: 'var(--surface)', color: 'var(--text-secondary)' }}
 											whileTap={{ scale: 0.93 }}
 										>
 											{t('session.continue')}
@@ -924,10 +948,9 @@ export function Session({ onClose }: { onClose: () => void }) {
 									key="done-btn"
 									onClick={handleDone}
 									disabled={pressing}
-									className="w-full rounded-[28px] py-5 text-base font-semibold tracking-[1.5px] mt-8 relative overflow-hidden"
+									className="gradient-gold w-full rounded-[28px] py-5 text-base font-semibold tracking-[1.5px] mt-8 relative overflow-hidden"
 									style={{
-										background: 'linear-gradient(135deg, #C9A962, #8B7845)',
-										color: '#1A1A1C',
+										color: 'var(--background)',
 									}}
 									whileTap={{ scale: 0.94 }}
 									whileHover={{ scale: 1.02 }}
@@ -967,14 +990,14 @@ export function Session({ onClose }: { onClose: () => void }) {
 										exit={{ opacity: 0, y: 8 }}
 										transition={spring}
 									>
-										<p className="text-sm" style={{ color: '#6E6E70' }}>
+										<p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
 											{t('session.quitConfirm')}
 										</p>
 										<div className="flex gap-4">
 											<motion.button
 												onClick={handleQuit}
 												className="px-5 py-2 rounded-2xl text-sm font-medium"
-												style={{ background: '#3A3A3C', color: '#F5F5F0' }}
+												style={{ background: 'var(--border)', color: 'var(--text-primary)' }}
 												whileTap={{ scale: 0.93 }}
 											>
 												{t('session.quit')}
@@ -982,7 +1005,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 											<motion.button
 												onClick={() => setConfirmQuit(false)}
 												className="px-5 py-2 rounded-2xl text-sm font-medium"
-												style={{ background: '#242426', color: '#6E6E70' }}
+												style={{ background: 'var(--surface)', color: 'var(--text-secondary)' }}
 												whileTap={{ scale: 0.93 }}
 											>
 												{t('session.continue')}
@@ -994,7 +1017,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 										key="quit-link"
 										onClick={() => setConfirmQuit(true)}
 										className="text-sm"
-										style={{ color: '#4A4A4C' }}
+										style={{ color: 'var(--text-tertiary)' }}
 										initial={{ opacity: 0 }}
 										animate={{ opacity: 1 }}
 										exit={{ opacity: 0 }}
@@ -1026,21 +1049,21 @@ export function Session({ onClose }: { onClose: () => void }) {
 								animate={{ scale: [1, 1.08, 1] }}
 								transition={{ delay: 0.5, duration: 0.6, ease: 'easeInOut' }}
 							>
-								<CheckCircle2 size={80} style={{ color: '#C9A962' }} />
+								<CheckCircle2 size={80} style={{ color: 'var(--gold)' }} />
 							</motion.div>
 						</motion.div>
 
 						{/* Radiating ring */}
 						<motion.div
 							className="pointer-events-none absolute w-32 h-32 rounded-full"
-							style={{ border: '2px solid #C9A96240' }}
+							style={{ border: '2px solid color-mix(in srgb, var(--gold) 25%, transparent)' }}
 							initial={{ scale: 0.8, opacity: 0 }}
 							animate={{ scale: 2.5, opacity: 0 }}
 							transition={{ delay: 0.4, duration: 1.2, ease: 'easeOut' }}
 						/>
 						<motion.div
 							className="pointer-events-none absolute w-32 h-32 rounded-full"
-							style={{ border: '2px solid #C9A96230' }}
+							style={{ border: '2px solid color-mix(in srgb, var(--gold) 19%, transparent)' }}
 							initial={{ scale: 0.8, opacity: 0 }}
 							animate={{ scale: 3.5, opacity: 0 }}
 							transition={{ delay: 0.6, duration: 1.5, ease: 'easeOut' }}
@@ -1052,12 +1075,15 @@ export function Session({ onClose }: { onClose: () => void }) {
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.25, ...spring }}
 						>
-							<h2 className="font-display text-4xl font-normal" style={{ color: '#F5F5F0' }}>
+							<h2
+								className="font-display text-4xl font-normal"
+								style={{ color: 'var(--text-primary)' }}
+							>
 								{t('session.completed')}
 							</h2>
 							<motion.p
 								className="text-base tabular-nums"
-								style={{ color: '#6E6E70' }}
+								style={{ color: 'var(--text-secondary)' }}
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								transition={{ delay: 0.4 }}
@@ -1070,8 +1096,8 @@ export function Session({ onClose }: { onClose: () => void }) {
 
 						<motion.button
 							onClick={onClose}
-							className="mt-2 w-full rounded-[28px] py-4 text-base font-semibold tracking-[1.5px]"
-							style={{ background: 'linear-gradient(135deg, #C9A962, #8B7845)', color: '#1A1A1C' }}
+							className="gradient-gold mt-2 w-full rounded-[28px] py-4 text-base font-semibold tracking-[1.5px]"
+							style={{ color: 'var(--background)' }}
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.45, ...spring }}

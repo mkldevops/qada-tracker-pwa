@@ -1,5 +1,11 @@
 import type { PrayerConfig, PrayerName } from '../types';
 
+export function getPrayerLabel(cfg: PrayerConfig, language: string): string {
+	if (language === 'en') return cfg.labelEn;
+	if (language === 'ar') return cfg.labelAr;
+	return cfg.labelFr;
+}
+
 export const PRAYER_CONFIG: Record<PrayerName, PrayerConfig & { hex: string }> = {
 	fajr: {
 		labelFr: 'Fajr',
