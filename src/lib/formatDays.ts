@@ -30,6 +30,6 @@ export function formatDays(days: number, t: TFunction): string {
 	const parts: string[] = [];
 	if (years > 0) parts.push(t('common.year', { count: years }));
 	if (months > 0) parts.push(t('common.monthCount', { count: months }));
-	if (remainingDays > 0 && years === 0) parts.push(t('common.dayCount', { count: remainingDays }));
+	if (remainingDays > 0) parts.push(t('common.dayCount', { count: remainingDays }));
 	return parts.join(' ') || t('common.lessThanOneDay');
 }

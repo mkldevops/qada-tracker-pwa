@@ -43,13 +43,14 @@ describe('formatDays', () => {
 		expect(formatDays(365, t)).toBe('1 year');
 	});
 
-	it('formats years and months (days omitted when years > 0)', () => {
-		expect(formatDays(400, t)).toBe('1 year 1 month');
+	it('formats years, months and days', () => {
+		// 400 days = 1 year + 35 days = 1 year + 1 month + 5 days
+		expect(formatDays(400, t)).toBe('1 year 1 month 5 d');
 	});
 
-	it('does not include days when years > 0', () => {
-		// 366 days = 1 year, 1 day — days should be suppressed
-		expect(formatDays(366, t)).toBe('1 year');
+	it('includes days when years > 0 and remainder days > 0', () => {
+		// 366 days = 1 year + 1 day
+		expect(formatDays(366, t)).toBe('1 year 1 d');
 	});
 
 	it('formats multiple years and months', () => {

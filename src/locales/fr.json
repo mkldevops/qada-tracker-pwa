@@ -243,6 +243,11 @@
 	"milestone": {
 		"title": "Bravo, continue ainsi !",
 		"subtitle": "{{count}} prières rattrapées",
+		"catchupMonth_one": "{{count}} mois rattrapé !",
+		"catchupMonth_other": "{{count}} mois rattrapés !",
+		"catchupYear_one": "{{count}} an rattrapé !",
+		"catchupYear_other": "{{count}} ans rattrapés !",
+		"catchupEncouragement": "Chaque prière te rapproche du but. Continue !",
 		"close": "Continuer"
 	},
 	"a11y": {

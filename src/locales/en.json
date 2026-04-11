@@ -243,6 +243,11 @@
 	"milestone": {
 		"title": "Keep it up!",
 		"subtitle": "{{count}} prayers made up",
+		"catchupMonth_one": "{{count}} month caught up!",
+		"catchupMonth_other": "{{count}} months caught up!",
+		"catchupYear_one": "{{count}} year caught up!",
+		"catchupYear_other": "{{count}} years caught up!",
+		"catchupEncouragement": "Every prayer brings you closer. Keep going!",
 		"close": "Continue"
 	},
 	"a11y": {

@@ -267,6 +267,17 @@
 	"milestone": {
 		"title": "أحسنت!",
 		"subtitle": "{{count}} صلاة مقضية",
+		"catchupMonth_one": "شهر واحد تم قضاؤه!",
+		"catchupMonth_two": "شهران تم قضاؤهما!",
+		"catchupMonth_few": "{{count}} أشهر تم قضاؤها!",
+		"catchupMonth_many": "{{count}} شهرًا تم قضاؤه!",
+		"catchupMonth_other": "{{count}} شهر تم قضاؤه!",
+		"catchupYear_one": "سنة واحدة تم قضاؤها!",
+		"catchupYear_two": "سنتان تم قضاؤهما!",
+		"catchupYear_few": "{{count}} سنوات تم قضاؤها!",
+		"catchupYear_many": "{{count}} سنة تم قضاؤها!",
+		"catchupYear_other": "{{count}} سنة تم قضاؤها!",
+		"catchupEncouragement": "كل صلاة تقربك من الهدف. واصل!",
 		"close": "متابعة"
 	}
 }
