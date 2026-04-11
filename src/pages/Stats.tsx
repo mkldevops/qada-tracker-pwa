@@ -43,6 +43,8 @@ export function Stats() {
 	const totalRemaining = useTotalRemaining();
 
 	const doneLabel = formatCatchUpLabel(stats.allTime, t);
+	const totalOwed = Object.values(debts).reduce((sum, d) => sum + (d?.total_owed ?? 0), 0);
+	const progress = totalOwed > 0 ? Math.min(100, (stats.allTime / totalOwed) * 100) : 0;
 
 	return (
 		<div className="space-y-5 px-7 pb-4 pt-1">
@@ -51,12 +53,22 @@ export function Stats() {
 			</h1>
 
 			<div className="gradient-gold flex w-full flex-col justify-center gap-2 rounded-[20px] px-6 py-7">
-				<p
-					className="text-[11px] font-medium tracking-[3px]"
-					style={{ color: 'color-mix(in srgb, var(--background) 53%, transparent)' }}
-				>
-					{t('stats.totalLogged')}
-				</p>
+				<div className="flex items-center justify-between">
+					<p
+						className="text-[11px] font-medium tracking-[3px]"
+						style={{ color: 'color-mix(in srgb, var(--background) 53%, transparent)' }}
+					>
+						{t('stats.totalLogged')}
+					</p>
+					{totalOwed > 0 && (
+						<p
+							className="text-sm font-medium tabular-nums"
+							style={{ color: 'color-mix(in srgb, var(--background) 70%, transparent)' }}
+						>
+							{progress.toFixed(2)}%
+						</p>
+					)}
+				</div>
 				<p
 					className="text-[52px] font-light leading-[0.85] tabular-nums"
 					style={{ color: 'var(--background)' }}

@@ -154,8 +154,8 @@ function PrayerRow({
 							}}
 						/>
 					</div>
-					<span className="w-8 text-right text-[10px] tabular-nums text-muted">
-						{totalOwed === 0 ? '—' : `${Math.round(progress)}%`}
+					<span className="w-12 text-right text-[10px] tabular-nums text-muted">
+						{totalOwed === 0 ? '—' : `${progress.toFixed(2)}%`}
 					</span>
 				</div>
 			</div>

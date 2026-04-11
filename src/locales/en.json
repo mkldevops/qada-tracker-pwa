@@ -12,6 +12,11 @@
 		"monthCount_other": "{{count}} months",
 		"dayCount": "{{count}} d",
 		"dayShort": "d",
+		"yearUnit_one": "year",
+		"yearUnit_other": "years",
+		"monthUnit_one": "month",
+		"monthUnit_other": "months",
+		"dayUnit": "d",
 		"lessThanOneDay": "< 1 day",
 		"years": "Years",
 		"months": "Months",
@@ -243,6 +248,11 @@
 	"milestone": {
 		"title": "Keep it up!",
 		"subtitle": "{{count}} prayers made up",
+		"catchupMonth_one": "{{count}} month caught up!",
+		"catchupMonth_other": "{{count}} months caught up!",
+		"catchupYear_one": "{{count}} year caught up!",
+		"catchupYear_other": "{{count}} years caught up!",
+		"catchupEncouragement": "Every prayer brings you closer. Keep going!",
 		"close": "Continue"
 	},
 	"a11y": {

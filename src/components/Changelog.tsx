@@ -10,6 +10,24 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.32.0',
+		date: '2026-04-11',
+		changes: {
+			fr: [
+				'Félicitations à chaque mois rattrapé (🌙) et célébration spéciale à chaque année (🎉🌟)',
+				"Estimation : les jours sont maintenant affichés même au-delà d'un an",
+				'Statistiques : pourcentage de progression ajouté sur la carte Total Logged',
+				'Dashboard : pourcentage affiché avec 2 décimales (0.01%)',
+			],
+			en: [
+				'Congratulations dialog every month caught up (🌙) and special celebration every year (🎉🌟)',
+				'Estimation: days now shown even beyond one year',
+				'Statistics: progress percentage added to Total Logged card',
+				'Dashboard: percentage displayed with 2 decimal places (0.01%)',
+			],
+		},
+	},
+	{
 		version: '1.31.0',
 		date: '2026-04-11',
 		changes: {

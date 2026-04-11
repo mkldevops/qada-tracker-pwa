@@ -52,3 +52,8 @@ export interface BatchEntry {
 	prayer: PrayerName;
 	quantity: number;
 }
+
+export type Milestone =
+	| { kind: 'count'; value: number }
+	| { kind: 'month'; months: number }
+	| { kind: 'year'; years: number };
