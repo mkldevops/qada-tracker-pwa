@@ -44,7 +44,13 @@ export function App() {
 	const {
 		needRefresh: [needRefresh],
 		updateServiceWorker,
-	} = useRegisterSW();
+	} = useRegisterSW({
+		onRegisteredSW(_swUrl, registration) {
+			if (registration) {
+				setInterval(() => registration.update(), 60 * 60 * 1000);
+			}
+		},
+	});
 
 	useEffect(() => {
 		loadAll();

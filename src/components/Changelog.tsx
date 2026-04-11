@@ -15,9 +15,11 @@ const ENTRIES: ChangelogEntry[] = [
 		changes: {
 			fr: [
 				'PWA : suppression du mécanisme de vérification de version par polling HTTP (useVersionCheck) — le service worker gère seul les mises à jour',
+				'PWA : vérification du service worker toutes les heures pour détecter les mises à jour sur les onglets ouverts longtemps',
 			],
 			en: [
 				'PWA: removed HTTP polling version check (useVersionCheck) — service worker handles all updates exclusively',
+				'PWA: hourly service worker update check for long-lived tabs',
 			],
 		},
 	},
