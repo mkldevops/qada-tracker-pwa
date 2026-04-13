@@ -16,10 +16,12 @@ const ENTRIES: ChangelogEntry[] = [
 			fr: [
 				'Refactoring : extraction de handleShare() en utilitaire partagé (src/lib/share.ts) — supprime la duplication entre Dashboard et Réglages',
 				'Clean code : MilestoneModal refactorisé — ternaires imbriqués remplacés par un objet de config, style gradient-gold centralisé',
+				'Fix : partage plus robuste — vérification de la présence du clipboard, gestion élargie des erreurs (AbortError + NotAllowedError)',
 			],
 			en: [
 				'Refactor: extract handleShare() to shared utility (src/lib/share.ts) — removes duplication between Dashboard and Settings',
 				'Clean code: MilestoneModal refactored — nested ternaries replaced by config object, gradient-gold style centralized',
+				'Fix: improved share robustness — clipboard presence guard, broader error handling (AbortError + NotAllowedError)',
 			],
 		},
 	},
