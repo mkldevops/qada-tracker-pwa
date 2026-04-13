@@ -63,14 +63,14 @@ export function Stats() {
 				<StatCard
 					label={t('stats.streak')}
 					value={`${stats.streak}${t('common.dayShort')}`}
-					color="var(--gold)"
+					tone="gold"
 					index={1}
 				/>
 				<StatCard label={t('stats.thisWeek')} value={stats.thisWeek} index={2} />
 				<StatCard
 					label={t('stats.avgPerDay')}
 					value={stats.avgPerDay > 0 ? stats.avgPerDay.toFixed(1) : '—'}
-					color="var(--sage)"
+					tone="sage"
 					index={3}
 				/>
 			</div>

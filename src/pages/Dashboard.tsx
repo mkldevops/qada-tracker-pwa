@@ -252,7 +252,7 @@ export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () =>
 							<StatCard
 								label={t('dashboard.today')}
 								value={activeObjective ? `${stats.today} / ${activeObjective.target}` : stats.today}
-								color="var(--gold)"
+								tone="gold"
 								index={0}
 							/>
 							<AnimatePresence>

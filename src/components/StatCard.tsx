@@ -1,15 +1,20 @@
 import { motion } from 'motion/react';
 import { spring } from '@/lib/animations';
 
+const TONE_CLASS = {
+	gold: 'text-gold',
+	sage: 'text-sage',
+} as const;
+
 export function StatCard({
 	label,
 	value,
-	color,
+	tone,
 	index = 0,
 }: {
 	label: string;
 	value: string | number;
-	color?: string;
+	tone?: keyof typeof TONE_CLASS;
 	index?: number;
 }) {
 	return (
@@ -21,8 +26,7 @@ export function StatCard({
 			whileHover={{ scale: 1.03 }}
 		>
 			<span
-				className={`text-3xl font-semibold leading-none tabular-nums ${!color ? 'text-foreground' : ''}`}
-				style={color ? { color } : undefined}
+				className={`text-3xl font-semibold leading-none tabular-nums ${tone ? TONE_CLASS[tone] : 'text-foreground'}`}
 			>
 				{value}
 			</span>

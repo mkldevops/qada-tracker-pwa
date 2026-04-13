@@ -1,3 +1,4 @@
 export function calculateProgress(completed: number, owed: number): number {
-	return owed > 0 ? Math.min(100, (completed / owed) * 100) : 0;
+	if (owed <= 0) return 0;
+	return Math.min(100, Math.max(0, (completed / owed) * 100));
 }
