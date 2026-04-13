@@ -10,6 +10,22 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.0',
+		date: '2026-04-13',
+		changes: {
+			fr: [
+				'Refactoring : composant StatCard partagé (remplace StatPill dans le Dashboard et StatTile dans les Statistiques)',
+				'Refactoring : utilitaire calculateProgress() — calcul du pourcentage de progression centralisé',
+				'Clean code : Stats.tsx — tous les styles inline remplacés par les tokens Tailwind du design system',
+			],
+			en: [
+				'Refactor: shared StatCard component (replaces StatPill in Dashboard and StatTile in Stats)',
+				'Refactor: calculateProgress() utility — progress percentage calculation centralized',
+				'Clean code: Stats.tsx — all inline styles replaced with Tailwind design system tokens',
+			],
+		},
+	},
+	{
 		version: '1.29.7',
 		date: '2026-04-13',
 		changes: {
