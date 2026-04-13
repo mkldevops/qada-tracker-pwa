@@ -10,6 +10,24 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.0',
+		date: '2026-04-13',
+		changes: {
+			fr: [
+				'Refactoring : composant StatCard partagé (remplace StatPill dans le Dashboard et StatTile dans les Statistiques)',
+				'Refactoring : utilitaire calculateProgress() — calcul du pourcentage de progression centralisé, robustesse renforcée (valeurs négatives et NaN)',
+				'Clean code : Stats.tsx — tous les styles inline remplacés par les tokens Tailwind du design system',
+				"Amélioration : prop tone ('gold' | 'sage') sur StatCard — remplace le color string libre, 100% design system",
+			],
+			en: [
+				'Refactor: shared StatCard component (replaces StatPill in Dashboard and StatTile in Stats)',
+				'Refactor: calculateProgress() utility — progress percentage centralized, hardened against negative and NaN inputs',
+				'Clean code: Stats.tsx — all inline styles replaced with Tailwind design system tokens',
+				"Improvement: tone ('gold' | 'sage') prop on StatCard — replaces free-form color string, fully design-system compliant",
+			],
+		},
+	},
+	{
 		version: '1.29.7',
 		date: '2026-04-13',
 		changes: {
@@ -17,11 +35,15 @@ const ENTRIES: ChangelogEntry[] = [
 				'Refactoring : extraction de handleShare() en utilitaire partagé (src/lib/share.ts) — supprime la duplication entre Dashboard et Réglages',
 				'Clean code : MilestoneModal refactorisé — ternaires imbriqués remplacés par un objet de config, style gradient-gold centralisé',
 				'Fix : partage plus robuste — vérification de la présence du clipboard, gestion élargie des erreurs (AbortError + NotAllowedError)',
+				'Refactoring : StatCard partagé (remplace StatPill + StatTile) — calcul de progression centralisé dans calculateProgress()',
+				'Clean code : Stats.tsx — styles inline remplacés par les tokens Tailwind du design system',
 			],
 			en: [
 				'Refactor: extract handleShare() to shared utility (src/lib/share.ts) — removes duplication between Dashboard and Settings',
 				'Clean code: MilestoneModal refactored — nested ternaries replaced by config object, gradient-gold style centralized',
 				'Fix: improved share robustness — clipboard presence guard, broader error handling (AbortError + NotAllowedError)',
+				'Refactor: shared StatCard component (replaces StatPill + StatTile) — progress calculation centralized in calculateProgress()',
+				'Clean code: Stats.tsx — inline styles replaced with Tailwind design system tokens',
 			],
 		},
 	},
