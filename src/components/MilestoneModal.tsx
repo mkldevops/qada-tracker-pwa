@@ -7,20 +7,29 @@ interface MilestoneModalProps {
 	onClose: () => void;
 }
 
+const MILESTONE_CONFIG: Record<Milestone['kind'], { emoji: string; isYear: boolean }> = {
+	count: { emoji: '✨', isYear: false },
+	month: { emoji: '🌙', isYear: false },
+	year: { emoji: '🎉', isYear: true },
+};
+
 function MilestoneContent({ milestone, onClose }: { milestone: Milestone; onClose: () => void }) {
 	const { t } = useTranslation();
-	const isYear = milestone.kind === 'year';
-	const emoji = milestone.kind === 'count' ? '✨' : isYear ? '🎉' : '🌙';
+	const { emoji, isYear } = MILESTONE_CONFIG[milestone.kind];
+	const subtleColor = 'color-mix(in srgb, var(--background) 80%, transparent)';
 
-	const title =
-		milestone.kind === 'count'
-			? t('milestone.subtitle', { count: milestone.value })
-			: milestone.kind === 'year'
-				? t('milestone.catchupYear', { count: milestone.years })
-				: t('milestone.catchupMonth', { count: milestone.months });
-
-	const subtitle =
-		milestone.kind === 'count' ? t('milestone.title') : t('milestone.catchupEncouragement');
+	let title: string;
+	let subtitle: string;
+	if (milestone.kind === 'count') {
+		title = t('milestone.subtitle', { count: milestone.value });
+		subtitle = t('milestone.title');
+	} else if (milestone.kind === 'year') {
+		title = t('milestone.catchupYear', { count: milestone.years });
+		subtitle = t('milestone.catchupEncouragement');
+	} else {
+		title = t('milestone.catchupMonth', { count: milestone.months });
+		subtitle = t('milestone.catchupEncouragement');
+	}
 
 	return (
 		<motion.div
@@ -38,8 +47,7 @@ function MilestoneContent({ milestone, onClose }: { milestone: Milestone; onClos
 				animate={{ scale: 1, opacity: 1 }}
 				exit={{ scale: 0.8, opacity: 0 }}
 				transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-				className="rounded-[24px] px-10 py-10 flex flex-col items-center gap-4 max-w-[320px]"
-				style={{ background: 'linear-gradient(135deg, var(--gold), #8B7845)' }}
+				className="gradient-gold rounded-[24px] px-10 py-10 flex flex-col items-center gap-4 max-w-[320px]"
 				onClick={(e) => e.stopPropagation()}
 			>
 				<motion.div
@@ -71,10 +79,7 @@ function MilestoneContent({ milestone, onClose }: { milestone: Milestone; onClos
 					transition={{ delay: 0.3, duration: 0.4 }}
 					className="text-center"
 				>
-					<p
-						className="text-sm font-medium"
-						style={{ color: 'color-mix(in srgb, var(--background) 80%, transparent)' }}
-					>
+					<p className="text-sm font-medium" style={{ color: subtleColor }}>
 						{subtitle}
 					</p>
 				</motion.div>
