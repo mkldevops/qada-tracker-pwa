@@ -5,6 +5,10 @@ import { track } from '@/lib/analytics';
 export async function handleShare(t: TFunction): Promise<void> {
 	const shareText = t('settings.shareText');
 	if (!navigator.share) {
+		if (!navigator.clipboard) {
+			toast.error(t('settings.shareFailed'));
+			return;
+		}
 		try {
 			await navigator.clipboard.writeText(shareText);
 			toast.success(t('settings.shareCopied'));
@@ -22,8 +26,12 @@ export async function handleShare(t: TFunction): Promise<void> {
 		});
 		track({ name: 'share', data: { method: 'native' } });
 	} catch (err) {
-		if (err instanceof Error && err.name !== 'AbortError') {
-			toast.error(t('settings.shareFailed'));
+		if (
+			err instanceof DOMException &&
+			(err.name === 'AbortError' || err.name === 'NotAllowedError')
+		) {
+			return;
 		}
+		toast.error(t('settings.shareFailed'));
 	}
 }
