@@ -1,0 +1,29 @@
+import type { TFunction } from 'i18next';
+import { toast } from 'sonner';
+import { track } from '@/lib/analytics';
+
+export async function handleShare(t: TFunction): Promise<void> {
+	const shareText = t('settings.shareText');
+	if (!navigator.share) {
+		try {
+			await navigator.clipboard.writeText(shareText);
+			toast.success(t('settings.shareCopied'));
+			track({ name: 'share', data: { method: 'clipboard' } });
+		} catch {
+			toast.error(t('settings.shareFailed'));
+		}
+		return;
+	}
+	try {
+		await navigator.share({
+			title: 'Qada Tracker',
+			text: shareText,
+			url: 'https://qada.fahari.pro',
+		});
+		track({ name: 'share', data: { method: 'native' } });
+	} catch (err) {
+		if (err instanceof Error && err.name !== 'AbortError') {
+			toast.error(t('settings.shareFailed'));
+		}
+	}
+}

@@ -1,13 +1,15 @@
-import { Plus, RotateCcw } from 'lucide-react';
+import { MessageSquare, Plus, RotateCcw, Share2 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EstimationCard } from '@/components/EstimationCard';
+import { FeedbackModal } from '@/components/FeedbackModal';
 import { Session } from '@/components/Session';
 import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
 import { track } from '@/lib/analytics';
 import { spring } from '@/lib/animations';
 import { formatCatchUpLabel } from '@/lib/formatDays';
+import { handleShare } from '@/lib/share';
 import {
 	useActiveObjective,
 	useDebts,
@@ -182,6 +184,7 @@ export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () =>
 	const activeObjective = useActiveObjective();
 	const totalRemaining = useTotalRemaining();
 	const [showSession, setShowSession] = useState(false);
+	const [showFeedback, setShowFeedback] = useState(false);
 
 	const catchUpLabel = formatCatchUpLabel(totalRemaining, t);
 
@@ -314,12 +317,48 @@ export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () =>
 								/>
 							))}
 						</div>
+
+						<motion.div
+							className="flex gap-3 pb-2"
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ delay: 0.5, ...spring }}
+						>
+							<motion.button
+								type="button"
+								onClick={() => {
+									setShowFeedback(true);
+									track({ name: 'feedback_open' });
+								}}
+								className="flex flex-1 items-center justify-center gap-2 rounded-[28px] py-4 bg-surface border border-border"
+								whileTap={{ scale: 0.97 }}
+								whileHover={{ scale: 1.01 }}
+							>
+								<MessageSquare size={15} className="text-gold" />
+								<span className="text-xs font-semibold tracking-[1px] text-gold">
+									{t('settings.sendFeedback')}
+								</span>
+							</motion.button>
+							<motion.button
+								type="button"
+								onClick={() => handleShare(t)}
+								className="flex flex-1 items-center justify-center gap-2 rounded-[28px] py-4 bg-surface border border-border"
+								whileTap={{ scale: 0.97 }}
+								whileHover={{ scale: 1.01 }}
+							>
+								<Share2 size={15} className="text-gold" />
+								<span className="text-xs font-semibold tracking-[1px] text-gold">
+									{t('settings.shareApp')}
+								</span>
+							</motion.button>
+						</motion.div>
 					</>
 				)}
 			</div>
 
 			<AnimatePresence>
 				{showSession && <Session onClose={() => setShowSession(false)} />}
+				{showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
 			</AnimatePresence>
 		</>
 	);

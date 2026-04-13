@@ -2,7 +2,6 @@ import { ChevronRight, Download, MessageSquare, Share2, Trash2, Upload } from 'l
 import { AnimatePresence } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
 import { Changelog } from '@/components/Changelog';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
 import { FeedbackModal } from '@/components/FeedbackModal';
@@ -21,6 +20,7 @@ import { db } from '@/db/database';
 import { exportBackup, importBackup } from '@/db/queries';
 import { track } from '@/lib/analytics';
 import { markOnboardingUndone } from '@/lib/onboarding';
+import { handleShare } from '@/lib/share';
 import { usePrayerStore } from '@/stores/prayerStore';
 
 export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
@@ -40,32 +40,6 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 		const timeout = setTimeout(() => setDataFeedback(null), 5000);
 		return () => clearTimeout(timeout);
 	}, [dataFeedback]);
-
-	const handleShare = async () => {
-		const shareText = t('settings.shareText');
-		if (!navigator.share) {
-			try {
-				await navigator.clipboard.writeText(shareText);
-				toast.success(t('settings.shareCopied'));
-				track({ name: 'share', data: { method: 'clipboard' } });
-			} catch {
-				toast.error(t('settings.shareFailed'));
-			}
-			return;
-		}
-		try {
-			await navigator.share({
-				title: 'Qada Tracker',
-				text: shareText,
-				url: 'https://qada.fahari.pro',
-			});
-			track({ name: 'share', data: { method: 'native' } });
-		} catch (err) {
-			if (err instanceof Error && err.name !== 'AbortError') {
-				toast.error(t('settings.shareFailed'));
-			}
-		}
-	};
 
 	const handleExport = async () => {
 		try {
@@ -229,7 +203,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 					</button>
 					<button
 						type="button"
-						onClick={handleShare}
+						onClick={() => handleShare(t)}
 						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-background border border-border"
 					>
 						<Share2 size={16} className="text-gold" />
