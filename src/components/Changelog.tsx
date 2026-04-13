@@ -10,7 +10,7 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
-		version: '1.30.3',
+		version: '1.30.2',
 		date: '2026-04-13',
 		changes: {
 			fr: [
