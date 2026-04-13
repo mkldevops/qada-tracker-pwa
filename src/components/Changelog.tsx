@@ -15,13 +15,15 @@ const ENTRIES: ChangelogEntry[] = [
 		changes: {
 			fr: [
 				'Refactoring : composant StatCard partagé (remplace StatPill dans le Dashboard et StatTile dans les Statistiques)',
-				'Refactoring : utilitaire calculateProgress() — calcul du pourcentage de progression centralisé',
+				'Refactoring : utilitaire calculateProgress() — calcul du pourcentage de progression centralisé, robustesse renforcée (valeurs négatives et NaN)',
 				'Clean code : Stats.tsx — tous les styles inline remplacés par les tokens Tailwind du design system',
+				"Amélioration : prop tone ('gold' | 'sage') sur StatCard — remplace le color string libre, 100% design system",
 			],
 			en: [
 				'Refactor: shared StatCard component (replaces StatPill in Dashboard and StatTile in Stats)',
-				'Refactor: calculateProgress() utility — progress percentage calculation centralized',
+				'Refactor: calculateProgress() utility — progress percentage centralized, hardened against negative and NaN inputs',
 				'Clean code: Stats.tsx — all inline styles replaced with Tailwind design system tokens',
+				"Improvement: tone ('gold' | 'sage') prop on StatCard — replaces free-form color string, fully design-system compliant",
 			],
 		},
 	},
