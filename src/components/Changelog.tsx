@@ -10,14 +10,16 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
-		version: '1.30.2',
+		version: '1.30.3',
 		date: '2026-04-13',
 		changes: {
 			fr: [
 				'Mise à jour de toutes les dépendances : Vite 8, TypeScript 6, Lucide React 1.x, i18next 26, react-i18next 17, Dexie 4.4, Vitest 4.1.4',
+				'Simplification : calculateProgress() maintenant utilisé dans PrayerCounter et ObjectiveTracker — formule centralisée en un seul endroit',
 			],
 			en: [
 				'All dependencies updated: Vite 8, TypeScript 6, Lucide React 1.x, i18next 26, react-i18next 17, Dexie 4.4, Vitest 4.1.4',
+				'Simplify: calculateProgress() now used in PrayerCounter and ObjectiveTracker — formula centralized in one place',
 			],
 		},
 	},

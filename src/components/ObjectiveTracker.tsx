@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { calculateProgress } from '@/lib/progress';
 import type { Objective, StatsState } from '@/types';
 
 interface ObjectiveTrackerProps {
@@ -19,7 +20,7 @@ const PERIOD_VALUE = (stats: StatsState, period: string): number => {
 export function ObjectiveTracker({ objective, stats }: ObjectiveTrackerProps) {
 	const { t } = useTranslation();
 	const current = PERIOD_VALUE(stats, objective.period);
-	const progress = objective.target > 0 ? Math.min(100, (current / objective.target) * 100) : 0;
+	const progress = calculateProgress(current, objective.target);
 	const done = current >= objective.target;
 	const periodLabel = t(`objective.periodLabel_${objective.period}`);
 
