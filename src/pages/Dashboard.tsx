@@ -78,8 +78,7 @@ function PrayerRow({
 
 	return (
 		<motion.div
-			className="relative flex items-center gap-4 overflow-hidden rounded-2xl bg-surface border border-border px-5"
-			style={{ height: 72 }}
+			className="relative flex items-center gap-4 overflow-hidden rounded-2xl bg-surface border border-border px-5 h-18"
 			initial={{ opacity: 0, x: -16 }}
 			animate={{ opacity: 1, x: 0 }}
 			transition={{ delay: 0.22 + index * 0.05, ...spring }}

@@ -10,6 +10,22 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.7',
+		date: '2026-04-15',
+		changes: {
+			fr: [
+				'Refactor : remplacement des couleurs hardcodées restantes par les tokens du design system (Settings, InstallBanner, overlays)',
+				'Refactor : typage strict des entrées de sauvegarde (PrayerLog / PrayerDebt / Objective) — suppression des `any`',
+				'Refactor : nombre magique de hauteur de ligne de prière remplacé par une classe Tailwind canonique',
+			],
+			en: [
+				'Refactor: replaced remaining hardcoded colors with design system tokens (Settings, InstallBanner, overlays)',
+				'Refactor: strictly typed backup imports (PrayerLog / PrayerDebt / Objective) — removed `any`',
+				'Refactor: prayer row height magic number replaced with a canonical Tailwind class',
+			],
+		},
+	},
+	{
 		version: '1.30.6',
 		date: '2026-04-15',
 		changes: {
