@@ -356,14 +356,14 @@ export async function importBackup(
 
 		// Import logs
 		if (data.prayer_logs.length > 0) {
-			const logsToAdd = data.prayer_logs.map(({ id: _, ...r }: any) => r);
+			const logsToAdd = data.prayer_logs.map(({ id: _, ...r }: PrayerLog) => r);
 			await db.prayer_logs.bulkAdd(logsToAdd);
 		}
 
 		// Import debts
 		const importedPrayers = new Set<PrayerName>();
 		if (data.prayer_debts.length > 0) {
-			const debtsToAdd = data.prayer_debts.map(({ id: _, ...r }: any) => {
+			const debtsToAdd = data.prayer_debts.map(({ id: _, ...r }: PrayerDebt) => {
 				importedPrayers.add(r.prayer);
 				return r;
 			});
@@ -386,7 +386,7 @@ export async function importBackup(
 
 		// Import objectives
 		if (data.objectives.length > 0) {
-			const objToAdd = data.objectives.map(({ id: _, ...r }: any) => r);
+			const objToAdd = data.objectives.map(({ id: _, ...r }: Objective) => r);
 			await db.objectives.bulkAdd(objToAdd);
 		}
 	});

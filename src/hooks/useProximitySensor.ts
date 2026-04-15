@@ -29,6 +29,7 @@ export function useProximitySensor(
 ): UseProximitySensorResult {
 	const [isSupported, setIsSupported] = useState(false);
 	const [currentState, setCurrentState] = useState<SensorState>('idle');
+	// biome-ignore lint/suspicious/noExplicitAny: heterogeneous sensor ref (ProximitySensor API, event handlers, camera cleanup) — non-standard browser APIs
 	const sensorRef = useRef<any>(null);
 	const lastDetectionRef = useRef<number>(0);
 	const ignoreUntilRef = useRef<number>(0);
@@ -135,6 +136,7 @@ export function useProximitySensor(
 
 		// Fallback to deviceproximity event (Firefox, Android)
 		function setupDeviceProximityFallback() {
+			// biome-ignore lint/suspicious/noExplicitAny: non-standard Firefox DeviceProximityEvent has no TypeScript types
 			function handleDeviceProximity(event: any) {
 				const isNear = (event.value as number) < 5;
 				handleProximityDetection(isNear);

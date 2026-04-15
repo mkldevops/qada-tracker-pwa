@@ -36,25 +36,15 @@ export function Settings({ onRestartOnboarding }: { onRestartOnboarding?: () => 
 
 	return (
 		<div className="flex flex-col gap-5 px-7 pb-4 pt-1">
-			<h1 className="font-display text-3xl font-normal" style={{ color: '#F5F5F0' }}>
-				{t('settings.title')}
-			</h1>
+			<h1 className="font-display text-3xl font-normal text-foreground">{t('settings.title')}</h1>
 
-			<div
-				className="flex gap-1 rounded-[20px] p-1"
-				style={{ background: '#1A1A1C', border: '1px solid #3A3A3C' }}
-			>
+			<div className="flex gap-1 rounded-[20px] p-1 bg-background border border-border">
 				{TABS.map(({ value, label }) => (
 					<button
 						key={value}
 						type="button"
 						onClick={() => handleSettingsTabChange(value)}
-						className="flex-1 rounded-[16px] py-2.5 text-[11px] font-semibold tracking-[1.5px] transition-colors"
-						style={
-							activeTab === value
-								? { background: '#C9A962', color: '#1A1A1C' }
-								: { color: '#4A4A4C' }
-						}
+						className={`flex-1 rounded-[16px] py-2.5 text-[11px] font-semibold tracking-[1.5px] transition-colors ${activeTab === value ? 'bg-gold text-background' : 'text-tertiary'}`}
 					>
 						{label}
 					</button>
