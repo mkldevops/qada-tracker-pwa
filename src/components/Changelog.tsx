@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.5',
+		date: '2026-04-15',
+		changes: {
+			fr: [
+				'CI : Dependabot configuré avec grouping (patch/minor en une PR, major séparés) et surveillance des GitHub Actions',
+			],
+			en: [
+				'CI: Dependabot configured with grouping (patch/minor in one PR, majors separate) and GitHub Actions ecosystem added',
+			],
+		},
+	},
+	{
 		version: '1.30.4',
 		date: '2026-04-15',
 		changes: {
