@@ -2,6 +2,7 @@ import { MessageSquare, Plus, RotateCcw, Share2 } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { EstimationCard } from '@/components/EstimationCard';
 import { FeedbackModal } from '@/components/FeedbackModal';
 import { Session } from '@/components/Session';
@@ -69,8 +70,8 @@ function PrayerRow({
 			if (!shouldReduce) {
 				setJustLogged(true);
 			}
-		} catch (err) {
-			if (import.meta.env.DEV) console.error('logPrayer failed', err);
+		} catch {
+			toast.error(t('common.error'));
 		}
 	}
 
