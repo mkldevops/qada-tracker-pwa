@@ -10,6 +10,34 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.10',
+		date: '2026-04-15',
+		changes: {
+			fr: [
+				'SEO : ajout des en-têtes HTTP HSTS, CSP, Cache-Control immutable sur les assets, no-store sur sw.js',
+				'SEO : correction de la canonical de privacy.html (/privacy.html → /privacy)',
+				'SEO : enrichissement du sitemap.xml — hreflang, lastmod, entrée /about',
+				'SEO : llms.txt mis à jour — licence RSL 1.0, section Links, date mise à jour',
+				'SEO : manifest PWA — suppression de lang:fr, ajout du tableau screenshots',
+				'SEO : création de /about avec schéma Person + AboutPage',
+				'SEO : schéma WebApplication upgradé — SoftwareApplication dual-type, @id, availability, auteur, dates',
+				'SEO : FAQ étendue à 9 questions (2 nouvelles en arabe), réponses enrichies à 140-160 mots',
+				'SEO : section noscript anglais enrichie à 600+ mots avec sous-sections H3',
+			],
+			en: [
+				'SEO: added HSTS, CSP, immutable Cache-Control on assets, no-store on sw.js via serve.json',
+				'SEO: fixed privacy.html canonical (/privacy.html → /privacy)',
+				'SEO: enriched sitemap.xml — hreflang, lastmod, /about entry',
+				'SEO: updated llms.txt — RSL 1.0 license, Links section, updated date',
+				'SEO: PWA manifest — removed lang:fr, added screenshots array',
+				'SEO: created /about page with Person + AboutPage schema',
+				'SEO: upgraded WebApplication schema — SoftwareApplication dual-type, @id, availability, author, dates',
+				'SEO: FAQPage expanded to 9 questions (2 new Arabic entries), answers enriched to 140-160 words',
+				'SEO: English noscript section expanded to 600+ words with H3 subsections',
+			],
+		},
+	},
+	{
 		version: '1.30.9',
 		date: '2026-04-15',
 		changes: {

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>À propos — Qada Tracker</title>
+    <meta name="description" content="Qada Tracker est un projet open source créé par Fahari, développeur musulman. Une application gratuite pour suivre et rattraper les prières manquées, 100% offline et respectueuse de la vie privée." />
+    <link rel="canonical" href="https://qada.fahari.pro/about" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "@id": "https://qada.fahari.pro/#author",
+        "name": "Fahari",
+        "url": "https://github.com/mkldevops",
+        "sameAs": ["https://github.com/mkldevops"]
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "url": "https://qada.fahari.pro/about",
+        "name": "À propos de Qada Tracker",
+        "description": "Qada Tracker est un projet open source créé par Fahari pour aider les musulmans à rattraper leurs prières manquées.",
+        "about": {
+          "@type": "SoftwareApplication",
+          "@id": "https://qada.fahari.pro/#app"
+        },
+        "author": {
+          "@type": "Person",
+          "@id": "https://qada.fahari.pro/#author"
+        }
+      }
+    </script>
+    <style>
+      :root {
+              --bg: #1a1a1c;
+              --surface: #242426;
+              --border: #3a3a3c;
+              --text: #f5f5f0;
+              --muted: #6e6e70;
+              --gold: #c9a962;
+            }
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body {
+              background: var(--bg);
+              color: var(--text);
+              font-family: Inter, system-ui, sans-serif;
+              font-size: 16px;
+              line-height: 1.7;
+              padding: 2rem 1rem 4rem;
+            }
+            .container { max-width: 680px; margin: 0 auto; }
+            a { color: var(--gold); }
+            a:hover { text-decoration: underline; }
+            header { margin-bottom: 2.5rem; }
+            header a {
+              color: var(--gold);
+              text-decoration: none;
+              font-size: 0.875rem;
+              display: inline-flex;
+              align-items: center;
+              gap: 0.4rem;
+              margin-bottom: 1.5rem;
+            }
+            header a:hover { text-decoration: underline; }
+            h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.5rem; }
+            .subtitle { color: var(--muted); font-size: 0.9rem; }
+            section { margin-top: 2rem; }
+            h2 { font-size: 1.1rem; font-weight: 600; color: var(--gold); margin-bottom: 0.75rem; }
+            p { margin-bottom: 1rem; }
+            ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+            li { margin-bottom: 0.4rem; }
+            .author-card {
+              display: flex;
+              align-items: center;
+              gap: 1rem;
+              padding: 1.25rem;
+              background: var(--surface);
+              border: 1px solid var(--border);
+              border-radius: 12px;
+              margin: 1.5rem 0;
+            }
+            .author-avatar {
+              width: 56px;
+              height: 56px;
+              border-radius: 50%;
+              background: var(--border);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 1.5rem;
+              flex-shrink: 0;
+            }
+            .author-name { font-weight: 600; margin-bottom: 0.2rem; }
+            .author-role { color: var(--muted); font-size: 0.875rem; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <a href="/">← Qada Tracker</a>
+        <h1>À propos</h1>
+        <p class="subtitle">L'histoire derrière l'application</p>
+      </header>
+
+      <section>
+        <h2>Le projet</h2>
+        <p>
+          Qada Tracker est une application web progressive (PWA) gratuite et open source pour aider les
+          musulmans à suivre et rattraper leurs prières manquées (قضاء). Elle est conçue pour être simple,
+          privée et fonctionner entièrement hors ligne — sans compte, sans publicité, sans collecte de données.
+        </p>
+        <p>
+          L'idée est née d'un besoin personnel : avoir un outil discret et respectueux de la vie privée pour
+          organiser le rattrapage des prières, sans dépendre d'applications tierces qui collectent des données
+          ou nécessitent une connexion internet permanente.
+        </p>
+      </section>
+
+      <section>
+        <h2>L'auteur</h2>
+        <div class="author-card">
+          <div class="author-avatar">🌙</div>
+          <div>
+            <div class="author-name">Fahari</div>
+            <div class="author-role">Développeur · Musulman pratiquant</div>
+          </div>
+        </div>
+        <p>
+          Je suis développeur et musulman pratiquant. J'ai créé Qada Tracker pour répondre à un besoin réel
+          au sein de la communauté : un outil de suivi des prières qada qui soit vraiment privé, installable
+          sur téléphone, et disponible en arabe, français et anglais.
+        </p>
+        <p>
+          Le code source est entièrement public sur
+          <a href="https://github.com/mkldevops/qada-tracker-pwa" rel="noopener">GitHub</a>.
+          Toute contribution, retour ou suggestion est la bienvenue.
+        </p>
+      </section>
+
+      <section>
+        <h2>Philosophie</h2>
+        <ul>
+          <li><strong>Vie privée d'abord</strong> — aucune donnée ne quitte jamais votre appareil.</li>
+          <li><strong>Gratuit pour toujours</strong> — pas de freemium, pas d'abonnement, pas de publicité.</li>
+          <li><strong>Open source</strong> — le code est public et auditable par n'importe qui.</li>
+          <li><strong>Accessible</strong> — disponible en français, anglais et arabe avec support RTL complet.</li>
+          <li><strong>Offline d'abord</strong> — fonctionne sans connexion après la première visite.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Contact &amp; contributions</h2>
+        <p>
+          Pour signaler un bug, proposer une fonctionnalité ou contribuer au code :
+          <a href="https://github.com/mkldevops/qada-tracker-pwa/issues" rel="noopener">GitHub Issues</a>.
+        </p>
+        <p>
+          <a href="/">← Retour à l'application</a> ·
+          <a href="/privacy">Politique de confidentialité</a>
+        </p>
+      </section>
+    </div>
+  </body>
+</html>
