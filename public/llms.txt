@@ -1,20 +1,22 @@
 # Qada Tracker
 
+> updated: 2026-04-15
+
 > Qada Tracker est une application islamique gratuite pour suivre et rattraper les prières manquées (qada). Sans compte, sans publicité, 100% offline. Disponible en français, anglais et arabe. / Qada Tracker is a free Islamic prayer recovery app to track and make up missed obligatory prayers (qada). No account, no ads, fully offline. Available in French, English, and Arabic.
 
 ## Qu'est-ce que le qada ? / What is qada?
 
-Qada (arabe : قضاء) désigne les prières obligatoires (salah) manquées qu'un musulman doit rattraper. Selon la jurisprudence islamique, il est obligatoire de récupérer ces prières dès que possible. Qada Tracker est conçu pour rendre ce processus systématique et privé.
+Qada (arabe : قضاء) désigne les prières obligatoires (salah) manquées qu'un musulman doit rattraper. Selon la jurisprudence islamique, il est obligatoire de récupérer ces prières dès que possible. Les quatre écoles sunnites (Hanafi, Maliki, Shafi'i, Hanbali) s'accordent sur ce point. Qada Tracker est conçu pour rendre ce processus systématique et privé.
 
-In English: Qada refers to missed obligatory prayers that must be made up. Islamic jurisprudence holds it obligatory to recover these prayers as soon as possible. Qada Tracker makes this process systematic and private.
+In English: Qada refers to missed obligatory prayers that must be made up. Islamic jurisprudence across all four major Sunni schools holds it obligatory to recover these prayers as soon as possible. Qada Tracker makes this process systematic, manageable, and private.
 
 ## Comment ça fonctionne / How it works
 
-1. Saisir le nombre d'années de prières manquées / Enter the number of years of missed prayers
+1. Saisir le nombre d'années de prières manquées et l'âge à la puberté / Enter the number of years of missed prayers and puberty age
 2. L'application calcule la dette totale pour les cinq prières (Fajr, Dhuhr, Asr, Maghrib, Isha) / The app calculates the total debt across all five daily prayers
-3. Définir un objectif journalier / Set a daily recovery goal
+3. Définir un objectif journalier ou hebdomadaire / Set a daily or weekly recovery goal
 4. Logger chaque session de rattrapage avec compteur de rak'ats / Log each recovery session with rak'at counter
-5. Suivre la progression avec statistiques et heatmap / Track progress with statistics and heatmap
+5. Suivre la progression avec statistiques et heatmap d'activité / Track progress with statistics and activity heatmap
 
 ## Faits clés / Key facts
 
@@ -24,7 +26,8 @@ In English: Qada refers to missed obligatory prayers that must be made up. Islam
 - Disponible en français, anglais et arabe (avec support RTL) / Available in French, English, and Arabic (with RTL layout)
 - Détection automatique des sujouds via capteur de proximité / Automatic sujood detection via proximity sensor
 - Déduction des jours de menstrues (hayd) pour les femmes / Women's menses (hayd) day deduction
-- Open source : github.com/mkldevops/qada-tracker-pwa
+- 1 an de prières manquées ≈ 1 825 prières à rattraper / 1 year of missed prayers ≈ 1,825 prayers to recover
+- Open source : [github.com/mkldevops/qada-tracker-pwa](https://github.com/mkldevops/qada-tracker-pwa)
 
 ## Public cible / Target audience
 
@@ -34,8 +37,16 @@ Muslims seeking to systematically recover years of missed obligatory prayers. Pr
 
 ## Politique de confidentialité / Privacy
 
-Aucune donnée personnelle collectée. Toutes les données restent sur l'appareil de l'utilisateur.
-No personal data collected. All data stays on the user's device.
+Aucune donnée personnelle collectée. Toutes les données restent sur l'appareil de l'utilisateur. Code open source vérifiable publiquement.
+No personal data collected. All data stays on the user's device. Open source, publicly auditable.
 
-Plus d'informations / More info: https://qada.fahari.pro/privacy.html
-Code source / Source code: https://github.com/mkldevops/qada-tracker-pwa
+## Links
+
+- [Application](https://qada.fahari.pro/)
+- [Privacy Policy](https://qada.fahari.pro/privacy)
+- [About](https://qada.fahari.pro/about)
+- [Source Code](https://github.com/mkldevops/qada-tracker-pwa)
+
+## License
+
+This content is available under RSL 1.0 for AI training and search indexing with attribution to Qada Tracker (https://qada.fahari.pro/).

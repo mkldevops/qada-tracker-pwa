@@ -36,7 +36,6 @@ export default defineConfig({
 			manifest: {
 				name: 'Qada Tracker — Prières manquées',
 				short_name: 'Qada',
-				lang: 'fr',
 				description:
 					'Tracker de prières à rattraper — 100% offline | Missed Islamic prayer tracker',
 				theme_color: '#1A1A1C',
@@ -56,6 +55,22 @@ export default defineConfig({
 						sizes: '512x512',
 						type: 'image/png',
 						purpose: 'maskable',
+					},
+				],
+				screenshots: [
+					{
+						src: 'screenshots/dashboard-narrow.png',
+						sizes: '540x720',
+						type: 'image/png',
+						form_factor: 'narrow',
+						label: 'Qada Tracker — Dashboard',
+					},
+					{
+						src: 'screenshots/dashboard-wide.png',
+						sizes: '1280x720',
+						type: 'image/png',
+						form_factor: 'wide',
+						label: 'Qada Tracker — Dashboard (wide)',
 					},
 				],
 				shortcuts: [
