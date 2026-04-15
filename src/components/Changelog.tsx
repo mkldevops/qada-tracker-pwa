@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.15',
+		date: '2026-04-15',
+		changes: {
+			fr: [
+				"Fix : ajout d'un Dockerfile (node:22.12-slim) pour bypasser Nixpacks — Node 20.18 et 22.11 de nixpkgs sont trop anciens pour rolldown (nécessite ^20.19 ou ≥22.12)",
+			],
+			en: [
+				'Fix: add Dockerfile (node:22.12-slim) to bypass Nixpacks — nixpkgs Node 20.18 and 22.11 are too old for rolldown (requires ^20.19 or ≥22.12)',
+			],
+		},
+	},
+	{
 		version: '1.30.14',
 		date: '2026-04-15',
 		changes: {
