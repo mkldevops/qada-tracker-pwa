@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.13',
+		date: '2026-04-15',
+		changes: {
+			fr: ['SEO : ajout du protocole IndexNow — clé de vérification + référence dans robots.txt'],
+			en: ['SEO: added IndexNow protocol — verification key file + reference in robots.txt'],
+		},
+	},
+	{
 		version: '1.30.10',
 		date: '2026-04-15',
 		changes: {

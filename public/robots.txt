@@ -26,3 +26,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://qada.fahari.pro/sitemap.xml
+IndexNow: https://qada.fahari.pro/b32a8593f85f4981ba60eab3880357b3.txt
