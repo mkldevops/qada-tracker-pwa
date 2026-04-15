@@ -15,9 +15,11 @@ const ENTRIES: ChangelogEntry[] = [
 		changes: {
 			fr: [
 				"Fix : ajout d'un Dockerfile (node:22.12-slim) pour bypasser Nixpacks — Node 20.18 et 22.11 de nixpkgs sont trop anciens pour rolldown (nécessite ^20.19 ou ≥22.12)",
+				'Fix : remplacement de corepack par npm install -g pnpm@10.32.1 — la vérification de signature corepack échouait dans Docker',
 			],
 			en: [
 				'Fix: add Dockerfile (node:22.12-slim) to bypass Nixpacks — nixpkgs Node 20.18 and 22.11 are too old for rolldown (requires ^20.19 or ≥22.12)',
+				'Fix: replace corepack with npm install -g pnpm@10.32.1 — corepack keyid signature check failed inside Docker',
 			],
 		},
 	},

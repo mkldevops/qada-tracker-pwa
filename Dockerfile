@@ -2,7 +2,7 @@ FROM node:22.12-slim AS builder
 
 WORKDIR /app
 
-RUN corepack enable
+RUN npm install -g pnpm@10.32.1
 
 COPY package.json pnpm-lock.yaml .npmrc ./
 RUN pnpm install --frozen-lockfile
