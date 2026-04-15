@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { db } from '@/db/database';
 import { getActivityByDay } from '@/db/queries';
@@ -35,43 +35,44 @@ export function ActivityCalendar() {
 		return () => document.removeEventListener('pointerdown', onPointerDown);
 	}, []);
 
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	const todayDow = (today.getDay() + 6) % 7; // 0=Mon, 6=Sun
-	const startDate = new Date(today);
-	startDate.setDate(today.getDate() - todayDow - (WEEKS - 1) * 7);
+	const { cells, monthLabels, hasData } = useMemo(() => {
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		const todayDow = (today.getDay() + 6) % 7; // 0=Mon, 6=Sun
+		const startDate = new Date(today);
+		startDate.setDate(today.getDate() - todayDow - (WEEKS - 1) * 7);
 
-	// Build cells[week][dow]
-	const cells: Array<Array<{ date: string; count: number; isFuture: boolean }>> = [];
-	for (let week = 0; week < WEEKS; week++) {
-		const weekCells = [];
-		for (let dow = 0; dow < 7; dow++) {
-			const d = new Date(startDate);
-			d.setDate(startDate.getDate() + week * 7 + dow);
-			const isFuture = d > today;
-			const dateStr = d.toISOString().slice(0, 10);
-			weekCells.push({ date: dateStr, count: activityMap.get(dateStr) ?? 0, isFuture });
+		const cells: Array<Array<{ date: string; count: number; isFuture: boolean }>> = [];
+		for (let week = 0; week < WEEKS; week++) {
+			const weekCells = [];
+			for (let dow = 0; dow < 7; dow++) {
+				const d = new Date(startDate);
+				d.setDate(startDate.getDate() + week * 7 + dow);
+				const isFuture = d > today;
+				const dateStr = d.toISOString().slice(0, 10);
+				weekCells.push({ date: dateStr, count: activityMap.get(dateStr) ?? 0, isFuture });
+			}
+			cells.push(weekCells);
 		}
-		cells.push(weekCells);
-	}
 
-	const hasData = cells.some((week) => week.some((cell) => !cell.isFuture && cell.count > 0));
+		const hasData = cells.some((week) => week.some((cell) => !cell.isFuture && cell.count > 0));
 
-	// Month labels: show month abbrev at the first week of each month
-	const monthLabels: (string | null)[] = Array(WEEKS).fill(null);
-	for (let week = 0; week < WEEKS; week++) {
-		const firstCell = cells[week][0];
-		if (firstCell && !firstCell.isFuture) {
-			const d = new Date(firstCell.date);
-			if (d.getDate() <= 7) {
-				monthLabels[week] = d.toLocaleString(i18n.language, { month: 'short' });
+		const monthLabels: (string | null)[] = Array(WEEKS).fill(null);
+		for (let week = 0; week < WEEKS; week++) {
+			const firstCell = cells[week][0];
+			if (firstCell && !firstCell.isFuture) {
+				const d = new Date(`${firstCell.date}T00:00:00`);
+				if (d.getDate() <= 7) {
+					monthLabels[week] = d.toLocaleString(i18n.language, { month: 'short' });
+				}
 			}
 		}
-	}
+
+		return { cells, monthLabels, hasData };
+	}, [activityMap, i18n.language]);
 
 	return (
 		<div ref={containerRef} className="flex flex-col gap-2">
-			{/* Tooltip */}
 			<div style={{ minHeight: 18 }}>
 				{selected && (
 					<p className="text-center text-[11px] text-muted">
@@ -89,7 +90,6 @@ export function ActivityCalendar() {
 				)}
 			</div>
 
-			{/* Month labels row */}
 			<div
 				style={{
 					display: 'grid',

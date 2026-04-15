@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.9',
+		date: '2026-04-15',
+		changes: {
+			fr: [
+				"Perf : mémorisation du calcul de la grille d'activité — évite 112 créations de Date et conversions ISO à chaque sélection de cellule",
+				"Fix : correction d'un bug de fuseau horaire dans les étiquettes de mois du calendrier d'activité",
+			],
+			en: [
+				'Perf: memoized activity calendar grid computation — avoids 112 Date allocations and ISO conversions on every cell selection',
+				'Fix: timezone bug in activity calendar month labels',
+			],
+		},
+	},
+	{
 		version: '1.30.8',
 		date: '2026-04-15',
 		changes: {
