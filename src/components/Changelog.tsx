@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.5',
+		date: '2026-04-15',
+		changes: {
+			fr: ["Fix : log d'erreur en développement restauré sur les échecs de sauvegarde de prière"],
+			en: ['Fix: dev error log restored on prayer save failures'],
+		},
+	},
+	{
 		version: '1.30.4',
 		date: '2026-04-15',
 		changes: {
