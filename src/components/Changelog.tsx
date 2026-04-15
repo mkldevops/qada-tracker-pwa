@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.8',
+		date: '2026-04-15',
+		changes: {
+			fr: [
+				"Refactor : calendrier d'activité — remplacement des couleurs hardcodées par les tokens du design system (color-mix pour les nuances de sage)",
+				'Refactor : extraction des constantes LONG_PRESS_MS et VIBRATE_MS dans LogPrayers',
+			],
+			en: [
+				'Refactor: activity calendar — replaced hardcoded colors with design system tokens (color-mix for sage shades)',
+				'Refactor: extracted LONG_PRESS_MS and VIBRATE_MS constants in LogPrayers',
+			],
+		},
+	},
+	{
 		version: '1.30.7',
 		date: '2026-04-15',
 		changes: {

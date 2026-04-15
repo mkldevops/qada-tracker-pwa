@@ -22,6 +22,9 @@ import { usePrayerStore } from '@/stores/prayerStore';
 import type { BatchEntry, PrayerLog, PrayerName } from '@/types';
 import { PRAYER_NAMES } from '@/types';
 
+const LONG_PRESS_MS = 450;
+const VIBRATE_MS = 50;
+
 const TABS = ['logger', 'history'] as const;
 type Tab = (typeof TABS)[number];
 
@@ -290,10 +293,10 @@ function HistoriqueTab({ logs, onUndo }: { logs: PrayerLog[]; onUndo: () => void
 		endPress();
 		pressTimer.current = setTimeout(() => {
 			if (logs.find((l) => l.id === log.id)) {
-				navigator.vibrate?.(50);
+				navigator.vibrate?.(VIBRATE_MS);
 				setSelectedLog(log);
 			}
-		}, 450);
+		}, LONG_PRESS_MS);
 	}
 
 	function endPress() {

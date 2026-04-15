@@ -8,11 +8,11 @@ const DAYS_TOTAL = WEEKS * 7;
 
 function getColor(count: number, isFuture: boolean): string {
 	if (isFuture) return 'transparent';
-	if (count === 0) return '#2A2A2C';
-	if (count < 5) return '#3D6B3D';
-	if (count < 10) return '#5A8F5A';
-	if (count < 20) return '#6E9E6E';
-	return '#C9A962';
+	if (count === 0) return 'var(--surface-raised)';
+	if (count < 5) return 'color-mix(in srgb, var(--sage) 40%, var(--surface-raised))';
+	if (count < 10) return 'color-mix(in srgb, var(--sage) 65%, var(--surface-raised))';
+	if (count < 20) return 'var(--sage)';
+	return 'var(--gold)';
 }
 
 export function ActivityCalendar() {
@@ -74,13 +74,13 @@ export function ActivityCalendar() {
 			{/* Tooltip */}
 			<div style={{ minHeight: 18 }}>
 				{selected && (
-					<p className="text-center text-[11px]" style={{ color: '#6E6E70' }}>
+					<p className="text-center text-[11px] text-muted">
 						{new Date(`${selected.date}T00:00:00`).toLocaleDateString(i18n.language, {
 							day: 'numeric',
 							month: 'long',
 						})}
 						{' · '}
-						<span style={{ color: selected.count > 0 ? '#6E9E6E' : '#4A4A4C' }}>
+						<span className={selected.count > 0 ? 'text-sage' : 'text-tertiary'}>
 							{selected.count > 0
 								? t('stats.activityCount', { count: selected.count })
 								: t('stats.activityNone')}
@@ -99,11 +99,7 @@ export function ActivityCalendar() {
 			>
 				{monthLabels.map((label, week) => (
 					<div key={cells[week][0].date} className="text-center">
-						{label && (
-							<span className="text-[9px] font-medium" style={{ color: '#4A4A4C' }}>
-								{label}
-							</span>
-						)}
+						{label && <span className="text-[9px] font-medium text-tertiary">{label}</span>}
 					</div>
 				))}
 			</div>
@@ -127,7 +123,7 @@ export function ActivityCalendar() {
 									aspectRatio: '1',
 									borderRadius: 3,
 									background: getColor(cell.count, cell.isFuture),
-									outline: isSelected ? '1.5px solid #C9A962' : 'none',
+									outline: isSelected ? '1.5px solid var(--gold)' : 'none',
 									cursor: cell.isFuture ? 'default' : 'pointer',
 								}}
 								onPointerDown={(e) => {
@@ -141,11 +137,7 @@ export function ActivityCalendar() {
 				)}
 			</div>
 
-			{!hasData && (
-				<p className="text-center text-xs" style={{ color: '#4A4A4C' }}>
-					{t('stats.activityEmpty')}
-				</p>
-			)}
+			{!hasData && <p className="text-center text-xs text-tertiary">{t('stats.activityEmpty')}</p>}
 		</div>
 	);
 }
