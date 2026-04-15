@@ -10,11 +10,17 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
-		version: '1.30.13',
+		version: '1.30.14',
 		date: '2026-04-15',
 		changes: {
-			fr: ['SEO : ajout du protocole IndexNow — clé de vérification + référence dans robots.txt'],
-			en: ['SEO: added IndexNow protocol — verification key file + reference in robots.txt'],
+			fr: [
+				'Fix : ajout de .npmrc (optional=true) pour corriger le build Coolify — rolldown ne trouvait pas ses bindings natifs linux-x64',
+				'SEO : redirection HTTP→HTTPS 307 → 301 via Traefik redirectscheme.permanent=true (Coolify)',
+			],
+			en: [
+				'Fix: add .npmrc (optional=true) to fix Coolify build — rolldown could not find its linux-x64 native bindings',
+				'SEO: HTTP→HTTPS redirect 307 → 301 via Traefik redirectscheme.permanent=true (Coolify)',
+			],
 		},
 	},
 	{
