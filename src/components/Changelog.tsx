@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.6',
+		date: '2026-04-15',
+		changes: {
+			fr: [
+				'CI : auto-merge Dependabot activé — les mises à jour patch/minor sont fusionnées automatiquement quand le CI est vert',
+			],
+			en: [
+				'CI: Dependabot auto-merge enabled — patch/minor updates are merged automatically when CI passes',
+			],
+		},
+	},
+	{
 		version: '1.30.5',
 		date: '2026-04-15',
 		changes: {
