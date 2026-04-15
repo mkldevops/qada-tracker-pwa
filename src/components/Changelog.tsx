@@ -10,6 +10,16 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.4',
+		date: '2026-04-15',
+		changes: {
+			fr: [
+				"Fix : erreur toast affichée si la sauvegarde d'une prière échoue (quota dépassé, DB inaccessible)",
+			],
+			en: ['Fix: toast error shown if saving a prayer fails (quota exceeded, DB unavailable)'],
+		},
+	},
+	{
 		version: '1.30.2',
 		date: '2026-04-13',
 		changes: {
