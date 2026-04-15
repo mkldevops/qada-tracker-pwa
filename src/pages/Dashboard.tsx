@@ -70,7 +70,8 @@ function PrayerRow({
 			if (!shouldReduce) {
 				setJustLogged(true);
 			}
-		} catch {
+		} catch (err) {
+			if (import.meta.env.DEV) console.error('logPrayer failed', err);
 			toast.error(t('common.error'));
 		}
 	}

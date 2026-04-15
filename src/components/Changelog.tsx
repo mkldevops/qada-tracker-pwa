@@ -15,8 +15,12 @@ const ENTRIES: ChangelogEntry[] = [
 		changes: {
 			fr: [
 				"Fix : erreur toast affichée si la sauvegarde d'une prière échoue (quota dépassé, DB inaccessible)",
+				"Fix : log d'erreur en développement restauré sur les échecs de sauvegarde de prière",
 			],
-			en: ['Fix: toast error shown if saving a prayer fails (quota exceeded, DB unavailable)'],
+			en: [
+				'Fix: toast error shown if saving a prayer fails (quota exceeded, DB unavailable)',
+				'Fix: dev error log restored on prayer save failures',
+			],
 		},
 	},
 	{
