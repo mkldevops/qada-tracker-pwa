@@ -104,6 +104,7 @@ export default defineConfig({
 					/^\/sitemap\.xml$/,
 					/^\/privacy\.html$/,
 					/^\/llms\.txt$/,
+					/^\/[a-f0-9]{32}\.txt$/,
 				],
 				runtimeCaching: [
 					{
