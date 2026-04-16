@@ -10,6 +10,28 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.16',
+		date: '2026-04-16',
+		changes: {
+			fr: [
+				'SEO : redirection HTTP→HTTPS permanente (308) via Traefik redirectRegex — correction du conflit de noms de routeurs Coolify',
+				'SEO : ajout de dateCreated au schéma WebSite, mise à jour softwareVersion + dateModified dans WebApplication',
+				"SEO : ajout d'un second profil GitHub (mkldevops) dans Organization.sameAs",
+				"SEO : ajout d'un avertissement qualificatif (consulter un érudit) à la réponse FAQ halal",
+				"SEO : section noscript anglais enrichie — nouveau paragraphe 'Who Is This For' + FAQ question langue",
+				'SEO : ajout du protocole IndexNow — fichier de vérification + meta tag pour indexation rapide (Bing, Yandex)',
+			],
+			en: [
+				'SEO: permanent HTTP→HTTPS redirect (308) via Traefik redirectRegex — fixed Coolify router name conflict',
+				'SEO: added dateCreated to WebSite schema, updated softwareVersion + dateModified in WebApplication',
+				'SEO: added second GitHub profile (mkldevops) to Organization.sameAs',
+				'SEO: added scholarly disclaimer qualifier to halal FAQ answer',
+				'SEO: expanded English noscript — added "Who Is This For" section + language FAQ entry',
+				'SEO: added IndexNow protocol — verification key file + meta tag for fast indexing (Bing, Yandex)',
+			],
+		},
+	},
+	{
 		version: '1.30.15',
 		date: '2026-04-15',
 		changes: {
