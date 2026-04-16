@@ -17,8 +17,10 @@ export function InstallBanner({ prompt, onDismiss }: InstallBannerProps) {
 		setIsPrompting(true);
 		try {
 			await prompt.prompt();
-			await prompt.userChoice;
-			track({ name: 'pwa_install' });
+			const { outcome } = await prompt.userChoice;
+			if (outcome === 'accepted') {
+				track({ name: 'pwa_install' });
+			}
 			dismissInstallBanner();
 			onDismiss();
 		} catch (error) {
