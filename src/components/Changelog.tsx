@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.30.17',
+		date: '2026-04-16',
+		changes: {
+			fr: [
+				"Session : mode rak'a par rak'a — avancez une rak'a à la fois, la prière est loggée après la dernière",
+				"Réglages : le suivi sujoud devient un sous-paramètre du mode rak'a par rak'a",
+			],
+			en: [
+				"Session: rak'a by rak'a mode — advance one rak'a at a time, the prayer is logged after the last one",
+				"Settings: sujood tracking is now a sub-setting of rak'a by rak'a mode",
+			],
+		},
+	},
+	{
 		version: '1.30.16',
 		date: '2026-04-16',
 		changes: {

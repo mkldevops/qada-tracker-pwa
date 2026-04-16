@@ -149,6 +149,8 @@
 		"prayerOrderDesc": "Ordre dans lequel les prières sont proposées en session",
 		"chronological": "Chronologique",
 		"highestDebt": "Priorité dette",
+		"rakaByRaka": "Rak'a par rak'a",
+		"rakaByRakaDesc": "Avancez une rak'a à la fois — la prière est loggée après la dernière",
 		"sujoodTracking": "Suivi sujoud",
 		"sujoodTrackingDesc": "Détection automatique des sujoud via les capteurs",
 		"tashahdDuration": "Durée du tachahoud",

@@ -24,6 +24,8 @@ export function SessionTab() {
 	const {
 		setSessionOrder,
 		sessionOrder,
+		rakaByRaka,
+		setRakaByRaka,
 		sujoodTrackingEnabled,
 		setSujoodTrackingEnabled,
 		tashahdDurationMs,
@@ -65,63 +67,93 @@ export function SessionTab() {
 					<div className="flex items-center justify-between pt-1">
 						<div className="flex flex-col gap-0.5">
 							<span className="text-sm font-medium text-foreground">
-								{t('settings.sujoodTracking')}
+								{t('settings.rakaByRaka')}
 							</span>
-							<span className="text-[11px] text-muted">{t('settings.sujoodTrackingDesc')}</span>
+							<span className="text-[11px] text-muted">{t('settings.rakaByRakaDesc')}</span>
 						</div>
 						<button
 							type="button"
 							role="switch"
-							aria-checked={sujoodTrackingEnabled}
-							aria-label={t('settings.sujoodTracking')}
-							onClick={() => setSujoodTrackingEnabled(!sujoodTrackingEnabled)}
+							aria-checked={rakaByRaka}
+							aria-label={t('settings.rakaByRaka')}
+							onClick={() => setRakaByRaka(!rakaByRaka)}
 							className="relative flex shrink-0 items-center rounded-lg p-2 focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
 						>
 							<span
-								className={`relative h-7 w-12 rounded-full transition-colors ${sujoodTrackingEnabled ? 'bg-gold' : 'bg-border'}`}
+								className={`relative h-7 w-12 rounded-full transition-colors ${rakaByRaka ? 'bg-gold' : 'bg-border'}`}
 							>
 								<span
 									className="absolute top-1 h-5 w-5 rounded-full bg-foreground transition-all"
-									style={{ left: sujoodTrackingEnabled ? '50%' : '4px' }}
+									style={{ left: rakaByRaka ? '50%' : '4px' }}
 								/>
 							</span>
 						</button>
 					</div>
-					{sujoodTrackingEnabled && (
+					{rakaByRaka && (
 						<>
 							<div className="h-px bg-border" />
 							<div className="flex items-center justify-between">
 								<div className="flex flex-col gap-0.5">
 									<span className="text-sm font-medium text-foreground">
-										{t('settings.tashahdDuration')}
+										{t('settings.sujoodTracking')}
 									</span>
-									<span className="text-[11px] text-muted">
-										{t('settings.tashahdDurationDesc')}
-									</span>
+									<span className="text-[11px] text-muted">{t('settings.sujoodTrackingDesc')}</span>
 								</div>
-								<div className="flex items-center gap-2">
-									<button
-										type="button"
-										onClick={() => setTashahdDurationMs(tashahdDurationMs - 5000)}
-										disabled={tashahdDurationMs <= 5000}
-										className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-medium text-foreground bg-background border border-border disabled:opacity-30"
+								<button
+									type="button"
+									role="switch"
+									aria-checked={sujoodTrackingEnabled}
+									aria-label={t('settings.sujoodTracking')}
+									onClick={() => setSujoodTrackingEnabled(!sujoodTrackingEnabled)}
+									className="relative flex shrink-0 items-center rounded-lg p-2 focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+								>
+									<span
+										className={`relative h-7 w-12 rounded-full transition-colors ${sujoodTrackingEnabled ? 'bg-gold' : 'bg-border'}`}
 									>
-										−
-									</button>
-									<span className="min-w-[48px] text-center text-sm font-semibold tabular-nums text-foreground">
-										{Math.round(tashahdDurationMs / 1000)}
-										<span className="text-muted font-normal text-xs ms-0.5">s</span>
+										<span
+											className="absolute top-1 h-5 w-5 rounded-full bg-foreground transition-all"
+											style={{ left: sujoodTrackingEnabled ? '50%' : '4px' }}
+										/>
 									</span>
-									<button
-										type="button"
-										onClick={() => setTashahdDurationMs(tashahdDurationMs + 5000)}
-										disabled={tashahdDurationMs >= 300000}
-										className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-medium text-foreground bg-background border border-border disabled:opacity-30"
-									>
-										+
-									</button>
-								</div>
+								</button>
 							</div>
+							{sujoodTrackingEnabled && (
+								<>
+									<div className="h-px bg-border" />
+									<div className="flex items-center justify-between">
+										<div className="flex flex-col gap-0.5">
+											<span className="text-sm font-medium text-foreground">
+												{t('settings.tashahdDuration')}
+											</span>
+											<span className="text-[11px] text-muted">
+												{t('settings.tashahdDurationDesc')}
+											</span>
+										</div>
+										<div className="flex items-center gap-2">
+											<button
+												type="button"
+												onClick={() => setTashahdDurationMs(tashahdDurationMs - 5000)}
+												disabled={tashahdDurationMs <= 5000}
+												className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-medium text-foreground bg-background border border-border disabled:opacity-30"
+											>
+												−
+											</button>
+											<span className="min-w-[48px] text-center text-sm font-semibold tabular-nums text-foreground">
+												{Math.round(tashahdDurationMs / 1000)}
+												<span className="text-muted font-normal text-xs ms-0.5">s</span>
+											</span>
+											<button
+												type="button"
+												onClick={() => setTashahdDurationMs(tashahdDurationMs + 5000)}
+												disabled={tashahdDurationMs >= 300000}
+												className="w-8 h-8 rounded-full flex items-center justify-center text-lg font-medium text-foreground bg-background border border-border disabled:opacity-30"
+											>
+												+
+											</button>
+										</div>
+									</div>
+								</>
+							)}
 						</>
 					)}
 					{activeObjective && (
