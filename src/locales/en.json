@@ -149,6 +149,8 @@
 		"prayerOrderDesc": "Order in which prayers are offered during session",
 		"chronological": "Chronological",
 		"highestDebt": "Debt priority",
+		"rakaByRaka": "Rak'a by rak'a",
+		"rakaByRakaDesc": "Advance one rak'a at a time — the prayer is logged after the last one",
 		"sujoodTracking": "Sujood tracking",
 		"sujoodTrackingDesc": "Auto-detect sujood via device sensors",
 		"tashahdDuration": "Tashahhud duration",

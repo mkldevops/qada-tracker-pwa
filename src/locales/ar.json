@@ -179,6 +179,8 @@
 		"prayerOrderDesc": "الترتيب الذي تُؤدَّى فيه الصلوات خلال الجلسة",
 		"chronological": "ترتيب زمني",
 		"highestDebt": "أولوية الفوائت",
+		"rakaByRaka": "ركعة بركعة",
+		"rakaByRakaDesc": "تقدّم ركعةً واحدة في كل مرة — تُسجَّل الصلاة بعد آخر ركعة",
 		"sujoodTracking": "تتبع السجود",
 		"sujoodTrackingDesc": "الكشف التلقائي للسجود عبر مستشعرات الجهاز",
 		"tashahdDuration": "مدة التشهد",

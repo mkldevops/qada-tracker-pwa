@@ -325,6 +325,7 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const activeObjective = usePrayerStore((s) => s.activeObjective);
 	const sessionOrder = usePrayerStore((s) => s.sessionOrder);
 	const sujoodTrackingEnabled = usePrayerStore((s) => s.sujoodTrackingEnabled);
+	const rakaByRaka = usePrayerStore((s) => s.rakaByRaka);
 	const sessionsPerDay = usePrayerStore((s) => s.sessionsPerDay);
 	const setTashahdDurationMs = usePrayerStore((s) => s.setTashahdDurationMs);
 
@@ -514,7 +515,9 @@ export function Session({ onClose }: { onClose: () => void }) {
 	}
 
 	const handleDone = () => {
-		if (currentRakat > 0) {
+		if (rakaByRaka && !sujoodTrackingEnabled) {
+			handleRakatComplete();
+		} else if (currentRakat > 0) {
 			setConfirmDone(true);
 		} else {
 			handleIncrement(true);
@@ -934,6 +937,20 @@ export function Session({ onClose }: { onClose: () => void }) {
 												transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
 												className="inline-block w-4 h-4 rounded-full border-2 border-current border-t-transparent"
 											/>
+										</motion.span>
+									) : rakaByRaka &&
+										!sujoodTrackingEnabled &&
+										cfg &&
+										currentRakat < cfg.rakat - 1 ? (
+										<motion.span
+											key={currentRakat}
+											initial={{ opacity: 0 }}
+											animate={{ opacity: 1 }}
+										>
+											{t('session.rakatProgress', {
+												current: currentRakat + 1,
+												total: cfg.rakat,
+											})}
 										</motion.span>
 									) : (
 										<motion.span key="label" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

@@ -102,6 +102,7 @@ export type SessionOrder = 'chronological' | 'highest-debt';
 
 const SESSION_ORDER_KEY = 'session-order';
 const SUJOOD_TRACKING_KEY = 'sujood-tracking-enabled';
+const RAKA_BY_RAKA_KEY = 'raka-by-raka-enabled';
 const SESSIONS_PER_DAY_KEY = 'sessions-per-day';
 const TASHAHD_DURATION_KEY = 'tashahd-duration-ms';
 
@@ -113,6 +114,7 @@ interface PrayerStore {
 	isLoading: boolean;
 	sessionOrder: SessionOrder;
 	sujoodTrackingEnabled: boolean;
+	rakaByRaka: boolean;
 	sessionsPerDay: number;
 	tashahdDurationMs: number;
 	pendingMilestone: Milestone | null;
@@ -128,6 +130,7 @@ interface PrayerStore {
 	setObjective: (period: Period, target: number) => Promise<void>;
 	setSessionOrder: (order: SessionOrder) => void;
 	setSujoodTrackingEnabled: (enabled: boolean) => void;
+	setRakaByRaka: (enabled: boolean) => void;
 	setSessionsPerDay: (value: number) => void;
 	setTashahdDurationMs: (ms: number) => void;
 	clearMilestone: () => void;
@@ -163,6 +166,14 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => {
 			return raw === 'chronological' || raw === 'highest-debt' ? raw : 'chronological';
 		})(),
 		sujoodTrackingEnabled: localStorage.getItem(SUJOOD_TRACKING_KEY) === 'true',
+		rakaByRaka: (() => {
+			if (localStorage.getItem(RAKA_BY_RAKA_KEY) === 'true') return true;
+			if (localStorage.getItem(SUJOOD_TRACKING_KEY) === 'true') {
+				localStorage.setItem(RAKA_BY_RAKA_KEY, 'true');
+				return true;
+			}
+			return false;
+		})(),
 		sessionsPerDay: (() => {
 			const raw = parseInt(localStorage.getItem(SESSIONS_PER_DAY_KEY) ?? '', 10);
 			return [1, 2, 3, 4, 5].includes(raw) ? raw : 1;
@@ -243,7 +254,22 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => {
 
 		setSujoodTrackingEnabled: (enabled) => {
 			localStorage.setItem(SUJOOD_TRACKING_KEY, String(enabled));
-			set({ sujoodTrackingEnabled: enabled });
+			if (enabled && !get().rakaByRaka) {
+				localStorage.setItem(RAKA_BY_RAKA_KEY, 'true');
+				set({ sujoodTrackingEnabled: true, rakaByRaka: true });
+			} else {
+				set({ sujoodTrackingEnabled: enabled });
+			}
+		},
+
+		setRakaByRaka: (enabled) => {
+			localStorage.setItem(RAKA_BY_RAKA_KEY, String(enabled));
+			if (!enabled) {
+				localStorage.setItem(SUJOOD_TRACKING_KEY, 'false');
+				set({ rakaByRaka: false, sujoodTrackingEnabled: false });
+			} else {
+				set({ rakaByRaka: true });
+			}
 		},
 
 		setSessionsPerDay: (value) => {
