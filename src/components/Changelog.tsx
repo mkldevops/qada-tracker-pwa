@@ -14,6 +14,8 @@ const ENTRIES: ChangelogEntry[] = [
 		date: '2026-04-16',
 		changes: {
 			fr: [
+				'Analytics : 5 nouveaux events Umami — pwa_install, pwa_install_dismiss, language_change, onboarding_complete, milestone_reached',
+				'Analytics : ajout de la source (dashboard/settings) aux events de partage',
 				'SEO : redirection HTTP→HTTPS permanente (308) via Traefik redirectRegex — correction du conflit de noms de routeurs Coolify',
 				'SEO : ajout de dateCreated au schéma WebSite, mise à jour softwareVersion + dateModified dans WebApplication',
 				"SEO : ajout d'un second profil GitHub (mkldevops) dans Organization.sameAs",
@@ -22,6 +24,8 @@ const ENTRIES: ChangelogEntry[] = [
 				'SEO : ajout du protocole IndexNow — fichier de vérification + meta tag pour indexation rapide (Bing, Yandex)',
 			],
 			en: [
+				'Analytics: 5 new Umami events — pwa_install, pwa_install_dismiss, language_change, onboarding_complete, milestone_reached',
+				'Analytics: added source (dashboard/settings) to share events',
 				'SEO: permanent HTTP→HTTPS redirect (308) via Traefik redirectRegex — fixed Coolify router name conflict',
 				'SEO: added dateCreated to WebSite schema, updated softwareVersion + dateModified in WebApplication',
 				'SEO: added second GitHub profile (mkldevops) to Organization.sameAs',

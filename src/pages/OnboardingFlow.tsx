@@ -6,6 +6,7 @@ import { HaydStepper } from '@/components/HaydStepper';
 import { IslamicReminder } from '@/components/IslamicReminder';
 import { ObjectiveCard } from '@/components/ObjectiveCard';
 import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
+import { track } from '@/lib/analytics';
 import { spring, springSnappy } from '@/lib/animations';
 import { calculateSuggestion } from '@/lib/calculateSuggestion';
 import { randomEncouragement } from '@/lib/encouragements';
@@ -895,6 +896,11 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 	const [saving, setSaving] = useState(false);
 	const [saveError, setSaveError] = useState<string | null>(null);
 
+	function handleComplete() {
+		track({ name: 'onboarding_complete' });
+		onComplete();
+	}
+
 	async function handleDebtNext(data: DebtData) {
 		setSaving(true);
 		setSaveError(null);
@@ -938,7 +944,9 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 		>
 			<div className="mx-auto flex w-full max-w-lg flex-1 flex-col min-h-0 pt-14">
 				<AnimatePresence mode="wait">
-					{step === 'welcome' && <WelcomeStep onNext={() => setStep('debt')} onSkip={onComplete} />}
+					{step === 'welcome' && (
+						<WelcomeStep onNext={() => setStep('debt')} onSkip={handleComplete} />
+					)}
 					{step === 'debt' && (
 						<DebtStep
 							onNext={handleDebtNext}
@@ -950,7 +958,7 @@ export function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
 					{step === 'objective' && (
 						<ObjectiveStep onNext={handleObjectiveNext} saving={saving} saveError={saveError} />
 					)}
-					{step === 'summary' && <SummaryStep onComplete={onComplete} />}
+					{step === 'summary' && <SummaryStep onComplete={handleComplete} />}
 				</AnimatePresence>
 			</div>
 		</motion.div>

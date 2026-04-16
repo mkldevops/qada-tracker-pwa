@@ -1,5 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { track } from '@/lib/analytics';
 import type { Milestone } from '@/types';
 
 interface MilestoneModalProps {
@@ -16,6 +18,20 @@ const MILESTONE_CONFIG: Record<Milestone['kind'], { emoji: string; isYear: boole
 function MilestoneContent({ milestone, onClose }: { milestone: Milestone; onClose: () => void }) {
 	const { t } = useTranslation();
 	const { emoji, isYear } = MILESTONE_CONFIG[milestone.kind];
+
+	const value =
+		milestone.kind === 'count'
+			? milestone.value
+			: milestone.kind === 'year'
+				? milestone.years
+				: milestone.months;
+	const trackedRef = useRef('');
+	useEffect(() => {
+		const key = `${milestone.kind}:${value}`;
+		if (trackedRef.current === key) return;
+		trackedRef.current = key;
+		track({ name: 'milestone_reached', data: { kind: milestone.kind, value } });
+	}, [milestone.kind, value]);
 	const subtleColor = 'color-mix(in srgb, var(--background) 80%, transparent)';
 
 	let title: string;

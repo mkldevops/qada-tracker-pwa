@@ -157,7 +157,10 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 							<button
 								key={lang}
 								type="button"
-								onClick={() => i18n.changeLanguage(lang)}
+								onClick={() => {
+									i18n.changeLanguage(lang);
+									track({ name: 'language_change', data: { lang } });
+								}}
 								className={`flex-1 rounded-[16px] py-2.5 text-[13px] font-semibold transition-colors ${
 									i18n.resolvedLanguage === lang
 										? 'bg-gold text-background'
@@ -203,7 +206,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 					</button>
 					<button
 						type="button"
-						onClick={() => handleShare(t)}
+						onClick={() => handleShare(t, 'settings')}
 						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-background border border-border"
 					>
 						<Share2 size={16} className="text-gold" />
