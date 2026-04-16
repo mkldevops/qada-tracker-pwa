@@ -314,7 +314,7 @@ export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () =>
 							</motion.button>
 							<motion.button
 								type="button"
-								onClick={() => handleShare(t)}
+								onClick={() => handleShare(t, 'dashboard')}
 								className="flex flex-1 items-center justify-center gap-2 rounded-[28px] py-4 bg-surface border border-border"
 								whileTap={{ scale: 0.97 }}
 								whileHover={{ scale: 1.01 }}

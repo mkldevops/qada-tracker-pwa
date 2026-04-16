@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { track } from '@/lib/analytics';
 import { type BeforeInstallPromptEvent, dismissInstallBanner } from '@/lib/pwa';
 
 interface InstallBannerProps {
@@ -17,6 +18,7 @@ export function InstallBanner({ prompt, onDismiss }: InstallBannerProps) {
 		try {
 			await prompt.prompt();
 			await prompt.userChoice;
+			track({ name: 'pwa_install' });
 			dismissInstallBanner();
 			onDismiss();
 		} catch (error) {
@@ -29,6 +31,7 @@ export function InstallBanner({ prompt, onDismiss }: InstallBannerProps) {
 	};
 
 	const handleDismiss = () => {
+		track({ name: 'pwa_install_dismiss' });
 		dismissInstallBanner();
 		onDismiss();
 	};

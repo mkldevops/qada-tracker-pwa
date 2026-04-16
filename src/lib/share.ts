@@ -2,7 +2,7 @@ import type { TFunction } from 'i18next';
 import { toast } from 'sonner';
 import { track } from '@/lib/analytics';
 
-export async function handleShare(t: TFunction): Promise<void> {
+export async function handleShare(t: TFunction, source: 'dashboard' | 'settings'): Promise<void> {
 	const shareText = t('settings.shareText');
 	if (!navigator.share) {
 		if (!navigator.clipboard) {
@@ -12,7 +12,7 @@ export async function handleShare(t: TFunction): Promise<void> {
 		try {
 			await navigator.clipboard.writeText(shareText);
 			toast.success(t('settings.shareCopied'));
-			track({ name: 'share', data: { method: 'clipboard' } });
+			track({ name: 'share', data: { method: 'clipboard', source } });
 		} catch {
 			toast.error(t('settings.shareFailed'));
 		}
@@ -24,7 +24,7 @@ export async function handleShare(t: TFunction): Promise<void> {
 			text: shareText,
 			url: 'https://qada.fahari.pro',
 		});
-		track({ name: 'share', data: { method: 'native' } });
+		track({ name: 'share', data: { method: 'native', source } });
 	} catch (err) {
 		if (
 			err instanceof DOMException &&

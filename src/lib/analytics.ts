@@ -18,7 +18,12 @@ type TrackEvent =
 	| { name: 'reset_all_data' }
 	| { name: 'restart_onboarding'; data: { from: 'settings' | 'dashboard' | 'reset' } }
 	| { name: 'feedback_open' }
-	| { name: 'share'; data: { method: 'native' | 'clipboard' } };
+	| { name: 'share'; data: { method: 'native' | 'clipboard'; source: 'dashboard' | 'settings' } }
+	| { name: 'pwa_install' }
+	| { name: 'pwa_install_dismiss' }
+	| { name: 'language_change'; data: { lang: string } }
+	| { name: 'onboarding_complete' }
+	| { name: 'milestone_reached'; data: { kind: string; value: number } };
 
 export function track(event: TrackEvent): void {
 	const data = 'data' in event ? event.data : undefined;
