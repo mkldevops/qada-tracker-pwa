@@ -10,6 +10,24 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.31.0',
+		date: '2026-04-17',
+		changes: {
+			fr: [
+				"Stats : nouvelles sections — En ce moment, Cette semaine, Vue d'ensemble",
+				'Stats : nouveaux indicateurs — meilleur streak, record jour/semaine, cohérence 30j, cadence, semaine précédente',
+				'Stats : prochain palier avec progression vers 100 / 500 / 1k / 2.5k / 5k / 10k',
+				"Feedback : ouverture directe du formulaire Tally dans un nouvel onglet au lieu de l'iframe (plus fiable)",
+			],
+			en: [
+				'Stats: new sections — Right now, This week, Overview',
+				'Stats: new metrics — best streak, best day/week, 30d consistency, pace, last week',
+				'Stats: next milestone with progress toward 100 / 500 / 1k / 2.5k / 5k / 10k',
+				'Feedback: open Tally form directly in a new tab instead of the iframe (more reliable)',
+			],
+		},
+	},
+	{
 		version: '1.30.17',
 		date: '2026-04-16',
 		changes: {

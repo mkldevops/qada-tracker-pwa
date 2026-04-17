@@ -37,6 +37,12 @@ export interface StatsState {
 	streak: number;
 	avgPerDay: number;
 	estimatedDays: number | null;
+	bestStreak: number;
+	bestDay: number;
+	bestWeek: number;
+	lastWeek: number;
+	consistencyRate: number;
+	nextMilestone: { target: number; remaining: number } | null;
 }
 
 export interface PrayerConfig {

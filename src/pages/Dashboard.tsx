@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { EstimationCard } from '@/components/EstimationCard';
-import { FeedbackModal } from '@/components/FeedbackModal';
 import { Session } from '@/components/Session';
 import { StatCard } from '@/components/StatCard';
 import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
@@ -150,14 +149,13 @@ function PrayerRow({
 }
 
 export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const { logPrayer } = usePrayerStore();
 	const debts = useDebts();
 	const stats = useStats();
 	const activeObjective = useActiveObjective();
 	const totalRemaining = useTotalRemaining();
 	const [showSession, setShowSession] = useState(false);
-	const [showFeedback, setShowFeedback] = useState(false);
 
 	const catchUpLabel = formatCatchUpLabel(totalRemaining, t);
 
@@ -300,8 +298,8 @@ export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () =>
 							<motion.button
 								type="button"
 								onClick={() => {
-									setShowFeedback(true);
 									track({ name: 'feedback_open' });
+									window.open(`https://tally.so/r/EkDK5X?lang=${i18n.language}`, '_blank');
 								}}
 								className="flex flex-1 items-center justify-center gap-2 rounded-[28px] py-4 bg-surface border border-border"
 								whileTap={{ scale: 0.97 }}
@@ -331,7 +329,6 @@ export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () =>
 
 			<AnimatePresence>
 				{showSession && <Session onClose={() => setShowSession(false)} />}
-				{showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
 			</AnimatePresence>
 		</>
 	);

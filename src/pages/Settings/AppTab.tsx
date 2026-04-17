@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Changelog } from '@/components/Changelog';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
-import { FeedbackModal } from '@/components/FeedbackModal';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -32,7 +31,6 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 		message: string;
 	} | null>(null);
 	const [showChangelog, setShowChangelog] = useState(false);
-	const [showFeedback, setShowFeedback] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -76,7 +74,6 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 		<>
 			<AnimatePresence>
 				{showChangelog && <Changelog onClose={() => setShowChangelog(false)} />}
-				{showFeedback && <FeedbackModal onClose={() => setShowFeedback(false)} />}
 			</AnimatePresence>
 
 			<CollapsibleSection label={t('settings.data')} defaultOpen={true}>
@@ -194,8 +191,8 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 					<button
 						type="button"
 						onClick={() => {
-							setShowFeedback(true);
 							track({ name: 'feedback_open' });
+							window.open(`https://tally.so/r/EkDK5X?lang=${i18n.language}`, '_blank');
 						}}
 						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-background border border-border"
 					>

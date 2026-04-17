@@ -78,6 +78,12 @@ const EMPTY_STATS: StatsState = {
 	streak: 0,
 	avgPerDay: 0,
 	estimatedDays: null,
+	bestStreak: 0,
+	bestDay: 0,
+	bestWeek: 0,
+	lastWeek: 0,
+	consistencyRate: 0,
+	nextMilestone: null,
 };
 
 const EMPTY_DEBT: PrayerDebt = {
