@@ -6,16 +6,25 @@ const TONE_CLASS = {
 	sage: 'text-sage',
 } as const;
 
+const BADGE_CLASS = {
+	sage: 'text-sage',
+	danger: 'text-danger',
+} as const;
+
 export function StatCard({
 	label,
 	value,
 	tone,
 	index = 0,
+	badge,
+	badgeTone,
 }: {
 	label: string;
 	value: string | number;
 	tone?: keyof typeof TONE_CLASS;
 	index?: number;
+	badge?: string;
+	badgeTone?: keyof typeof BADGE_CLASS;
 }) {
 	return (
 		<motion.div
@@ -29,6 +38,9 @@ export function StatCard({
 				className={`text-3xl font-semibold leading-none tabular-nums ${tone ? TONE_CLASS[tone] : 'text-foreground'}`}
 			>
 				{value}
+				{badge && badgeTone && (
+					<span className={`ms-1 text-[13px] font-medium ${BADGE_CLASS[badgeTone]}`}>{badge}</span>
+				)}
 			</span>
 			<span className="text-[10px] font-medium text-muted">{label}</span>
 		</motion.div>

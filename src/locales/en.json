@@ -68,7 +68,19 @@
 		"totalRemaining": "Total remaining",
 		"prayerCount_one": "{{count}} prayer",
 		"prayerCount_other": "{{count}} prayers",
-		"noPrayersInPeriod": "No prayers in this period"
+		"noPrayersInPeriod": "No prayers in this period",
+		"bestStreak": "best streak",
+		"bestDay": "best day",
+		"bestWeek": "best week",
+		"lastWeek": "last week",
+		"consistency": "30d consistency",
+		"paceLabel": "debt months / month",
+		"nextMilestoneLabel": "NEXT MILESTONE",
+		"nextMilestoneUnit": "prayers left",
+		"nextMilestoneTarget": "to reach {{target}}",
+		"sectionNow": "RIGHT NOW",
+		"sectionWeek": "THIS WEEK",
+		"sectionOverview": "OVERVIEW"
 	},
 	"log": {
 		"title": "Log",

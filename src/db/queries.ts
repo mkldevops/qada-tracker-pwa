@@ -107,12 +107,29 @@ export async function getRecentLogs(db: QadaDB, limit = 50): Promise<PrayerLog[]
 	return db.prayer_logs.orderBy('id').reverse().limit(limit).toArray();
 }
 
-async function getTemporalStats(db: QadaDB): Promise<{
+const NEXT_MILESTONES = [100, 500, 1000, 2500, 5000, 10000] as const;
+
+function getNextMilestone(allTime: number): { target: number; remaining: number } | null {
+	for (const milestone of NEXT_MILESTONES) {
+		if (milestone > allTime) {
+			return { target: milestone, remaining: milestone - allTime };
+		}
+	}
+	return null;
+}
+
+async function getExtendedTemporalStats(db: QadaDB): Promise<{
 	today: number;
 	thisWeek: number;
 	thisMonth: number;
 	allTime: number;
 	avgPerDay: number;
+	bestDay: number;
+	bestWeek: number;
+	lastWeek: number;
+	consistencyRate: number;
+	streak: number;
+	bestStreak: number;
 }> {
 	const all = await db.prayer_logs.toArray();
 	const now = new Date();
@@ -123,20 +140,30 @@ async function getTemporalStats(db: QadaDB): Promise<{
 	const weekAgo = new Date(now);
 	weekAgo.setDate(weekAgo.getDate() - 7);
 
+	const twoWeeksAgo = new Date(now);
+	twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
 	const monthAgo = new Date(now);
 	monthAgo.setDate(monthAgo.getDate() - 30);
 
 	let today = 0;
 	let thisWeek = 0;
+	let lastWeek = 0;
 	let thisMonth = 0;
 	let allTime = 0;
 	let firstLogDate: Date | null = null;
+	const byDate = new Map<string, number>();
 
 	for (const log of all) {
 		const logDate = new Date(log.logged_at);
+		const dateKey = log.logged_at.slice(0, 10);
+
 		allTime += log.quantity;
+		byDate.set(dateKey, (byDate.get(dateKey) ?? 0) + log.quantity);
+
 		if (logDate >= startOfToday) today += log.quantity;
 		if (logDate >= weekAgo) thisWeek += log.quantity;
+		if (logDate >= twoWeeksAgo && logDate < weekAgo) lastWeek += log.quantity;
 		if (logDate >= monthAgo) thisMonth += log.quantity;
 		if (!firstLogDate || logDate < firstLogDate) firstLogDate = logDate;
 	}
@@ -158,26 +185,44 @@ async function getTemporalStats(db: QadaDB): Promise<{
 		avgPerDay = logsInWindow > 0 ? logsInWindow / effectiveDays : 0;
 	}
 
-	return { today, thisWeek, thisMonth, allTime, avgPerDay };
-}
+	let bestDay = 0;
+	for (const count of byDate.values()) {
+		if (count > bestDay) bestDay = count;
+	}
 
-export async function getStreak(db: QadaDB): Promise<number> {
-	const rows = await db.prayer_logs.orderBy('logged_at').reverse().toArray();
+	const todayUtcMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+	let daysWithPrayers = 0;
+	for (let i = 0; i < 30; i++) {
+		const key = new Date(todayUtcMs - i * 86_400_000).toISOString().slice(0, 10);
+		if ((byDate.get(key) ?? 0) > 0) daysWithPrayers++;
+	}
+	const consistencyRate = Math.min(100, Math.round((daysWithPrayers / 30) * 100));
 
-	const uniqueDates = [...new Set(rows.map((r) => r.logged_at.slice(0, 10)))];
+	const sortedDates = [...byDate.keys()].sort();
 
-	if (uniqueDates.length === 0) return 0;
+	let bestStreak = 0;
+	let currentRun = 0;
+	let prevMs = 0;
+	for (const dateStr of sortedDates) {
+		const ms = new Date(dateStr).getTime();
+		if (prevMs === 0 || ms - prevMs === 86_400_000) {
+			currentRun++;
+		} else {
+			currentRun = 1;
+		}
+		if (currentRun > bestStreak) bestStreak = currentRun;
+		prevMs = ms;
+	}
 
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-
+	const todayNorm = new Date(now);
+	todayNorm.setHours(0, 0, 0, 0);
+	const reversedDates = [...sortedDates].reverse();
 	let streak = 0;
-	for (let i = 0; i < uniqueDates.length; i++) {
-		const rowDate = new Date(uniqueDates[i]);
+	for (let i = 0; i < reversedDates.length; i++) {
+		const rowDate = new Date(reversedDates[i]);
 		rowDate.setHours(0, 0, 0, 0);
-		const expected = new Date(today);
-		expected.setDate(today.getDate() - i);
-
+		const expected = new Date(todayNorm);
+		expected.setDate(todayNorm.getDate() - i);
 		if (rowDate.getTime() === expected.getTime()) {
 			streak++;
 		} else {
@@ -185,15 +230,40 @@ export async function getStreak(db: QadaDB): Promise<number> {
 		}
 	}
 
-	return streak;
+	let bestWeek = 0;
+	for (const dateStr of byDate.keys()) {
+		const [y, m, d] = dateStr.split('-').map(Number);
+		const baseMs = Date.UTC(y, m - 1, d);
+		let windowSum = 0;
+		for (let j = 0; j < 7; j++) {
+			const key = new Date(baseMs + j * 86_400_000).toISOString().slice(0, 10);
+			windowSum += byDate.get(key) ?? 0;
+		}
+		if (windowSum > bestWeek) bestWeek = windowSum;
+	}
+
+	return {
+		today,
+		thisWeek,
+		thisMonth,
+		allTime,
+		avgPerDay,
+		bestDay,
+		bestWeek,
+		lastWeek,
+		consistencyRate,
+		streak,
+		bestStreak,
+	};
+}
+
+export async function getStreak(db: QadaDB): Promise<number> {
+	const temporal = await getExtendedTemporalStats(db);
+	return temporal.streak;
 }
 
 export async function getStats(db: QadaDB): Promise<StatsState> {
-	const [temporal, streak, debts] = await Promise.all([
-		getTemporalStats(db),
-		getStreak(db),
-		getAllDebts(db),
-	]);
+	const [temporal, debts] = await Promise.all([getExtendedTemporalStats(db), getAllDebts(db)]);
 
 	const totalRemaining = PRAYER_NAMES.reduce((sum, p) => sum + (debts[p]?.remaining ?? 0), 0);
 
@@ -205,9 +275,15 @@ export async function getStats(db: QadaDB): Promise<StatsState> {
 		thisWeek: temporal.thisWeek,
 		thisMonth: temporal.thisMonth,
 		allTime: temporal.allTime,
-		streak,
+		streak: temporal.streak,
 		avgPerDay: temporal.avgPerDay,
 		estimatedDays,
+		bestStreak: temporal.bestStreak,
+		bestDay: temporal.bestDay,
+		bestWeek: temporal.bestWeek,
+		lastWeek: temporal.lastWeek,
+		consistencyRate: temporal.consistencyRate,
+		nextMilestone: getNextMilestone(temporal.allTime),
 	};
 }
 

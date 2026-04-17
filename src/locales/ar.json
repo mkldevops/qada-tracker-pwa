@@ -90,7 +90,19 @@
 		"prayerCount_few": "{{count}} صلوات",
 		"prayerCount_many": "{{count}} صلاة",
 		"prayerCount_other": "{{count}} صلاة",
-		"noPrayersInPeriod": "لا صلوات في هذه الفترة"
+		"noPrayersInPeriod": "لا صلوات في هذه الفترة",
+		"bestStreak": "أفضل تواصل",
+		"bestDay": "أفضل يوم",
+		"bestWeek": "أفضل أسبوع",
+		"lastWeek": "الأسبوع الماضي",
+		"consistency": "انتظام 30 يومًا",
+		"paceLabel": "أشهر الدين / شهر",
+		"nextMilestoneLabel": "المعلم التالي",
+		"nextMilestoneUnit": "صلاة متبقية",
+		"nextMilestoneTarget": "للوصول إلى {{target}}",
+		"sectionNow": "الآن",
+		"sectionWeek": "هذا الأسبوع",
+		"sectionOverview": "نظرة عامة"
 	},
 	"log": {
 		"title": "التسجيل",
