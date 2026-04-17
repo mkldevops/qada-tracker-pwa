@@ -190,11 +190,13 @@ async function getExtendedTemporalStats(db: QadaDB): Promise<{
 		if (count > bestDay) bestDay = count;
 	}
 
+	const todayUtcMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
 	let daysWithPrayers = 0;
-	for (const [dateStr, count] of byDate) {
-		if (count > 0 && new Date(dateStr) >= monthAgo) daysWithPrayers++;
+	for (let i = 0; i < 30; i++) {
+		const key = new Date(todayUtcMs - i * 86_400_000).toISOString().slice(0, 10);
+		if ((byDate.get(key) ?? 0) > 0) daysWithPrayers++;
 	}
-	const consistencyRate = Math.round((daysWithPrayers / 30) * 100);
+	const consistencyRate = Math.min(100, Math.round((daysWithPrayers / 30) * 100));
 
 	const sortedDates = [...byDate.keys()].sort();
 
@@ -230,12 +232,11 @@ async function getExtendedTemporalStats(db: QadaDB): Promise<{
 
 	let bestWeek = 0;
 	for (const dateStr of byDate.keys()) {
-		const baseDate = new Date(dateStr);
+		const [y, m, d] = dateStr.split('-').map(Number);
+		const baseMs = Date.UTC(y, m - 1, d);
 		let windowSum = 0;
 		for (let j = 0; j < 7; j++) {
-			const d = new Date(baseDate);
-			d.setDate(d.getDate() + j);
-			const key = d.toISOString().slice(0, 10);
+			const key = new Date(baseMs + j * 86_400_000).toISOString().slice(0, 10);
 			windowSum += byDate.get(key) ?? 0;
 		}
 		if (windowSum > bestWeek) bestWeek = windowSum;

@@ -75,7 +75,6 @@
 		"lastWeek": "last week",
 		"consistency": "30d consistency",
 		"paceLabel": "debt months / month",
-		"paceValue": "~{{value}} months cleared/month",
 		"nextMilestoneLabel": "NEXT MILESTONE",
 		"nextMilestoneUnit": "prayers left",
 		"nextMilestoneTarget": "to reach {{target}}",

@@ -9,6 +9,7 @@ import { StatCard } from '@/components/StatCard';
 import { getPrayerLabel, PRAYER_CONFIG } from '@/constants/prayers';
 import { track } from '@/lib/analytics';
 import { spring } from '@/lib/animations';
+import { openFeedback } from '@/lib/feedback';
 import { formatCatchUpLabel } from '@/lib/formatDays';
 import { calculateProgress } from '@/lib/progress';
 import { handleShare } from '@/lib/share';
@@ -299,7 +300,7 @@ export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () =>
 								type="button"
 								onClick={() => {
 									track({ name: 'feedback_open' });
-									window.open(`https://tally.so/r/EkDK5X?lang=${i18n.language}`, '_blank');
+									openFeedback(i18n.language);
 								}}
 								className="flex flex-1 items-center justify-center gap-2 rounded-[28px] py-4 bg-surface border border-border"
 								whileTap={{ scale: 0.97 }}

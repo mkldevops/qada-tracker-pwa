@@ -75,7 +75,6 @@
 		"lastWeek": "sem. précédente",
 		"consistency": "cohérence 30j",
 		"paceLabel": "mois de dette / mois",
-		"paceValue": "~{{value}} mois effacés/mois",
 		"nextMilestoneLabel": "PROCHAIN PALIER",
 		"nextMilestoneUnit": "prières restantes",
 		"nextMilestoneTarget": "pour atteindre {{target}}",

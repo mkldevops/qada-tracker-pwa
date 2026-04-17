@@ -97,7 +97,6 @@
 		"lastWeek": "الأسبوع الماضي",
 		"consistency": "انتظام 30 يومًا",
 		"paceLabel": "أشهر الدين / شهر",
-		"paceValue": "~{{value}} شهر مُمحى/شهر",
 		"nextMilestoneLabel": "المعلم التالي",
 		"nextMilestoneUnit": "صلاة متبقية",
 		"nextMilestoneTarget": "للوصول إلى {{target}}",

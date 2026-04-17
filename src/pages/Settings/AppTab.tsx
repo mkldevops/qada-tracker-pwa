@@ -18,6 +18,7 @@ import {
 import { db } from '@/db/database';
 import { exportBackup, importBackup } from '@/db/queries';
 import { track } from '@/lib/analytics';
+import { openFeedback } from '@/lib/feedback';
 import { markOnboardingUndone } from '@/lib/onboarding';
 import { handleShare } from '@/lib/share';
 import { usePrayerStore } from '@/stores/prayerStore';
@@ -192,7 +193,7 @@ export function AppTab({ onRestartOnboarding }: { onRestartOnboarding?: () => vo
 						type="button"
 						onClick={() => {
 							track({ name: 'feedback_open' });
-							window.open(`https://tally.so/r/EkDK5X?lang=${i18n.language}`, '_blank');
+							openFeedback(i18n.language);
 						}}
 						className="flex w-full items-center justify-center gap-2.5 rounded-[28px] py-4 bg-background border border-border"
 					>
