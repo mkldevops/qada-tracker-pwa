@@ -1,6 +1,6 @@
 import { Check, Minus, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
@@ -571,9 +571,9 @@ export function LogPrayers() {
 		setActiveTab(tab);
 	}
 
-	function handleChange(prayer: PrayerName, qty: number) {
+	const handleChange = useCallback((prayer: PrayerName, qty: number) => {
 		setQuantities((prev) => ({ ...prev, [prayer]: Math.max(0, qty) }));
-	}
+	}, []);
 
 	async function handleLog() {
 		const entries: BatchEntry[] = PRAYER_NAMES.map((prayer) => ({

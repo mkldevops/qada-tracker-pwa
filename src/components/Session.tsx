@@ -1,6 +1,6 @@
 import { CheckCircle2, Minus, Plus, Timer } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { EncouragementMessage } from '@/components/EncouragementMessage';
@@ -247,7 +247,6 @@ function AnimatedCounter({
 				</motion.button>
 			</div>
 
-			{/* Progress bar */}
 			<div
 				className="w-full h-1 rounded-full overflow-hidden"
 				style={{ background: 'var(--surface-raised)' }}
@@ -283,7 +282,6 @@ function PrayerCard({
 			exit={{ scale: 0.85, opacity: 0, y: -20 }}
 			transition={springBouncy}
 		>
-			{/* Glow background */}
 			<motion.div
 				className="absolute inset-0"
 				style={{
@@ -338,11 +336,14 @@ export function Session({ onClose }: { onClose: () => void }) {
 	const [targetDir, setTargetDir] = useState<1 | -1>(1);
 	const [userEdited, setUserEdited] = useState(false);
 
-	function changeTarget(v: number) {
-		setTargetDir(v >= target ? 1 : -1);
-		setTarget(v);
-		setUserEdited(true);
-	}
+	const changeTarget = useCallback(
+		(v: number) => {
+			setTargetDir(v >= target ? 1 : -1);
+			setTarget(v);
+			setUserEdited(true);
+		},
+		[target],
+	);
 
 	useEffect(() => {
 		if (userEdited || phase !== 'setup') return;
@@ -568,20 +569,22 @@ export function Session({ onClose }: { onClose: () => void }) {
 	}
 
 	const sessionPrayersRemaining = target - completed;
-	let sessionRakatsRemaining = 0;
-	if (phase === 'active' && sessionPrayersRemaining > 0) {
+	const sessionRakatsRemaining = useMemo(() => {
+		if (phase !== 'active' || sessionPrayersRemaining <= 0) return 0;
 		let count = 0;
 		let i = 0;
+		let total = 0;
 		const maxIter = prayerOrder.length * sessionPrayersRemaining + prayerOrder.length;
 		while (count < sessionPrayersRemaining && i < maxIter) {
 			const prayer = prayerOrder[(currentPrayerIndex + i) % prayerOrder.length];
 			if ((debts[prayer]?.remaining ?? 0) > 0) {
-				sessionRakatsRemaining += PRAYER_CONFIG[prayer].rakat;
+				total += PRAYER_CONFIG[prayer].rakat;
 				count++;
 			}
 			i++;
 		}
-	}
+		return total;
+	}, [phase, sessionPrayersRemaining, prayerOrder, currentPrayerIndex, debts]);
 	const effectiveRakatsRemaining = Math.max(0, sessionRakatsRemaining - currentRakat);
 
 	const currentEntry =
