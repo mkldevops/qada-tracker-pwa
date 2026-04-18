@@ -10,6 +10,20 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.33.2',
+		date: '2026-04-18',
+		changes: {
+			fr: [
+				'Session : mémoïsation du calcul des rak’a restantes et stabilisation des callbacks',
+				'Saisie : stabilisation du handler de quantité pour éviter les re-rendus inutiles',
+			],
+			en: [
+				'Session: memoized remaining rak’a computation and stabilized callbacks',
+				'Log prayers: stabilized quantity handler to avoid unnecessary re-renders',
+			],
+		},
+	},
+	{
 		version: '1.33.0',
 		date: '2026-04-18',
 		changes: {
