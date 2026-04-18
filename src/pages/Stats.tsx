@@ -29,7 +29,11 @@ export function Stats() {
 				? `+${weekDelta}`
 				: `${weekDelta}`
 			: undefined;
-	const weekBadgeTone = weekDelta > 0 ? ('sage' as const) : ('danger' as const);
+	const weekBadgeTone = weekBadge
+		? weekDelta > 0
+			? ('sage' as const)
+			: ('danger' as const)
+		: undefined;
 
 	const pace = stats.avgPerDay > 0 ? (stats.avgPerDay * 30) / 150 : 0;
 

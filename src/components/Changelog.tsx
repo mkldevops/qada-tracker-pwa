@@ -11,13 +11,14 @@ interface ChangelogEntry {
 const ENTRIES: ChangelogEntry[] = [
 	{
 		version: '1.31.0',
-		date: '2026-04-17',
+		date: '2026-04-18',
 		changes: {
 			fr: [
 				"Stats : nouvelles sections — En ce moment, Cette semaine, Vue d'ensemble",
 				'Stats : nouveaux indicateurs — meilleur streak, record jour/semaine, cohérence 30j, cadence, semaine précédente',
 				'Stats : prochain palier avec progression vers 100 / 500 / 1k / 2.5k / 5k / 10k',
 				'Stats : correction du calcul record semaine avec DST et de la cohérence 30j (bornée à 100 %)',
+				'Stats : fusion des boucles bestDay/bestStreak, badge de semaine conditionnel, StatCard badge sécurisé',
 				"Feedback : ouverture directe du formulaire Tally dans un nouvel onglet au lieu de l'iframe (plus fiable)",
 				'Feedback : ajout de noopener,noreferrer sur les liens externes (sécurité)',
 			],
@@ -26,6 +27,7 @@ const ENTRIES: ChangelogEntry[] = [
 				'Stats: new metrics — best streak, best day/week, 30d consistency, pace, last week',
 				'Stats: next milestone with progress toward 100 / 500 / 1k / 2.5k / 5k / 10k',
 				'Stats: fixed best-week DST bug and 30d consistency (clamped to 100%)',
+				'Stats: merged bestDay/bestStreak loops, conditional week badge tone, safe StatCard badge default',
 				'Feedback: open Tally form directly in a new tab instead of the iframe (more reliable)',
 				'Feedback: added noopener,noreferrer on external links (security)',
 			],

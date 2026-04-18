@@ -185,11 +185,6 @@ async function getExtendedTemporalStats(db: QadaDB): Promise<{
 		avgPerDay = logsInWindow > 0 ? logsInWindow / effectiveDays : 0;
 	}
 
-	let bestDay = 0;
-	for (const count of byDate.values()) {
-		if (count > bestDay) bestDay = count;
-	}
-
 	const todayUtcMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
 	let daysWithPrayers = 0;
 	for (let i = 0; i < 30; i++) {
@@ -200,10 +195,14 @@ async function getExtendedTemporalStats(db: QadaDB): Promise<{
 
 	const sortedDates = [...byDate.keys()].sort();
 
+	let bestDay = 0;
 	let bestStreak = 0;
 	let currentRun = 0;
 	let prevMs = 0;
 	for (const dateStr of sortedDates) {
+		const count = byDate.get(dateStr) ?? 0;
+		if (count > bestDay) bestDay = count;
+
 		const ms = new Date(dateStr).getTime();
 		if (prevMs === 0 || ms - prevMs === 86_400_000) {
 			currentRun++;
