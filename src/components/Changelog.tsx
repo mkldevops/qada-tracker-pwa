@@ -10,6 +10,14 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.33.0',
+		date: '2026-04-18',
+		changes: {
+			fr: ['Pages publiques : correction de l’indentation CSS/JS dans about.html et privacy.html'],
+			en: ['Public pages: fixed CSS/JS indentation in about.html and privacy.html'],
+		},
+	},
+	{
 		version: '1.31.0',
 		date: '2026-04-18',
 		changes: {
