@@ -38,8 +38,10 @@ export function StatCard({
 				className={`text-3xl font-semibold leading-none tabular-nums ${tone ? TONE_CLASS[tone] : 'text-foreground'}`}
 			>
 				{value}
-				{badge && badgeTone && (
-					<span className={`ms-1 text-[13px] font-medium ${BADGE_CLASS[badgeTone]}`}>{badge}</span>
+				{badge && (
+					<span className={`ms-1 text-[13px] font-medium ${BADGE_CLASS[badgeTone ?? 'sage']}`}>
+						{badge}
+					</span>
 				)}
 			</span>
 			<span className="text-[10px] font-medium text-muted">{label}</span>
