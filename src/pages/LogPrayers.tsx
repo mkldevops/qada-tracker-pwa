@@ -585,6 +585,10 @@ export function LogPrayers() {
 		track({ name: 'prayers_logged', data: { total } });
 		setQuantities(EMPTY());
 		switchTab('history');
+		toast(t('log.undoToast'), {
+			duration: 5000,
+			action: { label: t('log.undoAction'), onClick: undoLastLog },
+		});
 	}
 
 	return (

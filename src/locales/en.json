@@ -92,6 +92,8 @@
 		"totalCount_other": "{{count}} prayers",
 		"confirm": "CONFIRM LOG",
 		"emptyHistory": "No log recorded",
+		"undoToast": "Prayer logged",
+		"undoAction": "Undo",
 		"undoLast": "Undo last",
 		"undoTitle": "Undo last entry?",
 		"undoDesc": "Deletes the last session and updates the counters.",

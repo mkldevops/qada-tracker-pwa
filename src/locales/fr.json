@@ -92,6 +92,8 @@
 		"totalCount_other": "{{count}} prières",
 		"confirm": "CONFIRMER LE LOG",
 		"emptyHistory": "Aucun log enregistré",
+		"undoToast": "Prière loggée",
+		"undoAction": "Annuler",
 		"undoLast": "Annuler le dernier",
 		"undoTitle": "Annuler la dernière entrée ?",
 		"undoDesc": "Supprime la dernière session et remet les compteurs à jour.",
