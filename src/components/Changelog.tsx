@@ -10,6 +10,18 @@ interface ChangelogEntry {
 
 const ENTRIES: ChangelogEntry[] = [
 	{
+		version: '1.33.3',
+		date: '2026-04-30',
+		changes: {
+			fr: [
+				'Logger : toast de confirmation après chaque log avec bouton Annuler pour corriger un tap accidentel',
+			],
+			en: [
+				'Log: confirmation toast after each log with an Undo button to correct an accidental tap',
+			],
+		},
+	},
+	{
 		version: '1.33.2',
 		date: '2026-04-30',
 		changes: {
