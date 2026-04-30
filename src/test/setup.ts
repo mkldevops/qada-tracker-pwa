@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { beforeEach, vi } from 'vitest';
 import 'fake-indexeddb/auto';
 
 const store: Record<string, string> = {};
@@ -20,3 +20,7 @@ const localStorageMock = {
 };
 
 vi.stubGlobal('localStorage', localStorageMock);
+
+beforeEach(() => {
+	localStorageMock.clear();
+});

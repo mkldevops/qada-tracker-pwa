@@ -328,14 +328,14 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => {
 		setEstimationWindowDays: (days) => {
 			localStorage.setItem(ESTIMATION_WINDOW_KEY, days === null ? 'all-time' : String(days));
 			set({ estimationWindowDays: days });
-			syncDebtsStats();
+			void syncDebtsStats().catch(() => {});
 		},
 
 		setEstimationHaydDays: (days) => {
 			const clamped = Math.max(0, Math.min(15, days));
 			localStorage.setItem(ESTIMATION_HAYD_KEY, String(clamped));
 			set({ estimationHaydDays: clamped });
-			syncDebtsStats();
+			void syncDebtsStats().catch(() => {});
 		},
 
 		clearMilestone: () => {
