@@ -118,7 +118,11 @@ function getNextMilestone(allTime: number): { target: number; remaining: number 
 	return null;
 }
 
-async function getExtendedTemporalStats(db: QadaDB): Promise<{
+async function getExtendedTemporalStats(
+	db: QadaDB,
+	windowDays: number | null = 30,
+	haydAvgDays = 0,
+): Promise<{
 	today: number;
 	thisWeek: number;
 	thisMonth: number;
@@ -174,7 +178,8 @@ async function getExtendedTemporalStats(db: QadaDB): Promise<{
 			1,
 			Math.floor((now.getTime() - firstLogDate.getTime()) / 86_400_000),
 		);
-		const effectiveDays = Math.min(daysSinceFirst, 30);
+		const effectiveDays =
+			windowDays === null ? daysSinceFirst : Math.min(daysSinceFirst, windowDays);
 		const windowStart = new Date(now);
 		windowStart.setDate(windowStart.getDate() - effectiveDays);
 		let logsInWindow = 0;
@@ -182,7 +187,9 @@ async function getExtendedTemporalStats(db: QadaDB): Promise<{
 			const logDate = new Date(log.logged_at);
 			if (logDate >= windowStart) logsInWindow += log.quantity;
 		}
-		avgPerDay = logsInWindow > 0 ? logsInWindow / effectiveDays : 0;
+		const prayableDays =
+			haydAvgDays > 0 ? Math.max(1, effectiveDays * (1 - haydAvgDays / 30)) : effectiveDays;
+		avgPerDay = logsInWindow > 0 ? logsInWindow / prayableDays : 0;
 	}
 
 	const todayUtcMs = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
@@ -261,8 +268,15 @@ export async function getStreak(db: QadaDB): Promise<number> {
 	return temporal.streak;
 }
 
-export async function getStats(db: QadaDB): Promise<StatsState> {
-	const [temporal, debts] = await Promise.all([getExtendedTemporalStats(db), getAllDebts(db)]);
+export async function getStats(
+	db: QadaDB,
+	windowDays: number | null = 30,
+	haydAvgDays = 0,
+): Promise<StatsState> {
+	const [temporal, debts] = await Promise.all([
+		getExtendedTemporalStats(db, windowDays, haydAvgDays),
+		getAllDebts(db),
+	]);
 
 	const totalRemaining = PRAYER_NAMES.reduce((sum, p) => sum + (debts[p]?.remaining ?? 0), 0);
 

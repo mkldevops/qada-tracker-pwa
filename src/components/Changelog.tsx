@@ -11,15 +11,21 @@ interface ChangelogEntry {
 const ENTRIES: ChangelogEntry[] = [
 	{
 		version: '1.33.2',
-		date: '2026-04-18',
+		date: '2026-04-30',
 		changes: {
 			fr: [
+				'Estimation : nouvelle section dans les réglages — fenêtre de calcul (tout, 10 j, 30 j) et exclusion des jours de menstrues pour un taux quotidien plus précis',
 				'Session : mémoïsation du calcul des rak’a restantes et stabilisation des callbacks',
 				'Saisie : stabilisation du handler de quantité pour éviter les re-rendus inutiles',
+				'Tests : correction du polyfill localStorage dans l’environnement happy-dom',
+				'Store : gestion silencieuse des erreurs de synchronisation dans les setters',
 			],
 			en: [
+				'Estimation: new settings section — calculation window (all time, 10 d, 30 d) and menstrual exclusion for a more accurate daily rate',
 				'Session: memoized remaining rak’a computation and stabilized callbacks',
 				'Log prayers: stabilized quantity handler to avoid unnecessary re-renders',
+				'Tests: fixed localStorage polyfill in happy-dom test environment',
+				'Tests: global localStorage reset between tests; store setters handle sync errors silently',
 			],
 		},
 	},

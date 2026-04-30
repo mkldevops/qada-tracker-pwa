@@ -111,6 +111,21 @@ const SUJOOD_TRACKING_KEY = 'sujood-tracking-enabled';
 const RAKA_BY_RAKA_KEY = 'raka-by-raka-enabled';
 const SESSIONS_PER_DAY_KEY = 'sessions-per-day';
 const TASHAHD_DURATION_KEY = 'tashahd-duration-ms';
+const ESTIMATION_WINDOW_KEY = 'estimation-window-days';
+const ESTIMATION_HAYD_KEY = 'estimation-hayd-days';
+
+function readEstimationSettings(): { windowDays: number | null; haydAvgDays: number } {
+	const rawWindow = localStorage.getItem(ESTIMATION_WINDOW_KEY);
+	const windowDays: number | null =
+		rawWindow === 'all-time'
+			? null
+			: [10, 30].includes(Number.parseInt(rawWindow ?? '', 10))
+				? Number.parseInt(rawWindow ?? '', 10)
+				: 30;
+	const rawHayd = Number.parseInt(localStorage.getItem(ESTIMATION_HAYD_KEY) ?? '', 10);
+	const haydAvgDays = rawHayd >= 1 && rawHayd <= 15 ? rawHayd : 0;
+	return { windowDays, haydAvgDays };
+}
 
 interface PrayerStore {
 	debts: Record<PrayerName, PrayerDebt>;
@@ -123,6 +138,8 @@ interface PrayerStore {
 	rakaByRaka: boolean;
 	sessionsPerDay: number;
 	tashahdDurationMs: number;
+	estimationWindowDays: number | null;
+	estimationHaydDays: number;
 	pendingMilestone: Milestone | null;
 
 	loadAll: () => Promise<void>;
@@ -139,15 +156,18 @@ interface PrayerStore {
 	setRakaByRaka: (enabled: boolean) => void;
 	setSessionsPerDay: (value: number) => void;
 	setTashahdDurationMs: (ms: number) => void;
+	setEstimationWindowDays: (days: number | null) => void;
+	setEstimationHaydDays: (days: number) => void;
 	clearMilestone: () => void;
 	resetAll: () => Promise<void>;
 }
 
 export const usePrayerStore = create<PrayerStore>()((set, get) => {
 	async function syncAll() {
+		const { windowDays, haydAvgDays } = readEstimationSettings();
 		const [debts, stats, recentLogs] = await Promise.all([
 			queries.getAllDebts(db),
-			queries.getStats(db),
+			queries.getStats(db, windowDays, haydAvgDays),
 			queries.getRecentLogs(db, 50),
 		]);
 		set({ debts, stats, recentLogs });
@@ -156,7 +176,11 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => {
 	}
 
 	async function syncDebtsStats() {
-		const [debts, stats] = await Promise.all([queries.getAllDebts(db), queries.getStats(db)]);
+		const { windowDays, haydAvgDays } = readEstimationSettings();
+		const [debts, stats] = await Promise.all([
+			queries.getAllDebts(db),
+			queries.getStats(db, windowDays, haydAvgDays),
+		]);
 		set({ debts, stats });
 		updateAppBadge(debts);
 	}
@@ -188,13 +212,24 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => {
 			const raw = parseInt(localStorage.getItem(TASHAHD_DURATION_KEY) ?? '', 10);
 			return raw >= 5000 && raw <= 300000 ? raw : 30000;
 		})(),
+		estimationWindowDays: (() => {
+			const raw = localStorage.getItem(ESTIMATION_WINDOW_KEY);
+			if (raw === 'all-time') return null;
+			const n = parseInt(raw ?? '', 10);
+			return [10, 30].includes(n) ? n : 30;
+		})(),
+		estimationHaydDays: (() => {
+			const raw = parseInt(localStorage.getItem(ESTIMATION_HAYD_KEY) ?? '', 10);
+			return raw >= 1 && raw <= 15 ? raw : 0;
+		})(),
 		pendingMilestone: null,
 
 		loadAll: async () => {
 			set({ isLoading: true });
+			const { windowDays, haydAvgDays } = readEstimationSettings();
 			const [debts, stats, recentLogs, activeObjective] = await Promise.all([
 				queries.getAllDebts(db),
-				queries.getStats(db),
+				queries.getStats(db, windowDays, haydAvgDays),
 				queries.getRecentLogs(db, 50),
 				queries.getActiveObjective(db),
 			]);
@@ -288,6 +323,19 @@ export const usePrayerStore = create<PrayerStore>()((set, get) => {
 			const clamped = Math.max(5000, Math.min(300000, ms));
 			localStorage.setItem(TASHAHD_DURATION_KEY, String(clamped));
 			set({ tashahdDurationMs: clamped });
+		},
+
+		setEstimationWindowDays: (days) => {
+			localStorage.setItem(ESTIMATION_WINDOW_KEY, days === null ? 'all-time' : String(days));
+			set({ estimationWindowDays: days });
+			void syncDebtsStats().catch(() => {});
+		},
+
+		setEstimationHaydDays: (days) => {
+			const clamped = Math.max(0, Math.min(15, days));
+			localStorage.setItem(ESTIMATION_HAYD_KEY, String(clamped));
+			set({ estimationHaydDays: clamped });
+			void syncDebtsStats().catch(() => {});
 		},
 
 		clearMilestone: () => {
