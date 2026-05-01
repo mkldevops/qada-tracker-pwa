@@ -118,6 +118,8 @@
 		"totalCount_other": "{{count}} صلاة",
 		"confirm": "تأكيد التسجيل",
 		"emptyHistory": "لا سجل مُدوَّن",
+		"undoToast": "تم تسجيل الصلاة",
+		"undoAction": "تراجع",
 		"undoLast": "تراجع عن الأخير",
 		"undoTitle": "التراجع عن آخر إدخال؟",
 		"undoDesc": "يحذف الجلسة الأخيرة ويحدّث العدادات.",

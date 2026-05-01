@@ -29,6 +29,7 @@ function PrayerRow({
 	totalOwed,
 	totalCompleted,
 	onLog,
+	onUndo,
 	index = 0,
 }: {
 	prayer: PrayerName;
@@ -36,6 +37,7 @@ function PrayerRow({
 	totalOwed: number;
 	totalCompleted: number;
 	onLog: (p: PrayerName) => void;
+	onUndo: () => Promise<void>;
 	index?: number;
 }) {
 	const { t, i18n } = useTranslation();
@@ -70,6 +72,10 @@ function PrayerRow({
 			if (!shouldReduce) {
 				setJustLogged(true);
 			}
+			toast(t('log.undoToast'), {
+				duration: 5000,
+				action: { label: t('log.undoAction'), onClick: onUndo },
+			});
 		} catch (err) {
 			if (import.meta.env.DEV) console.error('logPrayer failed', err);
 			toast.error(t('common.error'));
@@ -151,7 +157,7 @@ function PrayerRow({
 
 export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () => void }) {
 	const { t, i18n } = useTranslation();
-	const { logPrayer } = usePrayerStore();
+	const { logPrayer, undoLastLog } = usePrayerStore();
 	const debts = useDebts();
 	const stats = useStats();
 	const activeObjective = useActiveObjective();
@@ -285,6 +291,7 @@ export function Dashboard({ onRestartOnboarding }: { onRestartOnboarding?: () =>
 									totalOwed={debts[prayer]?.total_owed ?? 0}
 									totalCompleted={debts[prayer]?.total_completed ?? 0}
 									onLog={logPrayer}
+									onUndo={undoLastLog}
 									index={index}
 								/>
 							))}
